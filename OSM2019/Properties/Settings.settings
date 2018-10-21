@@ -1,7 +1,36 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OSM2019.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AnacondaPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">G:\ProgramData\Anaconda3\Scripts\activate.bat</Value>
+    </Setting>
+    <Setting Name="AnacondaEnv" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GraphGeneratorFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">./Resources/PythonScript/GraphGenerator/</Value>
+    </Setting>
+    <Setting Name="LayoutGeneratorFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">./Resources/PythonScript/LayoutGenerator/</Value>
+    </Setting>
+    <Setting Name="lab_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\majitaki\Anaconda3\Scripts\activate.bat</Value>
+    </Setting>
+    <Setting Name="home_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">G:\ProgramData\Anaconda3\Scripts\activate.bat</Value>
+    </Setting>
+    <Setting Name="kaigi_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\ProgramData\Anaconda3\Scripts\activate.bat</Value>
+    </Setting>
+    <Setting Name="note_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\majit\Anaconda3\Scripts\activate.bat </Value>
+    </Setting>
+    <Setting Name="RawGraphPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">./Working/graph.json</Value>
+    </Setting>
+    <Setting Name="WorkingFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">./Working/</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

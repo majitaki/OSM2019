@@ -1,9 +1,11 @@
 ﻿using OSM2019.GUI;
+using OSM2019.OSM;
 using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -28,10 +30,16 @@ namespace OSM2019
             this.InitializeGUIs();
             InitializeComponent();
             this.UserInitialize();
+
+            var graph_generator = new Grid2D_GraphGenerator(10,10);
+            var graph = graph_generator.Generate(0, false);
         }
 
         void UserInitialize()
         {
+            Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
+            PythonProxy.StartUpPython();
+
             this.radioButtonGraphGUI.Checked = true;
             this.radioButtonStepCheck.Checked = true;
             this.numericUpDownStepsControl.Value = 3000;

@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E409FE00-5FE7-4947-8091-71815EFBAFE2}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>OSM2019</RootNamespace>
     <AssemblyName>OSM2019</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -32,7 +32,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstracts\A_GraphGenerator.cs" />
     <Compile Include="GUI\AgentGUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -76,9 +83,23 @@
     <Compile Include="GUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\I_GraphGenerator.cs" />
+    <Compile Include="OSM\GraphGenerator\BA_GraphGenerator.cs" />
+    <Compile Include="OSM\GraphGenerator\ConnectedWS_GraphGenerator.cs" />
+    <Compile Include="OSM\GraphGenerator\ER_GraphGenerator.cs" />
+    <Compile Include="OSM\Graph\RawGraph.cs" />
+    <Compile Include="OSM\GraphGenerator\Grid2D_GraphGenerator.cs" />
+    <Compile Include="OSM\GraphGenerator\Hexagonal_GraphGenerator.cs" />
+    <Compile Include="OSM\GraphGenerator\NewmanWS_GraphGenerator.cs" />
+    <Compile Include="OSM\GraphGenerator\PC_GraphGenerator.cs" />
+    <Compile Include="OSM\GraphGenerator\Triangular_GraphGenerator.cs" />
+    <Compile Include="OSM\GraphGenerator\WS_GraphGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Enum.cs" />
+    <Compile Include="Utility\PythonProxy.cs" />
+    <Compile Include="Utility\RandomPool.cs" />
+    <Compile Include="Utility\ReadWrite.cs" />
     <EmbeddedResource Include="GUI\AgentGUI.resx">
       <DependentUpon>AgentGUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -104,6 +125,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -113,37 +135,68 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Resources\Output\Working\adjacency.csv" />
-    <None Include="Resources\Output\Working\edge.csv" />
-    <None Include="Resources\Output\Working\node.csv" />
-    <None Include="Resources\PythonScript\LayoutGenerator\circular_layout.py" />
-    <None Include="Resources\PythonScript\LayoutGenerator\fruchterman_reingold_layout.py" />
-    <None Include="Resources\PythonScript\LayoutGenerator\kamada_kawai_layout.py" />
-    <None Include="Resources\PythonScript\LayoutGenerator\random_layout.py" />
-    <None Include="Resources\PythonScript\LayoutGenerator\shell_layout.py" />
-    <None Include="Resources\PythonScript\LayoutGenerator\spectral_layout.py" />
-    <None Include="Resources\PythonScript\LayoutGenerator\spring_layout.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\barabasi_albert_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\connected_watts_strogatz_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\erdos_renyi_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\fast_gnp_random_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\gnm_random_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\gnp_random_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\grid_2d_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\hexagonal_lattice_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\newman_watts_strogatz_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\powerlaw_cluster_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\triangular_graph.py" />
-    <None Include="Resources\PythonScript\NetworkGenerator\watts_strogatz_graph.py" />
+    <None Include="Resources\PythonScript\LayoutGenerator\circular_layout.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\LayoutGenerator\fruchterman_reingold_layout.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\LayoutGenerator\kamada_kawai_layout.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\LayoutGenerator\random_layout.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\LayoutGenerator\shell_layout.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\LayoutGenerator\spectral_layout.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\LayoutGenerator\spring_layout.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\barabasi_albert_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\connected_watts_strogatz_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\erdos_renyi_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\fast_gnp_random_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\gnm_random_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\gnp_random_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\grid_2d_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\hexagonal_lattice_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\newman_watts_strogatz_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\powerlaw_cluster_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\triangular_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\PythonScript\GraphGenerator\watts_strogatz_graph.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Abstracts\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="OSM\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Resources\Image\icon_agent.png" />
     <Content Include="Resources\Image\icon_animation.png" />
