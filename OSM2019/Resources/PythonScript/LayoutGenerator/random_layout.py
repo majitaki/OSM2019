@@ -4,6 +4,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
 import glob
+from networkx.readwrite import json_graph
+import json
 
 def main():
     argv = sys.argv
@@ -13,9 +15,9 @@ def main():
         print('[Python] ' + 'Arg Error')
         quit()
 
-    csv = glob.glob("./Resources/Output/Working/edge.csv")
-    graph_data = pd.read_csv(csv[0])
-    G = nx.from_pandas_edgelist(graph_data)
+    f = open('./Working/graph.json', 'r')
+    json_data = json.load(f)
+    G = json_graph.node_link_graph(json_data)
     set_layout(G)
 
 def set_layout(G):
@@ -24,9 +26,9 @@ def set_layout(G):
     pos_data = pd.DataFrame(pos)
     pos_data = pos_data.T
     pos_data.columns =["x", "y"]
-    pos_data.to_csv("./Resources/Output/Working/position.csv")
+    pos_data.to_csv("./Working/position.csv")
     print('[Python]' + 'Generate Position')
-    with open('./Resources/Output/Working/layout_flag', mode = 'w', encoding = 'utf-8') as fh:
+    with open('./Working/layout_flag', mode = 'w', encoding = 'utf-8') as fh:
         fh.write("i look at you")
 
 if __name__ == '__main__':

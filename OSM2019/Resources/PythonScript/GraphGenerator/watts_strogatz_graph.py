@@ -22,10 +22,10 @@ def main():
 
 def generate_graph(n, k, p, seed):
     G = nx.watts_strogatz_graph(n, k, p, seed)
-	data = json_graph.node_link_data(G, {'link': 'Edges'})
+    data = json_graph.node_link_data(G)
     with open('./Working/graph.json', 'w') as f:
-		json.dump(data, f)
-    with open('./Working/flag', mode = 'w', encoding = 'utf-8') as fh:
+        json.dump(data, f)
+    with open('./Working/graph_flag', mode = 'w', encoding = 'utf-8') as fh:
         fh.write("i look at you")
 
 if __name__ == '__main__':

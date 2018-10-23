@@ -3,6 +3,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+from networkx.readwrite import json_graph
+import json
 
 def main():
     argv = sys.argv
@@ -20,20 +22,11 @@ def generate_graph(m, n):
     G = nx.hexagonal_lattice_graph(m, n)
     A = nx.to_numpy_matrix(G)
     G = nx.from_numpy_matrix(A)
-    node_data = []
-    for i in nx.nodes(G):
-        node_data.append(i)
-    node_data = pd.DataFrame(node_data)
-    node_data.to_csv("./Resources/Output/Working/node.csv")
-    print('[Python]' + 'Generate Node')
-    edge_data = nx.to_pandas_edgelist(G)
-    edge_data.to_csv("./Resources/Output/Working/edge.csv")
-    print('[Python]' + 'Generate Edge')
-    with open('./Resources/Output/Working/flag', mode = 'w', encoding = 'utf-8') as fh:
+    data = json_graph.node_link_data(G)
+    with open('./Working/graph.json', 'w') as f:
+        json.dump(data, f)
+    with open('./Working/graph_flag', mode = 'w', encoding = 'utf-8') as fh:
         fh.write("i look at you")
-    #adjacency_data = nx.to_pandas_adjacency(G, dtype=int)
-    #adjacency_data.to_csv("./Resources/Output/Working/adjacency.csv")
-    #print('[Python]' + 'Generate Adjacency')
 
 if __name__ == '__main__':
     main()

@@ -1,4 +1,5 @@
 ﻿using OSM2019.GUI;
+using OSM2019.Interfaces;
 using OSM2019.OSM;
 using OSM2019.Utility;
 using System;
@@ -7,6 +8,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,14 +33,26 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
 
-            var graph_generator = new Grid2D_GraphGenerator(10,10);
+            I_GraphGenerator graph_generator;
+            graph_generator = new Grid2D_GraphGenerator(10,10);
             var graph = graph_generator.Generate(0, false);
+            var layout1 = new Circular_LayoutGenerator(graph).Generate();
+
+            graph_generator = new BA_GraphGenerator(200, 6);
+            graph = graph_generator.Generate(0, true);
+            var layout2 = new KK_LayoutGenerator(graph).Generate();
+
         }
 
         void UserInitialize()
         {
             Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
             PythonProxy.StartUpPython();
+            var working_folder_path = Properties.Settings.Default.WorkingFolderPath;
+            if (!Directory.Exists(working_folder_path))
+            {
+                Directory.CreateDirectory(working_folder_path);
+            }
 
             this.radioButtonGraphGUI.Checked = true;
             this.radioButtonStepCheck.Checked = true;

@@ -25,7 +25,7 @@ namespace OSM2019.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("G:\\ProgramData\\Anaconda3\\Scripts\\activate.bat")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\majitaki\\Anaconda3\\Scripts\\activate.bat")]
         public string AnacondaPath {
             get {
                 return ((string)(this["AnacondaPath"]));
@@ -121,13 +121,13 @@ namespace OSM2019.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("./Working/graph.json")]
-        public string RawGraphPath {
+        [global::System.Configuration.DefaultSettingValueAttribute("graph.json")]
+        public string RawGraphFile {
             get {
-                return ((string)(this["RawGraphPath"]));
+                return ((string)(this["RawGraphFile"]));
             }
             set {
-                this["RawGraphPath"] = value;
+                this["RawGraphFile"] = value;
             }
         }
         
@@ -140,6 +140,54 @@ namespace OSM2019.Properties {
             }
             set {
                 this["WorkingFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("graph_flag")]
+        public string RawGraphFlag {
+            get {
+                return ((string)(this["RawGraphFlag"]));
+            }
+            set {
+                this["RawGraphFlag"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("position.csv")]
+        public string LayoutFile {
+            get {
+                return ((string)(this["LayoutFile"]));
+            }
+            set {
+                this["LayoutFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("layout_flag")]
+        public string LayoutFlag {
+            get {
+                return ((string)(this["LayoutFlag"]));
+            }
+            set {
+                this["LayoutFlag"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("tmp_graph.json")]
+        public string TmpGraphFile {
+            get {
+                return ((string)(this["TmpGraphFile"]));
+            }
+            set {
+                this["TmpGraphFile"] = value;
             }
         }
     }

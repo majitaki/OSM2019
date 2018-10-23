@@ -60,4 +60,11 @@ namespace OSM2019.Utility
         PlayStepSeed,
         RoundSeed,
     }
+
+    enum InitBeliefMode
+    {
+        UniformRandom,
+        NormalRandom,
+        NoRandom
+    }
 }

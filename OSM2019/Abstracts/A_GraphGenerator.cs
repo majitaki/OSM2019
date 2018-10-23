@@ -19,10 +19,6 @@ namespace OSM2019.Abstracts
         public RawGraph Generate(int graph_seed, bool seed_enable)
         {
             var working_folder_path = Properties.Settings.Default.WorkingFolderPath;
-            if (!Directory.Exists(working_folder_path))
-            {
-                Directory.CreateDirectory(working_folder_path);
-            }
 
             var state = 0;
             switch (state)
@@ -30,7 +26,7 @@ namespace OSM2019.Abstracts
                 case 0:
                     Console.WriteLine("-----");
                     Console.WriteLine("ok Start Graph Generation");
-                    var delete_success = this.DeleteGraphJson();
+                    var delete_success = this.DeleteGraphJSON();
                     if (!delete_success) goto default;
 
                     var python_success = this.PythonGraphGenerate(graph_seed, seed_enable);
@@ -39,11 +35,11 @@ namespace OSM2019.Abstracts
                     var raw_graph = this.ReadJSON();
                     var graph_enum = this.MyGraphEnum;
                     raw_graph.MyGraphEnum = graph_enum;
-                    if (raw_graph.Edges == null || raw_graph.Nodes.Count == 0 || graph_enum == GraphEnum.Void) goto default;
+                    if (raw_graph.Links == null || raw_graph.Nodes.Count == 0 || graph_enum == GraphEnum.Void) goto default;
 
                     Console.WriteLine("ok Load Raw Graph");
                     Console.WriteLine("ok Node: " + raw_graph.Nodes.Count);
-                    Console.WriteLine("ok Edge: " + raw_graph.Edges.Count);
+                    Console.WriteLine("ok Edge: " + raw_graph.Links.Count);
                     Console.WriteLine("ok GraphEnum: " + graph_enum.ToString());
                     Console.WriteLine("ok Graph Seed: " + graph_seed);
                     Console.WriteLine("ok Success Graph Generation");
@@ -55,7 +51,7 @@ namespace OSM2019.Abstracts
             }
         }
 
-        bool DeleteGraphJson()
+        bool DeleteGraphJSON()
         {
             var path = Properties.Settings.Default.WorkingFolderPath;
 
@@ -69,8 +65,14 @@ namespace OSM2019.Abstracts
             {
                 foreach (string filePath in filePaths)
                 {
-                    File.SetAttributes(filePath, FileAttributes.Normal);
-                    File.Delete(filePath);
+                    var graph = Properties.Settings.Default.RawGraphFile;
+                    var graph_flag = Properties.Settings.Default.RawGraphFile;
+                    if (filePath.Contains(graph) || filePath.Contains(graph_flag))
+                    {
+                        File.SetAttributes(filePath, FileAttributes.Normal);
+                        File.Delete(filePath);
+                    }
+
                 }
                 Console.WriteLine("ok Delete Graph JSON");
                 return true;
@@ -82,11 +84,11 @@ namespace OSM2019.Abstracts
             }
         }
 
-        bool PythonGraphGenerate(int network_seed, bool seed_enable)
+        bool PythonGraphGenerate(int graph_seed, bool seed_enable)
         {
             if (seed_enable)
             {
-                PythonProxy.ExecutePythonScript(this.GeneratePath + " " + network_seed);
+                PythonProxy.ExecutePythonScript(this.GeneratePath + " " + graph_seed);
             }
             else
             {
@@ -95,7 +97,9 @@ namespace OSM2019.Abstracts
             bool exist_flag = false;
             while (!exist_flag)
             {
-                exist_flag = File.Exists(Properties.Settings.Default.WorkingFolderPath + "flag");
+                var working_path = Properties.Settings.Default.WorkingFolderPath;
+                var graph_flag = Properties.Settings.Default.RawGraphFile;
+                exist_flag = File.Exists(working_path + graph_flag);
                 System.Threading.Thread.Sleep(100);
                 if (PythonProxy.ErrorFlag)
                 {
@@ -108,9 +112,9 @@ namespace OSM2019.Abstracts
 
         RawGraph ReadJSON()
         {
-            //string filepath = @"graph.json";
-            string filepath = Properties.Settings.Default.RawGraphPath;
-            string jsonString = System.IO.File.ReadAllText(filepath, Encoding.UTF8);
+            var working_path = Properties.Settings.Default.WorkingFolderPath;
+            string graph_filepath = Properties.Settings.Default.RawGraphFile;
+            string jsonString = System.IO.File.ReadAllText(working_path + graph_filepath, Encoding.UTF8);
             RawGraph raw_graph = JsonConvert.DeserializeObject<RawGraph>(jsonString);
             return raw_graph;
         }

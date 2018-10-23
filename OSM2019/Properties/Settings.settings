@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="AnacondaPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">G:\ProgramData\Anaconda3\Scripts\activate.bat</Value>
+      <Value Profile="(Default)">C:\Users\majitaki\Anaconda3\Scripts\activate.bat</Value>
     </Setting>
     <Setting Name="AnacondaEnv" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -26,11 +26,23 @@
     <Setting Name="note_path" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Users\majit\Anaconda3\Scripts\activate.bat </Value>
     </Setting>
-    <Setting Name="RawGraphPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">./Working/graph.json</Value>
+    <Setting Name="RawGraphFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">graph.json</Value>
     </Setting>
     <Setting Name="WorkingFolderPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">./Working/</Value>
+    </Setting>
+    <Setting Name="RawGraphFlag" Type="System.String" Scope="User">
+      <Value Profile="(Default)">graph_flag</Value>
+    </Setting>
+    <Setting Name="LayoutFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">position.csv</Value>
+    </Setting>
+    <Setting Name="LayoutFlag" Type="System.String" Scope="User">
+      <Value Profile="(Default)">layout_flag</Value>
+    </Setting>
+    <Setting Name="TmpGraphFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">tmp_graph.json</Value>
     </Setting>
   </Settings>
 </SettingsFile>

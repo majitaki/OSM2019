@@ -36,11 +36,18 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CsvHelper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstracts\A_GraphGenerator.cs" />
+    <Compile Include="Abstracts\A_LayoutGenerator.cs" />
     <Compile Include="GUI\AgentGUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -83,7 +91,21 @@
     <Compile Include="GUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\I_Agent.cs" />
+    <Compile Include="Interfaces\I_AgentLink.cs" />
+    <Compile Include="Interfaces\I_AgentManager.cs" />
+    <Compile Include="Interfaces\I_AgentManagerGenerator.cs" />
     <Compile Include="Interfaces\I_GraphGenerator.cs" />
+    <Compile Include="Interfaces\I_InitBeliefGenerator.cs" />
+    <Compile Include="Interfaces\I_SensorGenerator.cs" />
+    <Compile Include="OSM\Basic_InitBeliefGenerator.cs" />
+    <Compile Include="OSM\LayoutGenerator\Spring_LayoutGenerator.cs" />
+    <Compile Include="OSM\LayoutGenerator\Spectral_LayoutGenerator.cs" />
+    <Compile Include="OSM\LayoutGenerator\Shell_LayoutGenerator.cs" />
+    <Compile Include="OSM\LayoutGenerator\Random_LayoutGenerator.cs" />
+    <Compile Include="OSM\LayoutGenerator\KK_LayoutGenerator.cs" />
+    <Compile Include="OSM\LayoutGenerator\FR_LayoutGenerator.cs" />
+    <Compile Include="OSM\LayoutGenerator\Circular_LayoutGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\BA_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\ConnectedWS_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\ER_GraphGenerator.cs" />
@@ -94,12 +116,14 @@
     <Compile Include="OSM\GraphGenerator\PC_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\Triangular_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\WS_GraphGenerator.cs" />
+    <Compile Include="OSM\Graph\Layout.cs" />
+    <Compile Include="OSM\OSM_Basic\Basic_AgentManagerGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Enum.cs" />
+    <Compile Include="Utility\CsvMapper.cs" />
     <Compile Include="Utility\PythonProxy.cs" />
     <Compile Include="Utility\RandomPool.cs" />
-    <Compile Include="Utility\ReadWrite.cs" />
     <EmbeddedResource Include="GUI\AgentGUI.resx">
       <DependentUpon>AgentGUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -196,7 +220,14 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="OSM\InitBeliefGenerator\" />
+    <Folder Include="OSM\OSM_AAT\" />
+    <Folder Include="OSM\OSM_AAT_Grid\" />
+    <Folder Include="OSM\OSM_AAT_HCII\" />
+    <Folder Include="OSM\OSM_IWT\" />
+    <Folder Include="OSM\SensorGenerator\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Image\icon_agent.png" />
     <Content Include="Resources\Image\icon_animation.png" />
