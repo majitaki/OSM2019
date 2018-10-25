@@ -14,8 +14,10 @@ namespace OSM2019.Interfaces
         bool IsSensor { get; set; }
         bool IsEnvironment { get; set; }
         string InitState { get; }
+        List<int> MyAgentLinkIDList { get; }
         List<I_AgentLink> MyAgentLinkList { get; set; }
 
-        void Initialize();
+        void SetInitState();
+        void Initialize(List<I_AgentLink> agentlink_list);
     }
 }

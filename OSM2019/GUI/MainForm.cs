@@ -35,18 +35,19 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
 
-            //I_GraphGenerator graph_generator;
-            //graph_generator = new Grid2D_GraphGenerator(10,10);
-            //var graph = graph_generator.Generate(0, false);
-            //var layout1 = new Circular_LayoutGenerator(graph).Generate();
+            I_GraphGenerator graph_generator;
+            graph_generator = new Grid2D_GraphGenerator(10,10);
+            var graph = graph_generator.Generate(0, false);
+            var layout = new Circular_LayoutGenerator(graph).Generate();
 
-            //graph_generator = new BA_GraphGenerator(200, 6);
-            //graph = graph_generator.Generate(0, true);
-            //var layout2 = new KK_LayoutGenerator(graph).Generate();
-            RandomPool.Declare(SeedEnum.AgentGenerateSeed, 100);
-            var belief_dic = new Basic_InitBeliefGenerator(InitBeliefMode.NoRandom).Generate(2);
-            var agent = new BasicAgent(0, null, null);
+            int op_size = 2;
+            int init_op = 0;
+            double threshold = 0.1;
 
+            var agent_manager_generator = new Basic_AgentManagerGenerator(graph, op_size, 0, threshold);
+            var init_belief_generator = new Basic_InitBeliefGenerator(InitBeliefMode.NormalRandom);
+            var agent_manager = agent_manager_generator.Generate(0, init_belief_generator, null);
+            agent_manager.Initialize();
         }
 
         void UserInitialize()

@@ -102,8 +102,10 @@
     <Compile Include="Interfaces\I_GraphGenerator.cs" />
     <Compile Include="Interfaces\I_InitBeliefGenerator.cs" />
     <Compile Include="Interfaces\I_SensorGenerator.cs" />
-    <Compile Include="OSM\BasicAgent.cs" />
-    <Compile Include="OSM\Basic_InitBeliefGenerator.cs" />
+    <Compile Include="OSM\OSM_Basic\BasicAgentManager.cs" />
+    <Compile Include="OSM\OSM_Basic\BasicAgentLink.cs" />
+    <Compile Include="OSM\OSM_Basic\BasicAgent.cs" />
+    <Compile Include="OSM\InitBeliefGenerator\Basic_InitBeliefGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Spring_LayoutGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Spectral_LayoutGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Shell_LayoutGenerator.cs" />
@@ -122,7 +124,7 @@
     <Compile Include="OSM\GraphGenerator\Triangular_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\WS_GraphGenerator.cs" />
     <Compile Include="OSM\Graph\Layout.cs" />
-    <Compile Include="OSM\OSM_Basic\Basic_AgentManagerGenerator.cs" />
+    <Compile Include="OSM\AgentManagerGenerator\Basic_AgentManagerGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Enum.cs" />
@@ -226,7 +228,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="OSM\InitBeliefGenerator\" />
     <Folder Include="OSM\OSM_AAT\" />
     <Folder Include="OSM\OSM_AAT_Grid\" />
     <Folder Include="OSM\OSM_AAT_HCII\" />

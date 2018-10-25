@@ -37,5 +37,10 @@ namespace OSM2019.OSM
             sw.Write(json);
             sw.Close();
         }
+
+        public List<Link> GetLinksOfSource(int source_id)
+        {
+            return this.Links.Where(l => l.Source == source_id).ToList();
+        }
     }
 }
