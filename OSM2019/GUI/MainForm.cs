@@ -1,4 +1,6 @@
-﻿using OSM2019.GUI;
+﻿using MathNet.Numerics.Distributions;
+using MathNet.Numerics.Random;
+using OSM2019.GUI;
 using OSM2019.Interfaces;
 using OSM2019.OSM;
 using OSM2019.Utility;
@@ -33,14 +35,17 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
 
-            I_GraphGenerator graph_generator;
-            graph_generator = new Grid2D_GraphGenerator(10,10);
-            var graph = graph_generator.Generate(0, false);
-            var layout1 = new Circular_LayoutGenerator(graph).Generate();
+            //I_GraphGenerator graph_generator;
+            //graph_generator = new Grid2D_GraphGenerator(10,10);
+            //var graph = graph_generator.Generate(0, false);
+            //var layout1 = new Circular_LayoutGenerator(graph).Generate();
 
-            graph_generator = new BA_GraphGenerator(200, 6);
-            graph = graph_generator.Generate(0, true);
-            var layout2 = new KK_LayoutGenerator(graph).Generate();
+            //graph_generator = new BA_GraphGenerator(200, 6);
+            //graph = graph_generator.Generate(0, true);
+            //var layout2 = new KK_LayoutGenerator(graph).Generate();
+            RandomPool.Declare(SeedEnum.AgentGenerateSeed, 100);
+            var belief_dic = new Basic_InitBeliefGenerator(InitBeliefMode.NoRandom).Generate(2);
+            var agent = new BasicAgent(0, null, null);
 
         }
 

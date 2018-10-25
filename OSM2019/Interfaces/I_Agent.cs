@@ -11,7 +11,11 @@ namespace OSM2019.Interfaces
         int AgentID { get; }
         Dictionary<int, double> BeliefDic { get; set; }
         int Opinion { get; set; }
-        bool IsSensor { get; }
-        bool IsEnvironment { get;}
+        bool IsSensor { get; set; }
+        bool IsEnvironment { get; set; }
+        string InitState { get; }
+        List<I_AgentLink> MyAgentLinkList { get; set; }
+
+        void Initialize();
     }
 }

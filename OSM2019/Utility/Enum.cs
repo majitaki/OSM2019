@@ -55,16 +55,15 @@ namespace OSM2019.Utility
 
     enum SeedEnum
     {
-        NetworkSeed,
-        AgentSeed,
+        AgentGenerateSeed,
         PlayStepSeed,
-        RoundSeed,
     }
 
     enum InitBeliefMode
     {
-        UniformRandom,
+        NormalNarrowRandom,
         NormalRandom,
+        NormalWideRandom,
         NoRandom
     }
 }

@@ -8,6 +8,6 @@ namespace OSM2019.Interfaces
 {
     interface I_InitBeliefGenerator
     {
-        Dictionary<int, double> Generate();
+        Dictionary<int, double> Generate(int opinion_size);
     }
 }

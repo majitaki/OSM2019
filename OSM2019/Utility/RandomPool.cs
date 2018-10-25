@@ -1,8 +1,11 @@
-﻿using System;
+﻿using MathNet.Numerics.Distributions;
+using MathNet.Numerics.Random;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace OSM2019.Utility
 {
@@ -31,12 +34,11 @@ namespace OSM2019.Utility
     {
         int seed = 0;
 
-        Random rand;
+        MersenneTwister rand;
 
-        public InitableRandom(int s)
+        public InitableRandom(int seed)
         {
-            seed = s;
-            rand = new Random(seed);
+            rand = new MersenneTwister(seed);
         }
 
         public virtual int Seed
@@ -54,7 +56,7 @@ namespace OSM2019.Utility
 
         public virtual void Init()
         {
-            rand = new Random(seed);
+            rand = new MersenneTwister(seed);
         }
 
         public virtual int Next()
@@ -72,11 +74,6 @@ namespace OSM2019.Utility
             return rand.Next(min, max);
         }
 
-        public virtual void NextBytes(byte[] buffer)
-        {
-            rand.NextBytes(buffer);
-        }
-
         public virtual double NextDouble()
         {
             return rand.NextDouble();
@@ -87,26 +84,27 @@ namespace OSM2019.Utility
             return (max - min) * rand.NextDouble() + min;
         }
 
-        // 平均mu, 標準偏差sigmaの正規分布乱数を得る。Box-Muller法による。
-        public virtual double NextNormal(double mu, double sigma)
+        public virtual double NextNormal(double mu, double stddev)
         {
-            if (Flag)
+            return Normal.Sample(rand, mu, stddev);
+        }
+
+        public virtual List<double> NextNormals(double mu, double stddev, int size, double bound_rate)
+        {
+            double sample;
+            List<double> sample_list = new List<double>();
+
+            foreach (var count in Enumerable.Range(1, size))
             {
-                Alpha = rand.NextDouble();
-                Beta = rand.NextDouble() * Math.PI * 2;
-                BoxMuller1 = Math.Sqrt(-2 * Math.Log(Alpha));
-                BoxMuller2 = Math.Sin(Beta);
-            }
-            else
-            {
-                BoxMuller2 = Math.Cos(Beta);
+                do
+                {
+                    sample = Normal.Sample(rand, mu, stddev);
+                } while (!(sample > mu - mu * bound_rate && sample < mu + mu * bound_rate));
+                sample_list.Add(sample);
             }
 
-            Flag = !Flag;
-            return sigma * (BoxMuller1 * BoxMuller2) + mu;
+            return sample_list;
         }
-        private double Alpha, Beta, BoxMuller1, BoxMuller2;
-        private bool Flag = false;
 
 
         public virtual List<int> getRandomIndexes(int from, int to)
