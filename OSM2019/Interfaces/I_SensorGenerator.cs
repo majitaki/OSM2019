@@ -8,5 +8,6 @@ namespace OSM2019.Interfaces
 {
     interface I_SensorGenerator
     {
+        void Generate(List<I_Agent> agent_list);
     }
 }

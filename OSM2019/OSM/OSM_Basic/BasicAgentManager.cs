@@ -16,12 +16,19 @@ namespace OSM2019.OSM
         {
             this.AgentList = agent_list;
             this.AgentLinkList = agentlink_list;
+            this.SetInitState();
         }
 
         public void Initialize()
         {
             this.AgentList.ForEach(agent => agent.Initialize(this.AgentLinkList));
             this.AgentLinkList.ForEach(agentlink => agentlink.Initialize(this.AgentList));
+        }
+
+        public void SetInitState()
+        {
+            this.AgentList.ForEach(agent => agent.SetInitState());
+            this.AgentLinkList.ForEach(agentlink => agentlink.SetInitState());
         }
     }
 }

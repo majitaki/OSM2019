@@ -48,6 +48,8 @@ namespace OSM2019.OSM
                 agentlink_list.AddRange(local_agentlink_list);
             }
 
+            sensor_generator.Generate(agent_list);
+
             return new BasicAgentManager(agent_list, agentlink_list);
         }
     }

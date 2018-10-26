@@ -102,6 +102,7 @@
     <Compile Include="Interfaces\I_GraphGenerator.cs" />
     <Compile Include="Interfaces\I_InitBeliefGenerator.cs" />
     <Compile Include="Interfaces\I_SensorGenerator.cs" />
+    <Compile Include="OSM\BasicSensorGenerator.cs" />
     <Compile Include="OSM\OSM_Basic\BasicAgentManager.cs" />
     <Compile Include="OSM\OSM_Basic\BasicAgentLink.cs" />
     <Compile Include="OSM\OSM_Basic\BasicAgent.cs" />

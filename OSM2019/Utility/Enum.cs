@@ -66,4 +66,5 @@ namespace OSM2019.Utility
         NormalWideRandom,
         NoRandom
     }
+
 }

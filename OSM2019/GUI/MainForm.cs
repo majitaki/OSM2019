@@ -36,7 +36,7 @@ namespace OSM2019
             this.UserInitialize();
 
             I_GraphGenerator graph_generator;
-            graph_generator = new Grid2D_GraphGenerator(10,10);
+            graph_generator = new Grid2D_GraphGenerator(5, 5);
             var graph = graph_generator.Generate(0, false);
             var layout = new Circular_LayoutGenerator(graph).Generate();
 
@@ -44,9 +44,10 @@ namespace OSM2019
             int init_op = 0;
             double threshold = 0.1;
 
-            var agent_manager_generator = new Basic_AgentManagerGenerator(graph, op_size, 0, threshold);
+            var agent_manager_generator = new Basic_AgentManagerGenerator(graph, op_size, init_op, threshold);
             var init_belief_generator = new Basic_InitBeliefGenerator(InitBeliefMode.NormalRandom);
-            var agent_manager = agent_manager_generator.Generate(0, init_belief_generator, null);
+            var sensor_generator = new BasicSensorGenerator(20);
+            var agent_manager = agent_manager_generator.Generate(0, init_belief_generator, sensor_generator);
             agent_manager.Initialize();
         }
 
