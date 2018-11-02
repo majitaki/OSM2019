@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OSM2019.OSM;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace OSM2019.Interfaces
 {
     interface I_AgentManagerGenerator
     {
-        I_AgentManager Generate(int agent_seed, I_InitBeliefGenerator init_belief_generator, I_SensorGenerator sensor_generator);
+        I_AgentManager Generate(I_InitBeliefGenerator init_belief_generator, I_SensorGenerator sensor_generator, RandomNumberManager rand_manager);
     }
 }

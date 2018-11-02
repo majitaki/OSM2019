@@ -1,5 +1,4 @@
-﻿using OSM2019.OSM;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace OSM2019.Interfaces
 {
-    interface I_SensorGenerator
+    interface I_OpinionManager
     {
-        void Generate(List<I_Agent> agent_list, ExtendRandom ex_rand);
+        void Register(int op_id, I_Opinion op);
+        I_Opinion Create(int op_id);
     }
 }

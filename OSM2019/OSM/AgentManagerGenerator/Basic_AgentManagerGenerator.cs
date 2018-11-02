@@ -23,17 +23,18 @@ namespace OSM2019.OSM
             this.OpinionThreshold = op_threshold;
         }
 
-        public I_AgentManager Generate(int agent_seed, I_InitBeliefGenerator init_belief_generator, I_SensorGenerator sensor_generator)
+        public I_AgentManager Generate(I_InitBeliefGenerator init_belief_generator, I_SensorGenerator sensor_generator, RandomNumberManager rand_manager)
         {
             List<I_Agent> agent_list = new List<I_Agent>();
             List<I_AgentLink> agentlink_list = new List<I_AgentLink>();
 
-            RandomPool.Declare(SeedEnum.AgentGenerateSeed, agent_seed);
+            //RandomPool.Declare(SeedEnum.AgentGenerateSeed, agent_seed);
+            //rand_manager.Register(SeedEnum.AgentGenerateSeed, agent_seed);
 
             int index = 0;
             foreach (var node in this.MyGraph.Nodes)
             {
-                var belief_dic = init_belief_generator.Generate(this.OpinionSize);
+                var belief_dic = init_belief_generator.Generate(this.OpinionSize, rand_manager.GetAgentGenerateRand());
                 var link_list = this.MyGraph.GetLinksOfSource(node.ID);
                 var local_agentlink_list = new List<I_AgentLink>();
 
@@ -48,7 +49,7 @@ namespace OSM2019.OSM
                 agentlink_list.AddRange(local_agentlink_list);
             }
 
-            sensor_generator.Generate(agent_list);
+            sensor_generator.Generate(agent_list, rand_manager.GetAgentGenerateRand());
 
             return new BasicAgentManager(agent_list, agentlink_list);
         }

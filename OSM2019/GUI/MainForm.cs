@@ -42,12 +42,16 @@ namespace OSM2019
 
             int op_size = 2;
             int init_op = 0;
+            int agent_gene_seed = 1;
             double threshold = 0.1;
+
+            var rand_manager = new RandomNumberManager();
+            rand_manager.SetAgentGenerateRand(agent_gene_seed);
 
             var agent_manager_generator = new Basic_AgentManagerGenerator(graph, op_size, init_op, threshold);
             var init_belief_generator = new Basic_InitBeliefGenerator(InitBeliefMode.NormalRandom);
             var sensor_generator = new BasicSensorGenerator(20);
-            var agent_manager = agent_manager_generator.Generate(0, init_belief_generator, sensor_generator);
+            var agent_manager = agent_manager_generator.Generate(init_belief_generator, sensor_generator, rand_manager);
             agent_manager.Initialize();
         }
 

@@ -101,7 +101,11 @@
     <Compile Include="Interfaces\I_AgentManagerGenerator.cs" />
     <Compile Include="Interfaces\I_GraphGenerator.cs" />
     <Compile Include="Interfaces\I_InitBeliefGenerator.cs" />
+    <Compile Include="Interfaces\I_Opinion.cs" />
+    <Compile Include="Interfaces\I_OpinionManager.cs" />
     <Compile Include="Interfaces\I_SensorGenerator.cs" />
+    <Compile Include="OSM\BasicOpinion.cs" />
+    <Compile Include="OSM\BasicOpinionManager.cs" />
     <Compile Include="OSM\BasicSensorGenerator.cs" />
     <Compile Include="OSM\OSM_Basic\BasicAgentManager.cs" />
     <Compile Include="OSM\OSM_Basic\BasicAgentLink.cs" />
@@ -131,6 +135,7 @@
     <Compile Include="Utility\Enum.cs" />
     <Compile Include="Utility\CsvMapper.cs" />
     <Compile Include="Utility\PythonProxy.cs" />
+    <Compile Include="OSM\RandomNumberManager.cs" />
     <Compile Include="Utility\RandomPool.cs" />
     <EmbeddedResource Include="GUI\AgentGUI.resx">
       <DependentUpon>AgentGUI.cs</DependentUpon>
@@ -229,10 +234,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="OSM\OSM_AAT\" />
-    <Folder Include="OSM\OSM_AAT_Grid\" />
-    <Folder Include="OSM\OSM_AAT_HCII\" />
-    <Folder Include="OSM\OSM_IWT\" />
     <Folder Include="OSM\SensorGenerator\" />
   </ItemGroup>
   <ItemGroup>

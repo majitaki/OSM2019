@@ -26,15 +26,14 @@ namespace OSM2019.OSM
             this.SensorRate = sensor_rate;
         }
 
-        public void Generate(List<I_Agent> agent_list)
+        public void Generate(List<I_Agent> agent_list, ExtendRandom ex_rand)
         {
             if (IsRateUse)
             {
                 this.SensorSize = (int)(agent_list.Count * this.SensorRate);
             }
 
-            var rand = RandomPool.Get(SeedEnum.AgentGenerateSeed);
-            var list = agent_list.Select(agent => agent.AgentID).OrderBy(id => rand.Next()).Take(this.SensorSize).ToList();
+            var list = agent_list.Select(agent => agent.AgentID).OrderBy(id => ex_rand.Next()).Take(this.SensorSize).ToList();
             agent_list.Where(agent => list.Contains(agent.AgentID)).ToList().ForEach(agent => agent.IsSensor = true);
         }
 

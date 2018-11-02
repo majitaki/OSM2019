@@ -17,7 +17,7 @@ namespace OSM2019.OSM
             this.InitBeliefMode = init_mode;
         }
 
-        public Dictionary<int, double> Generate(int opinion_size)
+        public Dictionary<int, double> Generate(int opinion_size, ExtendRandom ex_rand)
         {
             var init_belief_dic = new Dictionary<int, double>();
             double remain_belief = 1.0;
@@ -35,19 +35,19 @@ namespace OSM2019.OSM
             {
                 case InitBeliefMode.NormalNarrowRandom:
                     stddev = mu / narrow_div_num;
-                    init_belief_list = RandomPool.Get(SeedEnum.AgentGenerateSeed).NextNormals(mu, stddev, opinion_size - 1, bound_rate);
+                    init_belief_list = ex_rand.NextNormals(mu, stddev, opinion_size - 1, bound_rate);
                     last_belief = remain_belief - init_belief_list.Sum();
                     init_belief_list.Add(last_belief);
                     break;
                 case InitBeliefMode.NormalRandom:
                     stddev = mu / normal_div_num;
-                    init_belief_list = RandomPool.Get(SeedEnum.AgentGenerateSeed).NextNormals(mu, stddev, opinion_size - 1, bound_rate);
+                    init_belief_list = ex_rand.NextNormals(mu, stddev, opinion_size - 1, bound_rate);
                     last_belief = remain_belief - init_belief_list.Sum();
                     init_belief_list.Add(last_belief);
                     break;
                 case InitBeliefMode.NormalWideRandom:
                     stddev = mu / wide_div_num;
-                    init_belief_list = RandomPool.Get(SeedEnum.AgentGenerateSeed).NextNormals(mu, stddev, opinion_size - 1, bound_rate);
+                    init_belief_list = ex_rand.NextNormals(mu, stddev, opinion_size - 1, bound_rate);
                     last_belief = remain_belief - init_belief_list.Sum();
                     init_belief_list.Add(last_belief);
                     break;
