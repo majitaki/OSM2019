@@ -10,20 +10,47 @@ namespace OSM2019.OSM
 {
     class NewmanWS_GraphGenerator : A_GraphGenerator
     {
-        int NodeNum;
+        int NodeSize;
         int K;
         double RewireP;
         public override GraphEnum MyGraphEnum { get; }
-        protected override string GeneratePath { get; }
+        public override string GeneratePath { get; protected set; }
+        public override bool SeedEnable { get; protected set; }
 
-        public NewmanWS_GraphGenerator(int n, int k, double p)
+
+        public NewmanWS_GraphGenerator()
         {
-            this.NodeNum = n;
-            this.K = k;
-            this.RewireP = p;
             this.MyGraphEnum = GraphEnum.NewmanWS;
+            this.SeedEnable = true;
+            this.SetGeneratePath();
+        }
+
+
+        public NewmanWS_GraphGenerator SetNodeSize(int n)
+        {
+            this.NodeSize = n;
+            this.SetGeneratePath();
+            return this;
+        }
+
+        public NewmanWS_GraphGenerator SetNearestNeighbors(int k)
+        {
+            this.K = k;
+            this.SetGeneratePath();
+            return this;
+        }
+
+        public NewmanWS_GraphGenerator SetRewireP(double p)
+        {
+            this.RewireP = p;
+            this.SetGeneratePath();
+            return this;
+        }
+
+        protected override void SetGeneratePath()
+        {
             var path = Properties.Settings.Default.GraphGeneratorFolderPath + "newman_watts_strogatz_graph.py";
-            this.GeneratePath = path + " " + this.NodeNum + " " + this.K + " " + this.RewireP;
+            this.GeneratePath = path + " " + this.NodeSize + " " + this.K + " " + this.RewireP;
         }
     }
 }

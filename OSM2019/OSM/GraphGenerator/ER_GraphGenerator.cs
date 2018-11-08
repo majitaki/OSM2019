@@ -10,18 +10,37 @@ namespace OSM2019.OSM
 {
     class ER_GraphGenerator : A_GraphGenerator
     {
-        int NodeNum;
+        int NodeSize;
         double P;
         public override GraphEnum MyGraphEnum { get; }
-        protected override string GeneratePath { get; }
+        public override string GeneratePath { get; protected set; }
+        public override bool SeedEnable { get; protected set; }
 
-        public ER_GraphGenerator(int n, double p)
+        public ER_GraphGenerator()
         {
-            this.NodeNum = n;
-            this.P = p;
             this.MyGraphEnum = GraphEnum.ER;
+            this.SeedEnable = true;
+            this.SetGeneratePath();
+        }
+
+        public ER_GraphGenerator SetNodeSize(int n)
+        {
+            this.NodeSize = n;
+            this.SetGeneratePath();
+            return this;
+        }
+
+        public ER_GraphGenerator EdgeCreateP(double p)
+        {
+            this.P = p;
+            this.SetGeneratePath();
+            return this;
+        }
+
+        protected override void SetGeneratePath()
+        {
             var path = Properties.Settings.Default.GraphGeneratorFolderPath + "erdos_renyi_graph.py";
-            this.GeneratePath = path + " " + this.NodeNum + " " + this.P;
+            this.GeneratePath = path + " " + this.NodeSize + " " + this.P;
         }
     }
 }

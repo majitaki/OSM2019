@@ -14,9 +14,12 @@ namespace OSM2019.Abstracts
     abstract class A_GraphGenerator : I_GraphGenerator
     {
         public abstract GraphEnum MyGraphEnum { get; }
-        protected abstract string GeneratePath { get; }
+        public abstract string GeneratePath { get; protected set; }
+        public abstract bool SeedEnable { get; protected set; }
 
-        public RawGraph Generate(int graph_seed, bool seed_enable)
+        protected abstract void SetGeneratePath();
+
+        public RawGraph Generate(int graph_seed)
         {
             var working_folder_path = Properties.Settings.Default.WorkingFolderPath;
 
@@ -29,7 +32,7 @@ namespace OSM2019.Abstracts
                     var delete_success = this.DeleteGraphJSON();
                     if (!delete_success) goto default;
 
-                    var python_success = this.PythonGraphGenerate(graph_seed, seed_enable);
+                    var python_success = this.PythonGraphGenerate(graph_seed, this.SeedEnable);
                     if (!python_success) goto default;
 
                     var raw_graph = this.ReadJSON();

@@ -11,6 +11,6 @@ namespace OSM2019.Interfaces
     interface I_GraphGenerator
     {
         GraphEnum MyGraphEnum { get; }
-        RawGraph Generate(int graph_seed, bool seed_enable);
+        RawGraph Generate(int graph_seed);
     }
 }

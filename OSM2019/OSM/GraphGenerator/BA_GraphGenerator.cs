@@ -8,20 +8,39 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-    class BA_GraphGenerator: A_GraphGenerator
+    class BA_GraphGenerator : A_GraphGenerator
     {
-        int NodeNum;
-        int M;
+        int NodeSize;
+        int AttachEdges;
         public override GraphEnum MyGraphEnum { get; }
-        protected override string GeneratePath { get; }
+        public override string GeneratePath { get; protected set; }
+        public override bool SeedEnable { get; protected set; }
 
-        public BA_GraphGenerator(int n, int m)
+        public BA_GraphGenerator()
         {
-            this.NodeNum = n;
-            this.M = m;
             this.MyGraphEnum = GraphEnum.BA;
+            this.SeedEnable = true;
+            this.SetGeneratePath();
+        }
+
+        public BA_GraphGenerator SetNodeSize(int n)
+        {
+            this.NodeSize = n;
+            this.SetGeneratePath();
+            return this;
+        }
+
+        public BA_GraphGenerator SetAttachEdges(int m)
+        {
+            this.AttachEdges = m;
+            this.SetGeneratePath();
+            return this;
+        }
+
+        protected override void SetGeneratePath()
+        {
             var path = Properties.Settings.Default.GraphGeneratorFolderPath + "barabasi_albert_graph.py";
-            this.GeneratePath = "" + path + " " + this.NodeNum + " " + this.M;
+            this.GeneratePath = "" + path + " " + this.NodeSize + " " + this.AttachEdges;
         }
     }
 }

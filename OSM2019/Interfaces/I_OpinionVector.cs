@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace OSM2019.Interfaces
 {
-    interface I_Opinion : ICloneable
+    interface I_OpinionVector
     {
-        int OpinionID { get; }
-        Matrix<double> Value { get; }
-
-        I_Opinion CreateClone();
+        Vector<double> MyValue { get; }
+        int SubjectID { get; }
     }
 }

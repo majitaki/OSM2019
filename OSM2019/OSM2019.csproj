@@ -101,15 +101,8 @@
     <Compile Include="Interfaces\I_AgentManagerGenerator.cs" />
     <Compile Include="Interfaces\I_GraphGenerator.cs" />
     <Compile Include="Interfaces\I_InitBeliefGenerator.cs" />
-    <Compile Include="Interfaces\I_Opinion.cs" />
-    <Compile Include="Interfaces\I_OpinionManager.cs" />
+    <Compile Include="Interfaces\I_OpinionVector.cs" />
     <Compile Include="Interfaces\I_SensorGenerator.cs" />
-    <Compile Include="OSM\BasicOpinion.cs" />
-    <Compile Include="OSM\BasicOpinionManager.cs" />
-    <Compile Include="OSM\BasicSensorGenerator.cs" />
-    <Compile Include="OSM\OSM_Basic\BasicAgentManager.cs" />
-    <Compile Include="OSM\OSM_Basic\BasicAgentLink.cs" />
-    <Compile Include="OSM\OSM_Basic\BasicAgent.cs" />
     <Compile Include="OSM\InitBeliefGenerator\Basic_InitBeliefGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Spring_LayoutGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Spectral_LayoutGenerator.cs" />
@@ -129,7 +122,6 @@
     <Compile Include="OSM\GraphGenerator\Triangular_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\WS_GraphGenerator.cs" />
     <Compile Include="OSM\Graph\Layout.cs" />
-    <Compile Include="OSM\AgentManagerGenerator\Basic_AgentManagerGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Enum.cs" />
