@@ -42,10 +42,6 @@ namespace OSM2019.OSM
         {
             return this.Get(SeedEnum.AgentGenerateSeed);
         }
-
-
-
-
     }
 
     class ExtendRandom
@@ -57,6 +53,12 @@ namespace OSM2019.OSM
         public ExtendRandom(SeedEnum seed_enum, int seed)
         {
             this.MySeedEnum = seed_enum;
+            this.Seed = seed;
+            rand = new MersenneTwister(this.Seed);
+        }
+
+        public ExtendRandom(int seed)
+        {
             this.Seed = seed;
             rand = new MersenneTwister(this.Seed);
         }

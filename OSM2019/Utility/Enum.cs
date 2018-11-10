@@ -61,10 +61,20 @@ namespace OSM2019.Utility
 
     enum InitBeliefMode
     {
-        NormalNarrowRandom,
-        NormalRandom,
-        NormalWideRandom,
+        NormalNarrow,
+        Normal,
+        NormalWide,
         NoRandom
     }
 
+    enum InitWeightMode
+    {
+        Equality
+    }
+
+    enum BaseAgentMode
+    {
+        RandomSetRate,
+        RemainSet
+    }
 }

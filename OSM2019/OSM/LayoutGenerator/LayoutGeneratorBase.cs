@@ -10,9 +10,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OSM2019.Abstracts
+namespace OSM2019.OSM
 {
-    abstract class A_LayoutGenerator
+    abstract class LayoutGeneratorBase
     {
         public abstract LayoutEnum MyLayoutEnum { get; }
         protected abstract string GeneratePath { get; }
@@ -35,7 +35,7 @@ namespace OSM2019.Abstracts
                     var python_success = this.PythonLayoutGenerate(this.MyGraph);
                     if (!python_success) goto default;
 
-                    var layout = ReadLayout();
+                    var layout = this.ReadLayout();
                     if (layout == null) goto default;
 
                     Console.WriteLine("ok Success Layout Generation");

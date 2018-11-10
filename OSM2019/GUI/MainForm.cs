@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.Distributions;
+using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Random;
 using OSM2019.GUI;
 using OSM2019.Interfaces;
@@ -35,23 +36,58 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
 
-            I_GraphGenerator graph_generator;
-            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(200);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(200).SetNearestNeighbors(6).SetRewireP(0.1);
-            graph_generator = new PC_GraphGenerator().SetNodeSize(1000).SetRandomEdges(3).SetAddTriangleP(0.1);
+            GraphGeneratorBase graph_generator;
+            graph_generator = new PC_GraphGenerator().SetNodeSize(100).SetRandomEdges(3).SetAddTriangleP(0.1);
 
             var graph = graph_generator.Generate(0);
             var layout = new Circular_LayoutGenerator(graph).Generate();
 
-            int op_size = 2;
-            int init_op = 0;
-            int agent_gene_seed = 1;
-            double threshold = 0.1;
+            var init_belief_gene = new InitBeliefGenerator()
+                                    .SetInitBeliefMode(mode: InitBeliefMode.NormalWide);
 
-            var rand_manager = new RandomNumberManager();
-            rand_manager.SetAgentGenerateRand(agent_gene_seed);
+            var subject_tv = "good_tv";
+            var subject_company = "good_company";
+            double[] conv_array = { 2.0, 0.0, 0.0, 1.0 };
+            var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 2, conv_array);
 
-            var init_belief_generator = new Basic_InitBeliefGenerator(InitBeliefMode.NormalRandom);
+            var subject_manager = new SubjectManager()
+                                .AddSubject(subject_tv)
+                                .AddSubject(subject_company)
+                                .AddConvMatrix(subject_tv, subject_company, conv_matrix);
+
+
+
+            var op_form_threshold = 0.9;
+            var sample_agent_1 = new SampleAgent()
+                                .SetInitBeliefGene(init_belief_gene)
+                                .SetThreshold(op_form_threshold)
+                                .SetSubject(subject_tv)
+                                .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0))
+                                .SetInitWeightsMode(mode: InitWeightMode.Equality);
+
+
+            var sample_agent_2 = new SampleAgent()
+                                .SetInitBeliefGene(init_belief_gene)
+                                .SetThreshold(op_form_threshold)
+                                .SetSubject(subject_company)
+                                .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0))
+                                .SetInitWeightsMode(mode: InitWeightMode.Equality);
+
+            var sensor_gene = new SensorGenerator()
+                            .SetSensorSize(10);
+
+            int agent_gene_seed = 0;
+            var agent_gene_rand = new ExtendRandom(agent_gene_seed);
+
+
+            var agent_network = new AgentNetwork()
+                                    .SetRand(agent_gene_rand)
+                                    .GenerateNetworkFrame(graph)
+                                    .ApplySampleAgent(sample_agent_1, mode: BaseAgentMode.RandomSetRate, random_set_rate: 0.5)
+                                    .ApplySampleAgent(sample_agent_2, mode: BaseAgentMode.RemainSet)
+                                    .SetSensorGene(sensor_gene)
+                                    .SetLayout(layout);
+
         }
 
         void UserInitialize()

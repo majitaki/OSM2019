@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OSM2019.Abstracts
+namespace OSM2019.OSM
 {
-    abstract class A_GraphGenerator : I_GraphGenerator
+    abstract class GraphGeneratorBase 
     {
         public abstract GraphEnum MyGraphEnum { get; }
         public abstract string GeneratePath { get; protected set; }

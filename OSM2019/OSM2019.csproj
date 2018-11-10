@@ -63,8 +63,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstracts\A_GraphGenerator.cs" />
-    <Compile Include="Abstracts\A_LayoutGenerator.cs" />
+    <Compile Include="OSM\Agent.cs" />
+    <Compile Include="OSM\AgentNetworkGenerator.cs" />
+    <Compile Include="OSM\Component\AgentBase.cs" />
+    <Compile Include="OSM\Component\AgentLink.cs" />
+    <Compile Include="OSM\GraphGenerator\GraphGeneratorBase.cs" />
+    <Compile Include="OSM\LayoutGenerator\LayoutGeneratorBase.cs" />
     <Compile Include="GUI\AgentGUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -95,15 +99,9 @@
     <Compile Include="GUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\I_Agent.cs" />
-    <Compile Include="Interfaces\I_AgentLink.cs" />
-    <Compile Include="Interfaces\I_AgentManager.cs" />
-    <Compile Include="Interfaces\I_AgentManagerGenerator.cs" />
-    <Compile Include="Interfaces\I_GraphGenerator.cs" />
     <Compile Include="Interfaces\I_InitBeliefGenerator.cs" />
-    <Compile Include="Interfaces\I_OpinionVector.cs" />
-    <Compile Include="Interfaces\I_SensorGenerator.cs" />
-    <Compile Include="OSM\InitBeliefGenerator\Basic_InitBeliefGenerator.cs" />
+    <None Include="OSM\InitBeliefGenerator\Basic_InitBeliefGenerator.cs.bk" />
+    <Compile Include="OSM\Component\InitBeliefGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Spring_LayoutGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Spectral_LayoutGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Shell_LayoutGenerator.cs" />
@@ -122,13 +120,15 @@
     <Compile Include="OSM\GraphGenerator\Triangular_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\WS_GraphGenerator.cs" />
     <Compile Include="OSM\Graph\Layout.cs" />
+    <Compile Include="OSM\Component\SampleAgent.cs" />
+    <Compile Include="OSM\Component\SubjectManager.cs" />
+    <Compile Include="OSM\SensorGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Enum.cs" />
     <Compile Include="Utility\CsvMapper.cs" />
     <Compile Include="Utility\PythonProxy.cs" />
-    <Compile Include="OSM\RandomNumberManager.cs" />
-    <Compile Include="Utility\RandomPool.cs" />
+    <Compile Include="OSM\Component\RandomNumberManager.cs" />
     <EmbeddedResource Include="GUI\AgentGUI.resx">
       <DependentUpon>AgentGUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -225,9 +225,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="OSM\SensorGenerator\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Resources\Image\icon_agent.png" />
     <Content Include="Resources\Image\icon_animation.png" />

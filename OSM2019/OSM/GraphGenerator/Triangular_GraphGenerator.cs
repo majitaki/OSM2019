@@ -1,5 +1,4 @@
-﻿using OSM2019.Abstracts;
-using OSM2019.Utility;
+﻿using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-    class Triangular_GraphGenerator : A_GraphGenerator
+    class Triangular_GraphGenerator : GraphGeneratorBase
     {
         int Height;
         int Width;
