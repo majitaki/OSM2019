@@ -13,7 +13,6 @@ namespace OSM2019.OSM
         public RawGraph MyGraph { get; private set; }
         public Layout MyLayout { get; private set; }
         public SubjectManager MySubjectManager { get; private set; }
-        List<SampleAgent> SampleAgents;
         public List<Agent> Agents { get; private set; }
         public List<AgentLink> AgentLinks { get; private set; }
 
@@ -66,7 +65,7 @@ namespace OSM2019.OSM
                     this.Agents.Where(agent => list.Contains(agent.AgentID)).ToList().ForEach(agent => sample_agent.Generate(this.AgentGenerateRand, agent));
                     break;
                 case SampleAgentSetMode.RemainSet:
-                    this.Agents.Where(agent => agent.MyInitBelief == null).ToList().ForEach(agent => sample_agent.Generate(this.AgentGenerateRand, agent));
+                    this.Agents.Where(agent => agent.InitBelief == null).ToList().ForEach(agent => sample_agent.Generate(this.AgentGenerateRand, agent));
                     break;
                 default:
                     break;

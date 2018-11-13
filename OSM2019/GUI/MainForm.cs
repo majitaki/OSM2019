@@ -87,6 +87,29 @@ namespace OSM2019
                                     .ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
                                     .GenerateSensor(sensor_gene)
                                     .SetLayout(layout);
+
+
+            int update_step_seed = 0;
+            var update_step_rand = new ExtendRandom(update_step_seed);
+
+            var env_mgr = new EnvironmentManager()
+                            .SetSubject(subject_tv)
+                            .SetCorrectDim(0)
+                            .SetSensorRate(0.55);
+
+            OSMBase<AAT_OSM> osm = new AAT_OSM()
+                    .SetRand(update_step_rand)
+                    .SetEnvManager(env_mgr)
+                    .SetAgentNetwork(agent_network)
+                    .SetTargetH(0.9);
+
+
+            osm.UpdateStep();
+            osm.InitializeToZeroStep();
+            osm.UpdateSteps(1000);
+            osm.UpdateRound(1000);
+            osm.UpdateRounds(100, 1000);
+            osm.InitializeToZeroRound();
         }
 
         void UserInitialize()

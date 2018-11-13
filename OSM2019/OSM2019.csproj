@@ -63,11 +63,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OSM\AAT_OSM.cs" />
     <Compile Include="OSM\Component\Agent.cs" />
     <Compile Include="OSM\Component\AgentNetwork.cs" />
     <Compile Include="OSM\Component\AgentBase.cs" />
     <Compile Include="OSM\Component\AgentLink.cs" />
+    <Compile Include="OSM\EnvironmentManager.cs" />
     <Compile Include="OSM\GraphGenerator\GraphGeneratorBase.cs" />
+    <Compile Include="OSM\I_OSM.cs" />
     <Compile Include="OSM\LayoutGenerator\LayoutGeneratorBase.cs" />
     <Compile Include="GUI\AgentGUI.cs">
       <SubType>UserControl</SubType>
@@ -225,7 +228,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="OSM\Algorithm\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Image\icon_agent.png" />
     <Content Include="Resources\Image\icon_animation.png" />

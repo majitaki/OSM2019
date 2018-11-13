@@ -13,7 +13,7 @@ namespace OSM2019.OSM
         public bool IsSensor { get; set; }
         public string Subject { get; protected set; }
         public Matrix<double> InitOpinion { get; protected set; }
-        public Matrix<double> MyOpinion { get; set; }
+        public Matrix<double> Opinion { get; set; }
         public List<AgentLink> AgentLinks { get; protected set; }
         public double OpinionThreshold { get; protected set; }
 
@@ -36,7 +36,7 @@ namespace OSM2019.OSM
         public T SetInitOpinion(Matrix<double> init_op_matrix)
         {
             this.InitOpinion = init_op_matrix.Clone();
-            this.MyOpinion = init_op_matrix.Clone();
+            this.Opinion = init_op_matrix.Clone();
             return (T)(object)this;
         }
 

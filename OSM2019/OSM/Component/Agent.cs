@@ -9,8 +9,8 @@ namespace OSM2019.OSM
 {
     class Agent : AgentBase<Agent>
     {
-        public Matrix<double> MyInitBelief { get; private set; }
-        public Matrix<double> MyBelief { get; set; }
+        public Matrix<double> InitBelief { get; private set; }
+        public Matrix<double> Belief { get; set; }
 
         public Agent(Node node)
         {
@@ -26,8 +26,8 @@ namespace OSM2019.OSM
 
         public Agent SetInitBelief(Matrix<double> init_belief)
         {
-            this.MyInitBelief = init_belief.Clone();
-            this.MyBelief = init_belief.Clone();
+            this.InitBelief = init_belief.Clone();
+            this.Belief = init_belief.Clone();
             return this;
         }
     }
