@@ -72,7 +72,7 @@ namespace OSM2019.Utility
         Equality
     }
 
-    enum BaseAgentMode
+    enum SampleAgentSetMode
     {
         RandomSetRate,
         RemainSet

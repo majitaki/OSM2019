@@ -12,8 +12,8 @@ namespace OSM2019.OSM
         ExtendRandom MyRand;
         RawGraph MyGraph;
         Layout MyLayout;
+        SubjectManager MySubjectManager;
         List<SampleAgent> SampleAgents;
-        SensorGenerator MySensorGene;
         List<Agent> Agents;
         List<AgentLink> AgentLinks;
 
@@ -53,14 +53,20 @@ namespace OSM2019.OSM
             return this;
         }
 
-        public AgentNetwork ApplySampleAgent(SampleAgent sample_agent, BaseAgentMode mode, double random_set_rate = 0.0)
+        public AgentNetwork ApplySampleAgent(SampleAgent sample_agent, SampleAgentSetMode mode, double random_set_rate = 0.0)
         {
             switch (mode)
             {
-                case BaseAgentMode.RandomSetRate:
+                case SampleAgentSetMode.RandomSetRate:
+                    if (random_set_rate == 0.0) new Exception(nameof(AgentNetwork) + " Error no random set rate");
 
+                    var set_agent_size = (int)(this.MyGraph.Nodes.Count * random_set_rate);
+                    var list = this.Agents.Select(agent => agent.AgentID).OrderBy(id => this.MyRand.Next()).Take(set_agent_size)
+                        .ToList();
+                    this.Agents.Where(agent => list.Contains(agent.AgentID)).ToList().ForEach(agent => sample_agent.Generate(this.MyRand, agent));
                     break;
-                case BaseAgentMode.RemainSet:
+                case SampleAgentSetMode.RemainSet:
+                    this.Agents.Where(agent => agent.MyInitBelief == null).ToList().ForEach(agent => sample_agent.Generate(this.MyRand, agent));
                     break;
                 default:
                     break;
@@ -68,17 +74,22 @@ namespace OSM2019.OSM
             return this;
         }
 
-        public AgentNetwork SetSensorGene(SensorGenerator sensor_gene)
+        public AgentNetwork GenerateSensor(SensorGenerator sensor_gene)
         {
-
+            sensor_gene.Generate(this.MyRand, this.Agents);
             return this;
         }
 
         public AgentNetwork SetLayout(Layout layout)
         {
-
+            this.MyLayout = layout;
             return this;
         }
 
+        public AgentNetwork SetSubjectManager(SubjectManager subject_manager)
+        {
+            this.MySubjectManager = subject_manager;
+            return this;
+        }
     }
 }

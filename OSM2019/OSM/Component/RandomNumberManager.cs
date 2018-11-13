@@ -108,6 +108,7 @@ namespace OSM2019.OSM
                 do
                 {
                     sample = Normal.Sample(rand, mean, stddev);
+                    sample = Math.Round(sample, 4);
                 } while (!(sample > mean - mean * bound_rate && sample < mean + mean * bound_rate));
                 sample_list.Add(sample);
             }

@@ -14,7 +14,7 @@ namespace OSM2019.OSM
         public string Subject { get; protected set; }
         public Matrix<double> InitOpinionMatrix { get; protected set; }
         public List<AgentLink> AgentLinks { get; protected set; }
-        public double Threshold { get; protected set; }
+        public double OpinionThreshold { get; protected set; }
 
         public List<T> GetNeighbors()
         {
@@ -38,5 +38,10 @@ namespace OSM2019.OSM
             return (T)(object)this;
         }
 
+        public T SetSensor(bool is_sensor)
+        {
+            this.IsSensor = is_sensor;
+            return (T)(object)this;
+        }
     }
 }

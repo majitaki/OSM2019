@@ -21,26 +21,21 @@ namespace OSM2019.OSM
 
         public SampleAgent SetThreshold(double threshold)
         {
-            this.Threshold = threshold;
+            this.OpinionThreshold = threshold;
             return this;
         }
-
-        //public SampleAgent SetSubject(string subject)
-        //{
-        //    this.Subject = subject;
-        //    return this;
-        //}
-
-        //public SampleAgent SetInitOpinion(Matrix<double> init_op_matrix)
-        //{
-        //    this.InitOpinionMatrix = init_op_matrix;
-        //    return this;
-        //}
 
         public SampleAgent SetInitWeightsMode(InitWeightMode mode)
         {
             this.MyInitWeightMode = mode;
             return this;
+        }
+
+        public void Generate(ExtendRandom agent_network_rand, Agent agent)
+        {
+            var init_belief = this.MyInitBeliefGene.Generate(this.InitOpinionMatrix, agent_network_rand);
+            agent.SetInitBelief(init_belief);
+            agent.SetSubject(this.Subject);
         }
     }
 }

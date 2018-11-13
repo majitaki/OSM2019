@@ -43,7 +43,7 @@ namespace OSM2019
             var layout = new Circular_LayoutGenerator(graph).Generate();
 
             var init_belief_gene = new InitBeliefGenerator()
-                                    .SetInitBeliefMode(mode: InitBeliefMode.NormalWide);
+                                    .SetInitBeliefMode(mode: InitBeliefMode.NoRandom);
 
             var subject_tv = "good_tv";
             var subject_company = "good_company";
@@ -70,7 +70,7 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_company)
-                                .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0))
+                                .SetInitOpinion(Matrix<double>.Build.Dense(3, 1, 0.0))
                                 .SetInitWeightsMode(mode: InitWeightMode.Equality);
 
             var sensor_gene = new SensorGenerator()
@@ -83,9 +83,9 @@ namespace OSM2019
             var agent_network = new AgentNetwork()
                                     .SetRand(agent_gene_rand)
                                     .GenerateNetworkFrame(graph)
-                                    .ApplySampleAgent(sample_agent_1, mode: BaseAgentMode.RandomSetRate, random_set_rate: 0.5)
-                                    .ApplySampleAgent(sample_agent_2, mode: BaseAgentMode.RemainSet)
-                                    .SetSensorGene(sensor_gene)
+                                    .ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
+                                    .ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
+                                    .GenerateSensor(sensor_gene)
                                     .SetLayout(layout);
 
         }
