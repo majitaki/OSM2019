@@ -63,7 +63,7 @@ namespace OSM2019
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_tv)
                                 .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0))
-                                .SetInitWeightsMode(mode: InitWeightMode.Equality);
+                                .SetInitWeightsMode(mode: InitWeightMode.FavorMyOpinion);
 
 
             var sample_agent_2 = new SampleAgent()
@@ -71,7 +71,7 @@ namespace OSM2019
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_company)
                                 .SetInitOpinion(Matrix<double>.Build.Dense(3, 1, 0.0))
-                                .SetInitWeightsMode(mode: InitWeightMode.Equality);
+                                .SetInitWeightsMode(mode: InitWeightMode.FavorMyOpinion);
 
             var sensor_gene = new SensorGenerator()
                             .SetSensorSize(10);
@@ -87,7 +87,6 @@ namespace OSM2019
                                     .ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
                                     .GenerateSensor(sensor_gene)
                                     .SetLayout(layout);
-
         }
 
         void UserInitialize()

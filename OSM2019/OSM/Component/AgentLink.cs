@@ -13,6 +13,8 @@ namespace OSM2019.OSM
         public Agent TargetAgent { get; private set; }
         public double SourceWeight { get; set; }
         public double TargetWeight { get; set; }
+        public double InitSourceWeight { get; private set; }
+        public double InitTargetWeight { get; private set; }
 
         public AgentLink(int link_index)
         {
@@ -23,6 +25,20 @@ namespace OSM2019.OSM
         {
             this.SourceAgent = agents.First(agent => agent.AgentID == link.Source);
             this.TargetAgent = agents.First(agent => agent.AgentID == link.Target);
+            return this;
+        }
+
+        public AgentLink SetInitSourceWeight(double init_source_weight)
+        {
+            this.InitSourceWeight = init_source_weight;
+            this.SourceWeight = this.InitSourceWeight;
+            return this;
+        }
+
+        public AgentLink SetInitTargetWeight(double init_target_weight)
+        {
+            this.InitSourceWeight = init_target_weight;
+            this.TargetWeight = this.InitTargetWeight;
             return this;
         }
 

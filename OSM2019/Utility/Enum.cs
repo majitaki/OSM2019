@@ -69,6 +69,7 @@ namespace OSM2019.Utility
 
     enum InitWeightMode
     {
+        FavorMyOpinion,
         Equality
     }
 
