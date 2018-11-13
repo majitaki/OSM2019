@@ -9,13 +9,13 @@ namespace OSM2019.OSM
 {
     class AgentNetwork
     {
-        ExtendRandom MyRand;
-        RawGraph MyGraph;
-        Layout MyLayout;
-        SubjectManager MySubjectManager;
+        ExtendRandom AgentGenerateRand;
+        public RawGraph MyGraph { get; private set; }
+        public Layout MyLayout { get; private set; }
+        public SubjectManager MySubjectManager { get; private set; }
         List<SampleAgent> SampleAgents;
-        List<Agent> Agents;
-        List<AgentLink> AgentLinks;
+        public List<Agent> Agents { get; private set; }
+        public List<AgentLink> AgentLinks { get; private set; }
 
         public AgentNetwork()
         {
@@ -23,9 +23,9 @@ namespace OSM2019.OSM
             this.AgentLinks = new List<AgentLink>();
         }
 
-        public AgentNetwork SetRand(ExtendRandom ex_rand)
+        public AgentNetwork SetRand(ExtendRandom agent_gene_rand)
         {
-            this.MyRand = ex_rand;
+            this.AgentGenerateRand = agent_gene_rand;
             return this;
         }
 
@@ -61,12 +61,12 @@ namespace OSM2019.OSM
                     if (random_set_rate == 0.0) new Exception(nameof(AgentNetwork) + " Error no random set rate");
 
                     var set_agent_size = (int)(this.MyGraph.Nodes.Count * random_set_rate);
-                    var list = this.Agents.Select(agent => agent.AgentID).OrderBy(id => this.MyRand.Next()).Take(set_agent_size)
+                    var list = this.Agents.Select(agent => agent.AgentID).OrderBy(id => this.AgentGenerateRand.Next()).Take(set_agent_size)
                         .ToList();
-                    this.Agents.Where(agent => list.Contains(agent.AgentID)).ToList().ForEach(agent => sample_agent.Generate(this.MyRand, agent));
+                    this.Agents.Where(agent => list.Contains(agent.AgentID)).ToList().ForEach(agent => sample_agent.Generate(this.AgentGenerateRand, agent));
                     break;
                 case SampleAgentSetMode.RemainSet:
-                    this.Agents.Where(agent => agent.MyInitBelief == null).ToList().ForEach(agent => sample_agent.Generate(this.MyRand, agent));
+                    this.Agents.Where(agent => agent.MyInitBelief == null).ToList().ForEach(agent => sample_agent.Generate(this.AgentGenerateRand, agent));
                     break;
                 default:
                     break;
@@ -76,7 +76,7 @@ namespace OSM2019.OSM
 
         public AgentNetwork GenerateSensor(SensorGenerator sensor_gene)
         {
-            sensor_gene.Generate(this.MyRand, this.Agents);
+            sensor_gene.Generate(this.AgentGenerateRand, this.Agents);
             return this;
         }
 

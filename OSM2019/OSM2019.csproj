@@ -63,8 +63,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OSM\Agent.cs" />
-    <Compile Include="OSM\AgentNetwork.cs" />
+    <Compile Include="OSM\Component\Agent.cs" />
+    <Compile Include="OSM\Component\AgentNetwork.cs" />
     <Compile Include="OSM\Component\AgentBase.cs" />
     <Compile Include="OSM\Component\AgentLink.cs" />
     <Compile Include="OSM\GraphGenerator\GraphGeneratorBase.cs" />
@@ -121,7 +121,8 @@
     <Compile Include="OSM\Graph\Layout.cs" />
     <Compile Include="OSM\Component\SampleAgent.cs" />
     <Compile Include="OSM\Component\SubjectManager.cs" />
-    <Compile Include="OSM\SensorGenerator.cs" />
+    <Compile Include="OSM\Component\SensorGenerator.cs" />
+    <Compile Include="OSM\OSMBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Enum.cs" />

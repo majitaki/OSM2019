@@ -33,10 +33,9 @@ namespace OSM2019.OSM
 
         public void Generate(ExtendRandom agent_network_rand, Agent agent)
         {
-            var init_belief = this.MyInitBeliefGene.Generate(this.InitOpinionMatrix, agent_network_rand);
+            var init_belief = this.MyInitBeliefGene.Generate(this.InitOpinion, agent_network_rand);
             agent.SetInitBelief(init_belief);
             agent.SetSubject(this.Subject);
-            
         }
     }
 }
