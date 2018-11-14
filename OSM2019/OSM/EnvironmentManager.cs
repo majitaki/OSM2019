@@ -8,9 +8,9 @@ namespace OSM2019.OSM
 {
     class EnvironmentManager
     {
-        double SensorRate;
-        string EnvSubject;
-        int CorrectDim;
+        public double SensorRate { get; protected set; }
+        public string EnvSubject { get; protected set; }
+        public int CorrectDim { get; protected set; }
 
         public EnvironmentManager SetSubject(string subject)
         {
@@ -48,6 +48,8 @@ namespace OSM2019.OSM
                 sensor.AttachAgentLinks(env_links);
             }
 
+            env_agent.AttachAgentLinks(env_links);
         }
+
     }
 }

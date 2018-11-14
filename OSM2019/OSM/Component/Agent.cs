@@ -22,6 +22,7 @@ namespace OSM2019.OSM
         public Agent(int node_id)
         {
             this.AgentID = node_id;
+            this.AgentLinks = new List<AgentLink>();
             this.IsSensor = false;
         }
 
