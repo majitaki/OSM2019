@@ -35,6 +35,7 @@ namespace OSM2019.OSM
         public T SetEnvManager(EnvironmentManager env_mgr)
         {
             this.MyEnvManager = env_mgr;
+            this.MyEnvManager.AddEnvironment(this.MyAgentNetwork);
             return (T)(object)this;
         }
 

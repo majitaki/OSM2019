@@ -29,5 +29,25 @@ namespace OSM2019.OSM
             this.SensorRate = sensor_rate;
             return this;
         }
+
+        public void AddEnvironment(AgentNetwork agent_network)
+        {
+            Agent env_agent = new Agent(-1);
+            List<AgentLink> env_links = new List<AgentLink>();
+            var sensors = agent_network.Agents.Where(agent => agent.IsSensor).ToList();
+
+            int link_index = -1;
+            foreach (var sensor in sensors)
+            {
+                env_links.Add(new AgentLink(link_index, sensor, env_agent));
+                link_index--;
+            }
+
+            foreach (var sensor in sensors)
+            {
+                sensor.AttachAgentLinks(env_links);
+            }
+
+        }
     }
 }

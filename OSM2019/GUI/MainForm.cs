@@ -99,8 +99,8 @@ namespace OSM2019
 
             OSMBase<AAT_OSM> osm = new AAT_OSM()
                     .SetRand(update_step_rand)
-                    .SetEnvManager(env_mgr)
                     .SetAgentNetwork(agent_network)
+                    .SetEnvManager(env_mgr)
                     .SetTargetH(0.9);
 
 

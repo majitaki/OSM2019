@@ -15,12 +15,19 @@ namespace OSM2019.OSM
         public Agent(Node node)
         {
             this.AgentID = node.ID;
+            this.AgentLinks = new List<AgentLink>();
+            this.IsSensor = false;
+        }
+
+        public Agent(int node_id)
+        {
+            this.AgentID = node_id;
             this.IsSensor = false;
         }
 
         public Agent AttachAgentLinks(List<AgentLink> agent_links)
         {
-            this.AgentLinks = agent_links.Where(agent_link => agent_link.SourceAgent.AgentID == this.AgentID).ToList();
+            this.AgentLinks.AddRange(agent_links.Where(agent_link => agent_link.SourceAgent.AgentID == this.AgentID || agent_link.TargetAgent.AgentID == this.AgentID).ToList());
             return this;
         }
 
