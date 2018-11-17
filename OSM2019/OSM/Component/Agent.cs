@@ -39,5 +39,17 @@ namespace OSM2019.OSM
             return this;
         }
 
+        public Agent SetBeliefFromList(List<double> belief_list)
+        {
+            if (Belief.RowCount != belief_list.Count)
+            {
+                throw new Exception(nameof(Agent) + " Error irregular beleif list");
+            }
+
+            var new_belief = Matrix<double>.Build.DenseOfColumnVectors(Vector<double>.Build.Dense(belief_list.ToArray()));
+            this.Belief = new_belief;
+            //Console.WriteLine(this.Belief.ToString());
+            return this;
+        }
     }
 }

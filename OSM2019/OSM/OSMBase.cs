@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace OSM2019.OSM
         public int CurrentRound { get; protected set; }
         public double OpinionIntroRate { get; protected set; }
         public double OpinionIntroInterval { get; protected set; }
+        public InitWeightMode MyInitWeightMode { get; protected set; }
 
         Queue<int> op_formed_agent_ids;
 
@@ -65,6 +67,12 @@ namespace OSM2019.OSM
             return (T)(object)this;
         }
 
+        public T SetInitWeightsMode(InitWeightMode mode)
+        {
+            this.MyInitWeightMode = mode;
+            return (T)(object)this;
+        }
+
         public virtual void UpdateSteps(int steps)
         {
             int _cur_step = this.CurrentStep;
@@ -109,8 +117,12 @@ namespace OSM2019.OSM
                 .Subscribe(
                 step =>
                 {
-
-
+                    foreach (var message in messages)
+                    {
+                        this.UpdateBelief(message);
+                        Console.WriteLine(message.Opinion.ToString());
+                        Console.WriteLine(this.MyAgentNetwork.Agents[1].Belief.ToString());
+                    }
                     messages.Clear();
                 });
 
@@ -173,14 +185,87 @@ namespace OSM2019.OSM
 
         protected virtual void ReceiveOpinion()
         {
-            this.UpdateBelief();
+            //this.UpdateBelief();
             this.UpdateOpinion();
         }
 
-        protected virtual void UpdateBelief()
+        protected virtual void UpdateBelief(Message message)
         {
+            var pre_belief_list = message.ToAgent.Belief.Column(0).ToList();
 
+            var op_list = new List<double>();
+            var message_op = message.Opinion;
+            if (message.Subject != message.ToAgent.MySubject)
+            {
+                var to_subject = message.ToAgent.MySubject;
+                op_list = message.Subject.ConvertOpinionForSubject(message_op, to_subject).Column(0).ToList();
+            }
+            else
+            {
+                op_list = message_op.Column(0).ToList();
+            }
+
+            for (int op_dim = 0; op_dim < op_list.Count; op_dim++)
+            {
+                var op = op_list[op_dim];
+                int op_num = (int)Math.Floor(op);
+                double op_dust = op % 1;
+                var post_belief_list = new List<double>(pre_belief_list);
+
+                for (int belief_dim = 0; belief_dim < pre_belief_list.Count; belief_dim++)
+                {
+                    double weight = message.GetToWeight();
+                    for (int i = 0; i < op_num; i++)
+                    {
+                        double post_belief;
+                        post_belief = this.CalcSingleBelief(pre_belief_list, belief_dim, op_dim, weight);
+                        post_belief_list[belief_dim] = post_belief;
+                    }
+
+                    if (op_dust > 0)
+                    {
+                        post_belief_list[belief_dim] = this.CalcSingleBelief(pre_belief_list, belief_dim, op_dim, weight, op_dust);
+                    }
+
+                }
+                pre_belief_list = post_belief_list;
+            }
+
+            message.ToAgent.SetBeliefFromList(pre_belief_list);
         }
+
+        protected virtual double CalcSingleBelief(List<double> pre_beliefs, int belief_dim, int op_dim, double weight, double op_dust = 0.0)
+        {
+            var upper = pre_beliefs[belief_dim] * this.ConvertWeight(weight, belief_dim, op_dim, pre_beliefs.Count, op_dust);
+
+            var lower = 0.0;
+            foreach (var lower_belief_dim in Enumerable.Range(0, pre_beliefs.Count))
+            {
+                var pre_belief = pre_beliefs[lower_belief_dim];
+                lower += pre_belief * this.ConvertWeight(weight, lower_belief_dim, op_dim, pre_beliefs.Count, op_dust);
+            }
+
+            var pos_belief = upper / lower;
+            return Math.Round(pos_belief, 4);
+        }
+
+        protected virtual double ConvertWeight(double weight, int belief_dim, int op_dim, int dim_size, double op_dust)
+        {
+            if (op_dust != 0.0)
+            {
+                weight = (weight - 1 / dim_size) * op_dust + 1 / dim_size;
+            }
+
+            if (belief_dim == op_dim)
+            {
+                return weight;
+            }
+            else
+            {
+                return (1 - weight) / (dim_size - 1);
+            }
+        }
+
 
         protected virtual void UpdateOpinion()
         {
@@ -203,5 +288,8 @@ namespace OSM2019.OSM
 
             return messages;
         }
+
+
+
     }
 }

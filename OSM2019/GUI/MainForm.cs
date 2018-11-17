@@ -56,17 +56,17 @@ namespace OSM2019
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
 
-            double[] conv_array = { 1, 0, 0, 1, 0, 0 };
+            double[] conv_array = { 1, 0, 0, 1, 1, 0 };
             var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
 
             var subject_manager = new SubjectManager()
                 .RegistConversionMatrix(subject_tv, subject_company, conv_matrix);
 
 
-            double[] u_array = { 2, 1, 3 };
-            var U = Matrix<double>.Build.DenseOfColumnMajor(3, 1, u_array);
-            var tmp = subject_tv.ConvertOpinionForSubject(U, subject_company);
-            Console.WriteLine(tmp.ToString());
+            //double[] u_array = { 2, 1, 3 };
+            //var U = Matrix<double>.Build.DenseOfColumnMajor(3, 1, u_array);
+            //var tmp = subject_tv.ConvertOpinionForSubject(U, subject_company);
+            //Console.WriteLine(tmp.ToString());
 
 
             var op_form_threshold = 0.9;
@@ -74,16 +74,14 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_tv)
-                                .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0))
-                                .SetInitWeightsMode(mode: InitWeightMode.FavorMyOpinion);
+                                .SetInitOpinion(Matrix<double>.Build.Dense(3, 1, 0.0));
 
 
             var sample_agent_2 = new SampleAgent()
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_company)
-                                .SetInitOpinion(Matrix<double>.Build.Dense(3, 1, 0.0))
-                                .SetInitWeightsMode(mode: InitWeightMode.FavorMyOpinion);
+                                .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0));
 
             var sensor_gene = new SensorGenerator()
                             .SetSensorSize(10);
@@ -114,14 +112,17 @@ namespace OSM2019
                     .SetAgentNetwork(agent_network)
                     .SetEnvManager(env_mgr)
                     .SetSubjectManager(subject_manager)
+                    .SetInitWeightsMode(mode: InitWeightMode.FavorMyOpinion)
                     .SetOpinionIntroInterval(10)
                     .SetOpinionIntroRate(0.5)
                     .SetTargetH(0.9);
 
 
+            Console.WriteLine(osm.MyAgentNetwork.Agents[1].Belief.ToString());
+
             //osm.UpdateStep();
             //osm.InitializeToZeroStep();
-            osm.UpdateSteps(100);
+            osm.UpdateSteps(1000);
             //osm.UpdateRound(1000);
             //osm.UpdateRounds(100, 1000);
             //osm.InitializeToZeroRound();

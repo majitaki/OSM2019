@@ -70,7 +70,7 @@ namespace OSM2019.OSM
                 }
                 else
                 {
-                    List<int> incor_dim_list = Enumerable.Range(0, opinion.RowCount - 1).Except(new List<int>(this.CorrectDim)).ToList();
+                    List<int> incor_dim_list = Enumerable.Range(0, opinion.RowCount).Where(i => i != this.CorrectDim).ToList();
                     int incor_dim = incor_dim_list.OrderBy(_ => update_step_rand.Next()).First();
                     opinion[incor_dim, 0] = 1.0;
                 }

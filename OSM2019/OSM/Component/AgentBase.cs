@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,10 @@ namespace OSM2019.OSM
 
         public T SetInitOpinion(Matrix<double> init_op_matrix)
         {
+            if (this.MySubject.SubjectDimSize != init_op_matrix.RowCount)
+            {
+                throw new Exception("error not equal subject dim and init op dim");
+            }
             this.InitOpinion = init_op_matrix.Clone();
             this.Opinion = init_op_matrix.Clone();
             return (T)(object)this;
@@ -47,5 +52,6 @@ namespace OSM2019.OSM
             this.IsSensor = is_sensor;
             return (T)(object)this;
         }
+
     }
 }

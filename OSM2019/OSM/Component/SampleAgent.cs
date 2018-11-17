@@ -11,7 +11,6 @@ namespace OSM2019.OSM
     class SampleAgent : AgentBase<SampleAgent>
     {
         InitBeliefGenerator MyInitBeliefGene;
-        InitWeightMode MyInitWeightMode;
 
         public SampleAgent SetInitBeliefGene(InitBeliefGenerator init_belief_gene)
         {
@@ -22,12 +21,6 @@ namespace OSM2019.OSM
         public SampleAgent SetThreshold(double threshold)
         {
             this.OpinionThreshold = threshold;
-            return this;
-        }
-
-        public SampleAgent SetInitWeightsMode(InitWeightMode mode)
-        {
-            this.MyInitWeightMode = mode;
             return this;
         }
 
