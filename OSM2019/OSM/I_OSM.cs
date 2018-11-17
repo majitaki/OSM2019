@@ -8,8 +8,6 @@ namespace OSM2019.OSM
 {
     interface I_OSM
     {
-        void RecordStep();
-        void UpdateStep();
         void UpdateSteps(int steps);
         void InitializeStep();
         void InitializeToZeroStep();

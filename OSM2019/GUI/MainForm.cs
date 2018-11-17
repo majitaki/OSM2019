@@ -36,6 +36,14 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
 
+
+            //double[] u_array = { 1, 0, 0, 0, 0, 1, 0, 0 };
+            //var U = Matrix<double>.Build.DenseOfColumnMajor(4, 2, u_array);
+            //Console.WriteLine(U.ToString());
+            //var U_inv = U.PseudoInverse();
+            //Console.WriteLine(U_inv.ToString());
+
+
             GraphGeneratorBase graph_generator;
             graph_generator = new PC_GraphGenerator().SetNodeSize(100).SetRandomEdges(3).SetAddTriangleP(0.1);
 
@@ -45,16 +53,20 @@ namespace OSM2019
             var init_belief_gene = new InitBeliefGenerator()
                                     .SetInitBeliefMode(mode: InitBeliefMode.NoRandom);
 
-            var subject_tv = "good_tv";
-            var subject_company = "good_company";
-            double[] conv_array = { 2.0, 0.0, 0.0, 1.0 };
-            var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 2, conv_array);
+            var subject_tv = new OpinionSubject("good_tv", 3);
+            var subject_company = new OpinionSubject("good_company", 2);
+
+            double[] conv_array = { 1, 0, 0, 1, 0, 0 };
+            var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
 
             var subject_manager = new SubjectManager()
-                                .AddSubject(subject_tv)
-                                .AddSubject(subject_company)
-                                .AddConvMatrix(subject_tv, subject_company, conv_matrix);
+                .RegistConversionMatrix(subject_tv, subject_company, conv_matrix);
 
+
+            double[] u_array = { 2, 1, 3 };
+            var U = Matrix<double>.Build.DenseOfColumnMajor(3, 1, u_array);
+            var tmp = subject_tv.ConvertOpinionForSubject(U, subject_company);
+            Console.WriteLine(tmp.ToString());
 
 
             var op_form_threshold = 0.9;
@@ -101,15 +113,19 @@ namespace OSM2019
                     .SetRand(update_step_rand)
                     .SetAgentNetwork(agent_network)
                     .SetEnvManager(env_mgr)
+                    .SetSubjectManager(subject_manager)
+                    .SetOpinionIntroInterval(10)
+                    .SetOpinionIntroRate(0.5)
                     .SetTargetH(0.9);
 
 
-            osm.UpdateStep();
-            osm.InitializeToZeroStep();
-            osm.UpdateSteps(1000);
-            osm.UpdateRound(1000);
-            osm.UpdateRounds(100, 1000);
-            osm.InitializeToZeroRound();
+            //osm.UpdateStep();
+            //osm.InitializeToZeroStep();
+            osm.UpdateSteps(100);
+            //osm.UpdateRound(1000);
+            //osm.UpdateRounds(100, 1000);
+            //osm.InitializeToZeroRound();
+
         }
 
         void UserInitialize()

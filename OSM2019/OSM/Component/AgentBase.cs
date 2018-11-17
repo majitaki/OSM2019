@@ -11,7 +11,7 @@ namespace OSM2019.OSM
     {
         public int AgentID { get; protected set; }
         public bool IsSensor { get; set; }
-        public string Subject { get; protected set; }
+        public OpinionSubject MySubject { get; protected set; }
         public Matrix<double> InitOpinion { get; protected set; }
         public Matrix<double> Opinion { get; set; }
         public List<AgentLink> AgentLinks { get; protected set; }
@@ -27,9 +27,11 @@ namespace OSM2019.OSM
             return neighbors;
         }
 
-        public T SetSubject(string subject)
+        public T SetSubject(OpinionSubject subject)
         {
-            this.Subject = subject;
+            this.MySubject = subject;
+            var op_matrix = Matrix<double>.Build.Dense(this.MySubject.SubjectDimSize, 1, 0.0);
+            this.SetInitOpinion(op_matrix);
             return (T)(object)this;
         }
 

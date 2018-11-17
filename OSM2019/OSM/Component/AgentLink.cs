@@ -32,6 +32,15 @@ namespace OSM2019.OSM
             this.SetInitTargetWeight(1.0);
         }
 
+        public AgentLink(AgentLink agent_link)
+        {
+            this.AgentLinkID = agent_link.AgentLinkID;
+            this.SourceAgent = agent_link.SourceAgent;
+            this.TargetAgent = agent_link.TargetAgent;
+            this.SetInitSourceWeight(agent_link.InitSourceWeight);
+            this.SetInitTargetWeight(agent_link.InitTargetWeight);
+        }
+
         public AgentLink SetLink(Link link, List<Agent> agents)
         {
             this.SourceAgent = agents.First(agent => agent.AgentID == link.Source);

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using MathNet.Numerics.LinearAlgebra;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,13 +13,19 @@ namespace OSM2019.OSM
         ExtendRandom UpdateStepRand;
         public AgentNetwork MyAgentNetwork { get; protected set; }
         public EnvironmentManager MyEnvManager { get; protected set; }
+        public SubjectManager MySubjectManager { get; protected set; }
         public int CurrentStep { get; protected set; }
         public int CurrentRound { get; protected set; }
+        public double OpinionIntroRate { get; protected set; }
+        public double OpinionIntroInterval { get; protected set; }
+
+        Queue<int> op_formed_agent_ids;
 
         public OSMBase()
         {
             this.CurrentStep = 0;
             this.CurrentRound = 0;
+            this.op_formed_agent_ids = new Queue<int>();
         }
 
         public T SetRand(ExtendRandom update_step_rand)
@@ -39,26 +47,82 @@ namespace OSM2019.OSM
             return (T)(object)this;
         }
 
-        public virtual void RecordStep()
+        public T SetSubjectManager(SubjectManager subject_mgr)
         {
-
+            this.MySubjectManager = subject_mgr;
+            return (T)(object)this;
         }
 
-        public virtual void UpdateStep()
+        public T SetOpinionIntroRate(double op_intro_rate)
         {
-            this.SendOpinion();
-            this.ReceiveOpinion();
-            this.CurrentStep++;
+            this.OpinionIntroRate = op_intro_rate;
+            return (T)(object)this;
+        }
+
+        public T SetOpinionIntroInterval(int interval_step)
+        {
+            this.OpinionIntroInterval = interval_step;
+            return (T)(object)this;
         }
 
         public virtual void UpdateSteps(int steps)
         {
-            for (int step = 0; step < steps; step++)
-            {
-                this.UpdateStep();
-                this.RecordStep();
-                this.InitializeStep();
-            }
+            int _cur_step = this.CurrentStep;
+            var step_stream =
+                Observable.Range(_cur_step, _cur_step + steps).Publish();
+
+            var messages = new List<Message>();
+            //count step
+            step_stream
+                .Subscribe(
+                step =>
+                {
+                    this.CurrentStep = step;
+                    //Console.WriteLine(this.CurrentStep);
+                });
+
+            //sensor observe
+            step_stream
+                .Where(step => step % this.OpinionIntroInterval == 0)
+                .Subscribe(
+                step =>
+                {
+                    var all_sensors = this.MyAgentNetwork.Agents.Where(agent => agent.IsSensor).ToList();
+                    var observe_num = (int)(all_sensors.Count * this.OpinionIntroRate);
+                    var observe_sensors = all_sensors.Select(agent => agent.AgentID).OrderBy(a => this.UpdateStepRand.Next()).Take(observe_num).Select(id => this.MyAgentNetwork.Agents[id]).ToList();
+                    var env_messages = this.MyEnvManager.SendMessages(observe_sensors, this.UpdateStepRand);
+                    messages.AddRange(env_messages);
+                });
+
+            //agent observe
+            step_stream
+                .Subscribe(
+                step =>
+                {
+                    var op_formed_agents = this.op_formed_agent_ids.Select(id => this.MyAgentNetwork.Agents[id]).ToList();
+                    var op_form_messages = this.AgentSendMessages(op_formed_agents);
+                    messages.AddRange(op_form_messages);
+                });
+
+            //agent receive
+            step_stream
+                .Subscribe(
+                step =>
+                {
+
+
+                    messages.Clear();
+                });
+
+            var connection = step_stream.Connect();
+
+
+            //for (int step = 0; step < steps; step++)
+            //{
+            //    this.UpdateStep();
+            //    this.RecordStep();
+            //    this.InitializeStep();
+            //}
         }
 
         public virtual void InitializeStep()
@@ -107,22 +171,6 @@ namespace OSM2019.OSM
             this.CurrentRound = 0;
         }
 
-        protected virtual void SendOpinion()
-        {
-            this.AgentSendOpinion();
-            this.EnvSendOpinion();
-        }
-
-        protected virtual void AgentSendOpinion()
-        {
-
-        }
-
-        protected virtual void EnvSendOpinion()
-        {
-
-        }
-
         protected virtual void ReceiveOpinion()
         {
             this.UpdateBelief();
@@ -139,5 +187,21 @@ namespace OSM2019.OSM
 
         }
 
+
+        protected virtual List<Message> AgentSendMessages(List<Agent> op_formed_agents)
+        {
+            List<Message> messages = new List<Message>();
+            foreach (var agent in op_formed_agents)
+            {
+                var opinion = agent.Opinion.Clone();
+                foreach (var to_agent in agent.GetNeighbors())
+                {
+                    var agent_link = agent.AgentLinks.Where(link => link.SourceAgent == to_agent || link.TargetAgent == to_agent).First();
+                    messages.Add(new Message(agent, to_agent, agent_link, opinion));
+                }
+            }
+
+            return messages;
+        }
     }
 }

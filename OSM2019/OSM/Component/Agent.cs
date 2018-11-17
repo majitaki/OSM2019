@@ -38,5 +38,6 @@ namespace OSM2019.OSM
             this.Belief = init_belief.Clone();
             return this;
         }
+
     }
 }

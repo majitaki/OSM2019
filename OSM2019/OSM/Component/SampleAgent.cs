@@ -35,7 +35,7 @@ namespace OSM2019.OSM
         {
             var init_belief = this.MyInitBeliefGene.Generate(this.InitOpinion, agent_network_rand);
             agent.SetInitBelief(init_belief);
-            agent.SetSubject(this.Subject);
+            agent.SetSubject(this.MySubject);
             agent.SetInitOpinion(this.InitOpinion);
         }
     }
