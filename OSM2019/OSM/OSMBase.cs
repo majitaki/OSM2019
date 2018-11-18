@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,15 +20,13 @@ namespace OSM2019.OSM
         public int CurrentRound { get; protected set; }
         public double OpinionIntroRate { get; protected set; }
         public double OpinionIntroInterval { get; protected set; }
-        public InitWeightMode MyInitWeightMode { get; protected set; }
+        public CalcWeightMode MyCalcWeightMode { get; protected set; }
 
-        Queue<int> op_formed_agent_ids;
 
         public OSMBase()
         {
             this.CurrentStep = 0;
             this.CurrentRound = 0;
-            this.op_formed_agent_ids = new Queue<int>();
         }
 
         public T SetRand(ExtendRandom update_step_rand)
@@ -67,78 +66,66 @@ namespace OSM2019.OSM
             return (T)(object)this;
         }
 
-        public T SetInitWeightsMode(InitWeightMode mode)
+        public T SetInitWeightsMode(CalcWeightMode mode)
         {
-            this.MyInitWeightMode = mode;
+            this.MyCalcWeightMode = mode;
             return (T)(object)this;
         }
 
         public virtual void UpdateSteps(int steps)
         {
-            int _cur_step = this.CurrentStep;
-            var step_stream =
-                Observable.Range(_cur_step, _cur_step + steps).Publish();
-
             var messages = new List<Message>();
-            //count step
-            step_stream
-                .Subscribe(
-                step =>
-                {
-                    this.CurrentStep = step;
-                    //Console.WriteLine(this.CurrentStep);
-                });
+            var op_form_agents = new List<Agent>();
 
-            //sensor observe
-            step_stream
-                .Where(step => step % this.OpinionIntroInterval == 0)
-                .Subscribe(
-                step =>
+            int end_step = this.CurrentStep + steps;
+            for (; this.CurrentStep < end_step; this.CurrentStep++)
+            {
+                //sensor observe
+                if (this.CurrentStep % this.OpinionIntroInterval == 0)
                 {
                     var all_sensors = this.MyAgentNetwork.Agents.Where(agent => agent.IsSensor).ToList();
                     var observe_num = (int)(all_sensors.Count * this.OpinionIntroRate);
                     var observe_sensors = all_sensors.Select(agent => agent.AgentID).OrderBy(a => this.UpdateStepRand.Next()).Take(observe_num).Select(id => this.MyAgentNetwork.Agents[id]).ToList();
                     var env_messages = this.MyEnvManager.SendMessages(observe_sensors, this.UpdateStepRand);
                     messages.AddRange(env_messages);
-                });
+                }
 
-            //agent observe
-            step_stream
-                .Subscribe(
-                step =>
+                //agent observe
+                var op_form_messages = this.AgentSendMessages(op_form_agents);
+                messages.AddRange(op_form_messages);
+                op_form_agents.Clear();
+
+                //agent receive
+                foreach (var message in messages)
                 {
-                    var op_formed_agents = this.op_formed_agent_ids.Select(id => this.MyAgentNetwork.Agents[id]).ToList();
-                    var op_form_messages = this.AgentSendMessages(op_formed_agents);
-                    messages.AddRange(op_form_messages);
-                });
+                    this.UpdateBelief(message);
+                    var op_form_agent = this.UpdateOpinion(message);
+                    op_form_agents.Add(op_form_agent);
+                    //Console.WriteLine(message.Opinion.ToString());
+                    //Console.WriteLine(this.MyAgentNetwork.Agents[1].Belief.ToString());
+                }
+                messages.Clear();
+                //this.RecordStep();
+            }
 
-            //agent receive
-            step_stream
-                .Subscribe(
-                step =>
-                {
-                    foreach (var message in messages)
-                    {
-                        this.UpdateBelief(message);
-                        Console.WriteLine(message.Opinion.ToString());
-                        Console.WriteLine(this.MyAgentNetwork.Agents[1].Belief.ToString());
-                    }
-                    messages.Clear();
-                });
-
-            var connection = step_stream.Connect();
-
-
-            //for (int step = 0; step < steps; step++)
-            //{
-            //    this.UpdateStep();
-            //    this.RecordStep();
-            //    this.InitializeStep();
-            //}
         }
 
-        public virtual void InitializeStep()
+        public virtual void UpdateRounds(int rounds, int steps)
         {
+            int end_round = this.CurrentRound + rounds;
+            for (; this.CurrentRound < end_round; this.CurrentRound++)
+            {
+                this.UpdateSteps(steps);
+                this.RecordRound();
+                this.InitializeToZeroStep();
+            }
+
+
+        }
+
+        public virtual void InitializeStep(Agent agent)
+        {
+
         }
 
         public virtual void InitializeToZeroStep()
@@ -151,42 +138,32 @@ namespace OSM2019.OSM
             this.CurrentStep = 0;
         }
 
+        public virtual void RecordStep()
+        {
+            var cor_dim = this.MyEnvManager.CorrectDim;
+            var cor_agents = this.MyAgentNetwork.Agents.Where(agent => agent.OpinionDim() == cor_dim).ToList();
+
+            Console.WriteLine($"step: {this.CurrentStep} " + $"acc: {Math.Round(cor_agents.Count / (double)this.MyAgentNetwork.Agents.Count, 3)}");
+
+        }
+
         public virtual void RecordRound()
         {
+            //this.MyAgentNetwork.Agents.ForEach(agent => Console.WriteLine(agent.Opinion.ToString()));
+            var cor_dim = this.MyEnvManager.CorrectDim;
+            var cor_agents = this.MyAgentNetwork.Agents.Where(agent => agent.OpinionDim() == cor_dim).ToList();
 
+            Console.WriteLine($"round: {this.CurrentRound} " + $"acc: {Math.Round(cor_agents.Count / (double)this.MyAgentNetwork.Agents.Count, 3)}");
         }
 
-        public virtual void UpdateRound(int steps)
+        public virtual void InitializeRound(Agent agent)
         {
-            this.UpdateSteps(steps);
-            this.InitializeToZeroStep();
-            this.CurrentRound++;
-        }
-
-        public virtual void UpdateRounds(int rounds, int steps)
-        {
-            for (int round = 0; round < rounds; round++)
-            {
-                this.UpdateRound(steps);
-                this.RecordRound();
-                this.InitializeRound();
-            }
-        }
-
-        public virtual void InitializeRound()
-        {
-
         }
 
         public virtual void InitializeToZeroRound()
         {
+            this.InitializeToZeroStep();
             this.CurrentRound = 0;
-        }
-
-        protected virtual void ReceiveOpinion()
-        {
-            //this.UpdateBelief();
-            this.UpdateOpinion();
         }
 
         protected virtual void UpdateBelief(Message message)
@@ -256,6 +233,16 @@ namespace OSM2019.OSM
                 weight = (weight - 1 / dim_size) * op_dust + 1 / dim_size;
             }
 
+            //switch (this.MyCalcWeightMode)
+            //{
+            //    case CalcWeightMode.FavorMyOpinion:
+            //        break;
+            //    case CalcWeightMode.Equality:
+            //        break;
+            //    default:
+            //        break;
+            //}
+
             if (belief_dim == op_dim)
             {
                 return weight;
@@ -267,9 +254,22 @@ namespace OSM2019.OSM
         }
 
 
-        protected virtual void UpdateOpinion()
+        protected virtual Agent UpdateOpinion(Message message)
         {
+            var belief_list = message.ToAgent.Belief.Column(0).ToList();
+            var op_list = message.ToAgent.Opinion.Column(0).ToList();
+            var op_threshold = message.ToAgent.OpinionThreshold;
 
+            for (int dim = 0; dim < belief_list.Count; dim++)
+            {
+                if (belief_list[dim] > op_threshold && op_list[dim] != 1)
+                {
+                    message.ToAgent.Opinion.Clear();
+                    message.ToAgent.Opinion[dim, 0] = 1;
+                    return message.ToAgent;
+                }
+            }
+            return null;
         }
 
 
@@ -278,6 +278,7 @@ namespace OSM2019.OSM
             List<Message> messages = new List<Message>();
             foreach (var agent in op_formed_agents)
             {
+                if (agent == null) continue;
                 var opinion = agent.Opinion.Clone();
                 foreach (var to_agent in agent.GetNeighbors())
                 {

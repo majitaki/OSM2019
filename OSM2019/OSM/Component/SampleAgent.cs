@@ -18,11 +18,6 @@ namespace OSM2019.OSM
             return this;
         }
 
-        public SampleAgent SetThreshold(double threshold)
-        {
-            this.OpinionThreshold = threshold;
-            return this;
-        }
 
         public void Generate(ExtendRandom agent_network_rand, Agent agent)
         {
@@ -30,6 +25,7 @@ namespace OSM2019.OSM
             agent.SetInitBelief(init_belief);
             agent.SetSubject(this.MySubject);
             agent.SetInitOpinion(this.InitOpinion);
+            agent.SetThreshold(this.OpinionThreshold);
         }
     }
 }

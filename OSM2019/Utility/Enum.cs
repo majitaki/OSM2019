@@ -67,7 +67,7 @@ namespace OSM2019.Utility
         NoRandom
     }
 
-    enum InitWeightMode
+    enum CalcWeightMode
     {
         FavorMyOpinion,
         Equality

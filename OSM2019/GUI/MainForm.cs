@@ -45,7 +45,7 @@ namespace OSM2019
 
 
             GraphGeneratorBase graph_generator;
-            graph_generator = new PC_GraphGenerator().SetNodeSize(100).SetRandomEdges(3).SetAddTriangleP(0.1);
+            graph_generator = new PC_GraphGenerator().SetNodeSize(1000).SetRandomEdges(3).SetAddTriangleP(0.1);
 
             var graph = graph_generator.Generate(0);
             var layout = new Circular_LayoutGenerator(graph).Generate();
@@ -61,12 +61,6 @@ namespace OSM2019
 
             var subject_manager = new SubjectManager()
                 .RegistConversionMatrix(subject_tv, subject_company, conv_matrix);
-
-
-            //double[] u_array = { 2, 1, 3 };
-            //var U = Matrix<double>.Build.DenseOfColumnMajor(3, 1, u_array);
-            //var tmp = subject_tv.ConvertOpinionForSubject(U, subject_company);
-            //Console.WriteLine(tmp.ToString());
 
 
             var op_form_threshold = 0.9;
@@ -93,7 +87,7 @@ namespace OSM2019
             var agent_network = new AgentNetwork()
                                     .SetRand(agent_gene_rand)
                                     .GenerateNetworkFrame(graph)
-                                    .ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
+                                    //.ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
                                     .ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
                                     .GenerateSensor(sensor_gene)
                                     .SetLayout(layout);
@@ -112,20 +106,15 @@ namespace OSM2019
                     .SetAgentNetwork(agent_network)
                     .SetEnvManager(env_mgr)
                     .SetSubjectManager(subject_manager)
-                    .SetInitWeightsMode(mode: InitWeightMode.FavorMyOpinion)
+                    .SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion)
                     .SetOpinionIntroInterval(10)
-                    .SetOpinionIntroRate(0.5)
+                    .SetOpinionIntroRate(0.1)
                     .SetTargetH(0.9);
 
-
-            Console.WriteLine(osm.MyAgentNetwork.Agents[1].Belief.ToString());
-
-            //osm.UpdateStep();
             //osm.InitializeToZeroStep();
-            osm.UpdateSteps(1000);
-            //osm.UpdateRound(1000);
-            //osm.UpdateRounds(100, 1000);
-            //osm.InitializeToZeroRound();
+            //osm.UpdateSteps(1000);
+            osm.UpdateRounds(100, 250);
+            //osm.UpdateRounds(1, 10000);
 
         }
 

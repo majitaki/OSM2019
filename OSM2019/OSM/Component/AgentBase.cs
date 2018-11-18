@@ -18,12 +18,27 @@ namespace OSM2019.OSM
         public List<AgentLink> AgentLinks { get; protected set; }
         public double OpinionThreshold { get; protected set; }
 
+        public int OpinionDim()
+        {
+            var op_list = Opinion.Column(0).ToList();
+
+            for (int dim = 0; dim < op_list.Count; dim++)
+            {
+                if (op_list[dim] == 1) return dim;
+            }
+            return -1;
+        }
+
         public List<T> GetNeighbors()
         {
             var neighbors = new List<T>();
             foreach (var agent_link in this.AgentLinks)
             {
-                neighbors.Add((T)(object)agent_link.TargetAgent);
+                if (agent_link.TargetAgent.AgentID == -1) continue;
+                Agent neighbor_agent;
+                neighbor_agent = agent_link.TargetAgent.AgentID == this.AgentID ? agent_link.SourceAgent : agent_link.TargetAgent;
+
+                neighbors.Add((T)(object)neighbor_agent);
             }
             return neighbors;
         }
@@ -53,5 +68,10 @@ namespace OSM2019.OSM
             return (T)(object)this;
         }
 
+        public T SetThreshold(double threshold)
+        {
+            this.OpinionThreshold = threshold;
+            return (T)(object)this;
+        }
     }
 }

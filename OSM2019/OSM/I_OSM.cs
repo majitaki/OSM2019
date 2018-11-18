@@ -9,12 +9,12 @@ namespace OSM2019.OSM
     interface I_OSM
     {
         void UpdateSteps(int steps);
-        void InitializeStep();
+        void InitializeStep(Agent agent);
         void InitializeToZeroStep();
         void RecordRound();
-        void UpdateRound(int steps);
+        void RecordStep();
         void UpdateRounds(int rounds, int steps);
-        void InitializeRound();
+        void InitializeRound(Agent agent);
         void InitializeToZeroRound();
     }
 }
