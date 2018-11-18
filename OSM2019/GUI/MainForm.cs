@@ -28,6 +28,7 @@ namespace OSM2019
         internal AgentGUI MyAgentGUI;
         internal LearningGUI MyLearningGUI;
         internal ExperimentGUI MyExperimentGUI;
+        internal AnimationForm MyAnimationForm;
 
         public MainForm()
         {
@@ -35,20 +36,21 @@ namespace OSM2019
             this.InitializeGUIs();
             InitializeComponent();
             this.UserInitialize();
+            this.MyAnimationForm = new AnimationForm();
+            Test();
+            this.MyAnimationForm.Show();
+            this.MyAnimationForm.Left = this.Right;
+        }
 
-
-            //double[] u_array = { 1, 0, 0, 0, 0, 1, 0, 0 };
-            //var U = Matrix<double>.Build.DenseOfColumnMajor(4, 2, u_array);
-            //Console.WriteLine(U.ToString());
-            //var U_inv = U.PseudoInverse();
-            //Console.WriteLine(U_inv.ToString());
-
+        void Test()
+        {
 
             GraphGeneratorBase graph_generator;
-            graph_generator = new PC_GraphGenerator().SetNodeSize(1000).SetRandomEdges(3).SetAddTriangleP(0.1);
+            //graph_generator = new PC_GraphGenerator().SetNodeSize(10).SetRandomEdges(3).SetAddTriangleP(0.1);
+            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(20);
 
             var graph = graph_generator.Generate(0);
-            var layout = new Circular_LayoutGenerator(graph).Generate();
+            var layout = new KK_LayoutGenerator(graph).Generate();
 
             var init_belief_gene = new InitBeliefGenerator()
                                     .SetInitBeliefMode(mode: InitBeliefMode.NoRandom);
@@ -111,9 +113,10 @@ namespace OSM2019
                     .SetOpinionIntroRate(0.1)
                     .SetTargetH(0.9);
 
+            this.MyAnimationForm.RegistOSM(osm);
             //osm.InitializeToZeroStep();
             //osm.UpdateSteps(1000);
-            osm.UpdateRounds(100, 250);
+            //osm.UpdateRounds(100, 250);
             //osm.UpdateRounds(1, 10000);
 
         }

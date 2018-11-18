@@ -8,13 +8,15 @@ namespace OSM2019.OSM
 {
     interface I_OSM
     {
+        int CurrentStep { get; set; }
+        int CurrentRound { get; set; }
+        AgentNetwork MyAgentNetwork { get; set; }
+
         void UpdateSteps(int steps);
-        void InitializeStep(Agent agent);
         void InitializeToZeroStep();
         void RecordRound();
         void RecordStep();
         void UpdateRounds(int rounds, int steps);
-        void InitializeRound(Agent agent);
         void InitializeToZeroRound();
     }
 }

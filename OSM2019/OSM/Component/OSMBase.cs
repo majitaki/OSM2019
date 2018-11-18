@@ -12,12 +12,13 @@ namespace OSM2019.OSM
 {
     abstract class OSMBase<T> : I_OSM
     {
+        public AgentNetwork MyAgentNetwork { get; set; }
+        public int CurrentStep { get; set; }
+        public int CurrentRound { get; set; }
+
         ExtendRandom UpdateStepRand;
-        public AgentNetwork MyAgentNetwork { get; protected set; }
         public EnvironmentManager MyEnvManager { get; protected set; }
         public SubjectManager MySubjectManager { get; protected set; }
-        public int CurrentStep { get; protected set; }
-        public int CurrentRound { get; protected set; }
         public double OpinionIntroRate { get; protected set; }
         public double OpinionIntroInterval { get; protected set; }
         public CalcWeightMode MyCalcWeightMode { get; protected set; }
@@ -101,8 +102,6 @@ namespace OSM2019.OSM
                     this.UpdateBelief(message);
                     var op_form_agent = this.UpdateOpinion(message);
                     op_form_agents.Add(op_form_agent);
-                    //Console.WriteLine(message.Opinion.ToString());
-                    //Console.WriteLine(this.MyAgentNetwork.Agents[1].Belief.ToString());
                 }
                 messages.Clear();
                 //this.RecordStep();
@@ -119,12 +118,6 @@ namespace OSM2019.OSM
                 this.RecordRound();
                 this.InitializeToZeroStep();
             }
-
-
-        }
-
-        public virtual void InitializeStep(Agent agent)
-        {
 
         }
 
@@ -144,7 +137,6 @@ namespace OSM2019.OSM
             var cor_agents = this.MyAgentNetwork.Agents.Where(agent => agent.OpinionDim() == cor_dim).ToList();
 
             Console.WriteLine($"step: {this.CurrentStep} " + $"acc: {Math.Round(cor_agents.Count / (double)this.MyAgentNetwork.Agents.Count, 3)}");
-
         }
 
         public virtual void RecordRound()
@@ -154,10 +146,6 @@ namespace OSM2019.OSM
             var cor_agents = this.MyAgentNetwork.Agents.Where(agent => agent.OpinionDim() == cor_dim).ToList();
 
             Console.WriteLine($"round: {this.CurrentRound} " + $"acc: {Math.Round(cor_agents.Count / (double)this.MyAgentNetwork.Agents.Count, 3)}");
-        }
-
-        public virtual void InitializeRound(Agent agent)
-        {
         }
 
         public virtual void InitializeToZeroRound()
@@ -271,7 +259,6 @@ namespace OSM2019.OSM
             }
             return null;
         }
-
 
         protected virtual List<Message> AgentSendMessages(List<Agent> op_formed_agents)
         {

@@ -337,7 +337,7 @@
             this.labelRoundNum.Name = "labelRoundNum";
             this.labelRoundNum.Size = new System.Drawing.Size(36, 41);
             this.labelRoundNum.TabIndex = 3;
-            this.labelRoundNum.Text = "1";
+            this.labelRoundNum.Text = "0";
             // 
             // labelStepNum
             // 
@@ -480,7 +480,7 @@
             this.Controls.Add(this.flowLayoutPanel2);
             this.DoubleBuffered = true;
             this.Name = "MainForm";
-            this.Text = "Form1";
+            this.Text = "OSM2019";
             this.flowLayoutPanel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();

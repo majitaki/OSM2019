@@ -18,5 +18,18 @@ namespace OSM2019.OSM
             this.MyLayoutEnum = layout_enum;
             this.PosList = pos_list;
         }
+
+        public Vector2 GetAgentPosition(Agent agent)
+        {
+            return this.PosList[agent.AgentID];
+        }
+
+        public (Vector2 source_pos, Vector2 target_pos) GetLinkPosition(AgentLink agent_link)
+        {
+            var s_pos = this.GetAgentPosition(agent_link.SourceAgent);
+            var t_pos = this.GetAgentPosition(agent_link.TargetAgent);
+
+            return (s_pos, t_pos);
+        }
     }
 }
