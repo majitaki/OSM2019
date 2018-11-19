@@ -19,8 +19,8 @@ namespace OSM2019.OSM
         public AgentLink(int link_index)
         {
             this.AgentLinkID = link_index;
-            this.SetInitSourceWeight(0.8);
-            this.SetInitTargetWeight(0.8);
+            this.SetInitSourceWeight(0.95);
+            this.SetInitTargetWeight(0.95);
         }
 
         public AgentLink(int link_index, Agent source_agent, Agent target_agent)
@@ -28,8 +28,8 @@ namespace OSM2019.OSM
             this.AgentLinkID = link_index;
             this.SourceAgent = source_agent;
             this.TargetAgent = target_agent;
-            this.SetInitSourceWeight(0.8);
-            this.SetInitTargetWeight(0.8);
+            this.SetInitSourceWeight(0.95);
+            this.SetInitTargetWeight(0.95);
         }
 
         public AgentLink(AgentLink agent_link)

@@ -46,11 +46,13 @@ namespace OSM2019
         {
 
             GraphGeneratorBase graph_generator;
-            graph_generator = new PC_GraphGenerator().SetNodeSize(100).SetRandomEdges(3).SetAddTriangleP(0.1);
-            //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(20);
+            //graph_generator = new PC_GraphGenerator().SetNodeSize(100).SetRandomEdges(3).SetAddTriangleP(0.1);
+            //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(100);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(100).SetNearestNeighbors(6).SetRewireP(0.05);
 
             var graph = graph_generator.Generate(0);
-            var layout = new KK_LayoutGenerator(graph).Generate();
+            //var layout = new KK_LayoutGenerator(graph).Generate();
+            var layout = new Circular_LayoutGenerator(graph).Generate();
 
             var init_belief_gene = new InitBeliefGenerator()
                                     .SetInitBeliefMode(mode: InitBeliefMode.NoRandom);
@@ -90,6 +92,7 @@ namespace OSM2019
                                     .SetRand(agent_gene_rand)
                                     .GenerateNetworkFrame(graph)
                                     //.ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
+                                    //.ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
                                     .ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
                                     .GenerateSensor(sensor_gene)
                                     .SetLayout(layout);
@@ -116,7 +119,7 @@ namespace OSM2019
             this.MyAnimationForm.RegistOSM(osm);
             //osm.InitializeToZeroStep();
             //osm.UpdateSteps(200);
-            osm.UpdateRounds(1, 250);
+            osm.UpdateRounds(100, 300);
             //osm.UpdateRounds(1, 10000);
 
         }

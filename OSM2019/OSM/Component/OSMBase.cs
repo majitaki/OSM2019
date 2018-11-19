@@ -106,7 +106,7 @@ namespace OSM2019.OSM
                     op_form_agents.Add(op_form_agent);
                 }
                 messages.Clear();
-                this.RecordStep();
+                //this.RecordStep();
             }
 
         }
