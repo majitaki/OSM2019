@@ -34,7 +34,7 @@ namespace OSM2019.OSM
             var neighbors = new List<T>();
             foreach (var agent_link in this.AgentLinks)
             {
-                if (agent_link.TargetAgent.AgentID == -1) continue;
+                if (agent_link.TargetAgent.AgentID < 0) continue;
                 Agent neighbor_agent;
                 neighbor_agent = agent_link.TargetAgent.AgentID == this.AgentID ? agent_link.SourceAgent : agent_link.TargetAgent;
 

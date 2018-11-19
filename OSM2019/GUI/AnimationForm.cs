@@ -1,4 +1,5 @@
 ﻿using OSM2019.OSM;
+using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -67,7 +68,6 @@ namespace OSM2019.GUI
                 return _IsView;
             }
         }
-
         struct LinkView
         {
             public AgentLink MyAgentLink { get; private set; }
@@ -99,11 +99,26 @@ namespace OSM2019.GUI
             }
         }
 
-
+        float ViewScale;
+        float ViewX;
+        float ViewY;
+        float ViewOriginX;
+        float ViewOriginY;
 
         public AnimationForm()
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
+        }
+
+        void UserInitialize()
+        {
+            foreach (var layout in Enum.GetValues(typeof(LayoutEnum)))
+            {
+                this.comboBoxLayout.Items.Add(layout.ToString());
+            }
+            this.comboBoxLayout.SelectedIndex = 0;
+            
         }
 
         internal void RegistOSM(I_OSM osm)

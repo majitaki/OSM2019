@@ -38,16 +38,16 @@ namespace OSM2019
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
             Test();
-            this.MyAnimationForm.Show();
-            this.MyAnimationForm.Left = this.Right;
+            //this.MyAnimationForm.Show();
+            //this.MyAnimationForm.Left = this.Right;
         }
 
         void Test()
         {
 
             GraphGeneratorBase graph_generator;
-            //graph_generator = new PC_GraphGenerator().SetNodeSize(10).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(20);
+            graph_generator = new PC_GraphGenerator().SetNodeSize(100).SetRandomEdges(3).SetAddTriangleP(0.1);
+            //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(20);
 
             var graph = graph_generator.Generate(0);
             var layout = new KK_LayoutGenerator(graph).Generate();
@@ -115,7 +115,7 @@ namespace OSM2019
 
             this.MyAnimationForm.RegistOSM(osm);
             //osm.InitializeToZeroStep();
-            //osm.UpdateSteps(1000);
+            osm.UpdateSteps(1000);
             //osm.UpdateRounds(100, 250);
             //osm.UpdateRounds(1, 10000);
 

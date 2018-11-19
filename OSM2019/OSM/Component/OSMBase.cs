@@ -22,12 +22,14 @@ namespace OSM2019.OSM
         public double OpinionIntroRate { get; protected set; }
         public double OpinionIntroInterval { get; protected set; }
         public CalcWeightMode MyCalcWeightMode { get; protected set; }
+        AggregationFunctions MyAggFuncs;
 
 
         public OSMBase()
         {
             this.CurrentStep = 0;
             this.CurrentRound = 0;
+            this.MyAggFuncs = new AggregationFunctions();
         }
 
         public T SetRand(ExtendRandom update_step_rand)
@@ -36,7 +38,7 @@ namespace OSM2019.OSM
             return (T)(object)this;
         }
 
-        public T SetAgentNetwork(AgentNetwork agent_network)
+        public virtual T SetAgentNetwork(AgentNetwork agent_network)
         {
             this.MyAgentNetwork = agent_network;
             return (T)(object)this;
@@ -99,12 +101,12 @@ namespace OSM2019.OSM
                 //agent receive
                 foreach (var message in messages)
                 {
-                    this.UpdateBelief(message);
+                    this.UpdateBeliefByMessage(message);
                     var op_form_agent = this.UpdateOpinion(message);
                     op_form_agents.Add(op_form_agent);
                 }
                 messages.Clear();
-                //this.RecordStep();
+                this.RecordStep();
             }
 
         }
@@ -125,7 +127,7 @@ namespace OSM2019.OSM
         {
             foreach (var agent in this.MyAgentNetwork.Agents)
             {
-                agent.Belief = agent.InitBelief.Clone();
+                agent.SetBelief(agent.InitBelief.Clone());
                 agent.Opinion = agent.InitOpinion.Clone();
             }
             this.CurrentStep = 0;
@@ -154,93 +156,25 @@ namespace OSM2019.OSM
             this.CurrentRound = 0;
         }
 
-        protected virtual void UpdateBelief(Message message)
+        protected virtual void UpdateBeliefByMessage(Message message)
         {
-            var pre_belief_list = message.ToAgent.Belief.Column(0).ToList();
+            Matrix<double> receive_op;
+            var pre_belief = message.ToAgent.Belief;
+            var weight = message.GetToWeight();
 
-            var op_list = new List<double>();
-            var message_op = message.Opinion;
             if (message.Subject != message.ToAgent.MySubject)
             {
                 var to_subject = message.ToAgent.MySubject;
-                op_list = message.Subject.ConvertOpinionForSubject(message_op, to_subject).Column(0).ToList();
+                receive_op = message.Subject.ConvertOpinionForSubject(message.Opinion, to_subject);
             }
             else
             {
-                op_list = message_op.Column(0).ToList();
+                receive_op = message.Opinion;
             }
 
-            for (int op_dim = 0; op_dim < op_list.Count; op_dim++)
-            {
-                var op = op_list[op_dim];
-                int op_num = (int)Math.Floor(op);
-                double op_dust = op % 1;
-                var post_belief_list = new List<double>(pre_belief_list);
-
-                for (int belief_dim = 0; belief_dim < pre_belief_list.Count; belief_dim++)
-                {
-                    double weight = message.GetToWeight();
-                    for (int i = 0; i < op_num; i++)
-                    {
-                        double post_belief;
-                        post_belief = this.CalcSingleBelief(pre_belief_list, belief_dim, op_dim, weight);
-                        post_belief_list[belief_dim] = post_belief;
-                    }
-
-                    if (op_dust > 0)
-                    {
-                        post_belief_list[belief_dim] = this.CalcSingleBelief(pre_belief_list, belief_dim, op_dim, weight, op_dust);
-                    }
-
-                }
-                pre_belief_list = post_belief_list;
-            }
-
-            message.ToAgent.SetBeliefFromList(pre_belief_list);
+            var updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, weight, receive_op);
+            message.ToAgent.SetBelief(updated_belief);
         }
-
-        protected virtual double CalcSingleBelief(List<double> pre_beliefs, int belief_dim, int op_dim, double weight, double op_dust = 0.0)
-        {
-            var upper = pre_beliefs[belief_dim] * this.ConvertWeight(weight, belief_dim, op_dim, pre_beliefs.Count, op_dust);
-
-            var lower = 0.0;
-            foreach (var lower_belief_dim in Enumerable.Range(0, pre_beliefs.Count))
-            {
-                var pre_belief = pre_beliefs[lower_belief_dim];
-                lower += pre_belief * this.ConvertWeight(weight, lower_belief_dim, op_dim, pre_beliefs.Count, op_dust);
-            }
-
-            var pos_belief = upper / lower;
-            return Math.Round(pos_belief, 4);
-        }
-
-        protected virtual double ConvertWeight(double weight, int belief_dim, int op_dim, int dim_size, double op_dust)
-        {
-            if (op_dust != 0.0)
-            {
-                weight = (weight - 1 / dim_size) * op_dust + 1 / dim_size;
-            }
-
-            //switch (this.MyCalcWeightMode)
-            //{
-            //    case CalcWeightMode.FavorMyOpinion:
-            //        break;
-            //    case CalcWeightMode.Equality:
-            //        break;
-            //    default:
-            //        break;
-            //}
-
-            if (belief_dim == op_dim)
-            {
-                return weight;
-            }
-            else
-            {
-                return (1 - weight) / (dim_size - 1);
-            }
-        }
-
 
         protected virtual Agent UpdateOpinion(Message message)
         {

@@ -87,6 +87,9 @@
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="OSM\AAT_OSM.cs" />
+    <Compile Include="OSM\AggregationFunctions.cs" />
+    <Compile Include="OSM\Candidate.cs" />
+    <Compile Include="OSM\CandidateRecord.cs" />
     <Compile Include="OSM\Component\Agent.cs" />
     <Compile Include="OSM\Component\AgentNetwork.cs" />
     <Compile Include="OSM\Component\AgentBase.cs" />

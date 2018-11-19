@@ -25,16 +25,19 @@ namespace OSM2019.GUI
             var layout = this.MyOSM.MyAgentNetwork.MyLayout;
 
             var network_size = this.MyOSM.MyAgentNetwork.Agents.Count;
-            var r = (float)(this.FixClientWidth() / Math.Pow(layout.PosList.Count, 3));
-            if (r == 0) r = 2;
-
+            //var r = (float)(this.FixClientWidth() / Math.Pow(layout.PosList.Count, 3));
+            var network_height = layout.PosList.Select(vector => vector.Y).Max() - layout.PosList.Select(vector => vector.Y).Min();
+            var r = (float)(network_height / Math.Sqrt(layout.PosList.Count));
+            //if (r == 0) r = 1;
+            var scale = this.FixClientWidth() / (layout.PosList.Select(vector => vector.X).Max() - layout.PosList.Select(vector => vector.X).Min());
+            scale /= (float)1.4;
 
             var CentralX = this.pictureBoxAnimation.ClientSize.Width / 2;
             var CentralY = this.pictureBoxAnimation.ClientSize.Height / 2;
 
             Matrix matrix = new Matrix();
             matrix.Translate(CentralX, CentralY);
-            matrix.Scale(100, 100);
+            matrix.Scale(scale, scale);
             matrix.Rotate(30F);
 
             foreach (var agent in this.MyOSM.MyAgentNetwork.Agents)

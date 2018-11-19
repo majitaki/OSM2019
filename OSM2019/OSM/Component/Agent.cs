@@ -10,7 +10,11 @@ namespace OSM2019.OSM
     class Agent : AgentBase<Agent>
     {
         public Matrix<double> InitBelief { get; private set; }
-        public Matrix<double> Belief { get; set; }
+        public Matrix<double> Belief { get; private set; }
+
+        public Agent()
+        {
+        }
 
         public Agent(Node node)
         {
@@ -38,6 +42,18 @@ namespace OSM2019.OSM
             this.Belief = init_belief.Clone();
             return this;
         }
+
+        public Agent SetBelief(Matrix<double> beliefs)
+        {
+            if (Belief.RowCount != beliefs.RowCount)
+            {
+                throw new Exception(nameof(Agent) + " Error irregular beleif dim");
+            }
+
+            this.Belief = beliefs.Clone();
+            return this;
+        }
+
 
         public Agent SetBeliefFromList(List<double> belief_list)
         {
