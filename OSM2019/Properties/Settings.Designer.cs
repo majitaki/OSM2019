@@ -25,7 +25,7 @@ namespace OSM2019.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\majitaki\\Anaconda3\\Scripts\\activate.bat")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\takadamalab\\Anaconda3\\Scripts\\activate.bat ")]
         public string AnacondaPath {
             get {
                 return ((string)(this["AnacondaPath"]));

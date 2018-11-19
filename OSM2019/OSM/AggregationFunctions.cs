@@ -12,7 +12,6 @@ namespace OSM2019.OSM
         public Matrix<double> UpdateBelief(Matrix<double> belief, double weight, Matrix<double> receive_opinion)
         {
             var pre_belief_list = belief.Column(0).ToList();
-
             var op_list = new List<double>();
             op_list = receive_opinion.Column(0).ToList();
 
@@ -21,24 +20,30 @@ namespace OSM2019.OSM
                 var op = op_list[op_dim];
                 int op_num = (int)Math.Floor(op);
                 double op_dust = op % 1;
-                var post_belief_list = new List<double>(pre_belief_list);
 
-                for (int belief_dim = 0; belief_dim < pre_belief_list.Count; belief_dim++)
+                for (int i = 0; i < op_num; i++)
                 {
-                    for (int i = 0; i < op_num; i++)
+                    var post_belief_list = new List<double>(pre_belief_list);
+                    for (int belief_dim = 0; belief_dim < pre_belief_list.Count; belief_dim++)
                     {
                         double post_belief;
                         post_belief = this.CalcSingleBelief(pre_belief_list, belief_dim, op_dim, weight);
                         post_belief_list[belief_dim] = post_belief;
                     }
-
-                    if (op_dust > 0)
-                    {
-                        post_belief_list[belief_dim] = this.CalcSingleBelief(pre_belief_list, belief_dim, op_dim, weight, op_dust);
-                    }
-
+                    pre_belief_list = post_belief_list;
                 }
-                pre_belief_list = post_belief_list;
+
+                if (op_dust > 0)
+                {
+                    var post_belief_list = new List<double>(pre_belief_list);
+                    for (int belief_dim = 0; belief_dim < pre_belief_list.Count; belief_dim++)
+                    {
+                        double post_belief;
+                        post_belief = this.CalcSingleBelief(pre_belief_list, belief_dim, op_dim, weight, op_dust);
+                        post_belief_list[belief_dim] = post_belief;
+                    }
+                    pre_belief_list = post_belief_list;
+                }
             }
 
             var new_belief = Matrix<double>.Build.DenseOfColumnVectors(Vector<double>.Build.Dense(pre_belief_list.ToArray()));

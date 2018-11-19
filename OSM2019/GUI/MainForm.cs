@@ -115,8 +115,8 @@ namespace OSM2019
 
             this.MyAnimationForm.RegistOSM(osm);
             //osm.InitializeToZeroStep();
-            osm.UpdateSteps(1000);
-            //osm.UpdateRounds(100, 250);
+            //osm.UpdateSteps(200);
+            osm.UpdateRounds(1, 250);
             //osm.UpdateRounds(1, 10000);
 
         }
