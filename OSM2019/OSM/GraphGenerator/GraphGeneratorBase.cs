@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using OSM2019.Interfaces;
 using OSM2019.OSM;
 using OSM2019.Utility;
 using System;

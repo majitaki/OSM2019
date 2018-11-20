@@ -2,7 +2,6 @@
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Random;
 using OSM2019.GUI;
-using OSM2019.Interfaces;
 using OSM2019.OSM;
 using OSM2019.Utility;
 using System;
@@ -47,7 +46,7 @@ namespace OSM2019
 
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(100).SetRandomEdges(3).SetAddTriangleP(0.1);
-            //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(100);
+            //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(1000);
             graph_generator = new WS_GraphGenerator().SetNodeSize(100).SetNearestNeighbors(6).SetRewireP(0.05);
 
             var graph = graph_generator.Generate(0);
@@ -55,7 +54,7 @@ namespace OSM2019
             var layout = new Circular_LayoutGenerator(graph).Generate();
 
             var init_belief_gene = new InitBeliefGenerator()
-                                    .SetInitBeliefMode(mode: InitBeliefMode.NoRandom);
+                                    .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
 
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
@@ -102,7 +101,7 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
             var env_mgr = new EnvironmentManager()
-                            .SetSubject(subject_tv)
+                            .SetSubject(subject_company)
                             .SetCorrectDim(0)
                             .SetSensorRate(0.55);
 
@@ -119,7 +118,7 @@ namespace OSM2019
             this.MyAnimationForm.RegistOSM(osm);
             //osm.InitializeToZeroStep();
             //osm.UpdateSteps(200);
-            osm.UpdateRounds(100, 300);
+            osm.UpdateRounds(10, 300);
             //osm.UpdateRounds(1, 10000);
 
         }

@@ -39,10 +39,24 @@ namespace OSM2019.OSM
                 this.UpdateSteps(steps);
                 this.RecordRound();
 
+                this.EstimateAwaRate();
+                this.SelectionWeight();
 
 
                 this.InitializeToZeroStep();
             }
         }
+
+        protected void EstimateAwaRate()
+        {
+
+        }
+
+        protected void SelectionWeight()
+        {
+
+        }
+
+
     }
 }

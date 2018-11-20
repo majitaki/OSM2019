@@ -9,6 +9,8 @@ namespace OSM2019.OSM
     class Candidate
     {
         public List<CandidateRecord> DataBase { get; protected set; }
+        List<CandidateRecord> SortedDataBase;
+        public int SelectSortedIndex;
 
         public Candidate(Agent agent)
         {
@@ -26,6 +28,23 @@ namespace OSM2019.OSM
                 }
             }
 
+            this.SortedDataBase = this.DataBase.OrderBy(record => record.CanWeight).ToList();
+            this.SelectSortedIndex = 0;
+        }
+
+        public CandidateRecord GetSortedRecord(int index)
+        {
+            return this.SortedDataBase[index];
+        }
+
+        public CandidateRecord GetCurrentSelectRecord()
+        {
+            return this.SortedDataBase[this.SelectSortedIndex];
+        }
+
+        public double GetSelectCanWeight()
+        {
+            return this.GetCurrentSelectRecord().CanWeight;
         }
     }
 }

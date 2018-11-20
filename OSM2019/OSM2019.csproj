@@ -86,10 +86,10 @@
     <Compile Include="GUI\AnimationForm.Designer.cs">
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="OSM\AAT_OSM.cs" />
-    <Compile Include="OSM\AggregationFunctions.cs" />
-    <Compile Include="OSM\Candidate.cs" />
-    <Compile Include="OSM\CandidateRecord.cs" />
+    <Compile Include="OSM\Algorithm\AAT\AAT_OSM.cs" />
+    <Compile Include="OSM\Component\AggregationFunctions.cs" />
+    <Compile Include="OSM\Algorithm\AAT\Candidate.cs" />
+    <Compile Include="OSM\Algorithm\AAT\CandidateRecord.cs" />
     <Compile Include="OSM\Component\Agent.cs" />
     <Compile Include="OSM\Component\AgentNetwork.cs" />
     <Compile Include="OSM\Component\AgentBase.cs" />
@@ -128,7 +128,6 @@
     <Compile Include="GUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\I_InitBeliefGenerator.cs" />
     <Compile Include="OSM\Component\InitBeliefGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Spring_LayoutGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Spectral_LayoutGenerator.cs" />
@@ -158,6 +157,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Enum.cs" />
     <Compile Include="Utility\CsvMapper.cs" />
+    <Compile Include="Utility\MyMath.cs" />
     <Compile Include="Utility\PythonProxy.cs" />
     <Compile Include="OSM\Component\RandomNumberManager.cs" />
     <EmbeddedResource Include="GUI\AgentGUI.resx">
@@ -259,9 +259,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="OSM\Algorithm\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Resources\Image\icon_agent.png" />
     <Content Include="Resources\Image\icon_animation.png" />

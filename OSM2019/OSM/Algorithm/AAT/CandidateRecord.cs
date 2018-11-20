@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace OSM2019.OSM
             receive_op.Clear();
             receive_op[belief_dim, 0] = requre_num;
 
-            double can_weight;
+            double can_weight = 0.00;
             for (can_weight = init_can_weight; can_weight < 1.0; can_weight += diff)
             {
                 var belief = this.MyAggFuncs.UpdateBelief(init_belief, can_weight, receive_op);
@@ -47,6 +48,9 @@ namespace OSM2019.OSM
             {
                 throw new Exception("error over can weight");
             }
+
+            can_weight = MyMath.Ceiling(can_weight, 4);
+
             return can_weight;
         }
     }

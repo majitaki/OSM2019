@@ -106,7 +106,7 @@ namespace OSM2019.OSM
                     op_form_agents.Add(op_form_agent);
                 }
                 messages.Clear();
-                //this.RecordStep();
+                this.RecordStep();
             }
 
         }
@@ -137,8 +137,15 @@ namespace OSM2019.OSM
         {
             var cor_dim = this.MyEnvManager.CorrectDim;
             var cor_agents = this.MyAgentNetwork.Agents.Where(agent => agent.OpinionDim() == cor_dim).ToList();
+            var undeter_agents = this.MyAgentNetwork.Agents.Where(agent => agent.OpinionDim() != 0).ToList();
+            var incor_agents = this.MyAgentNetwork.Agents.Except(cor_agents).Except(undeter_agents).ToList();
+            var network_size = this.MyAgentNetwork.Agents.Count;
 
-            Console.WriteLine($"step: {this.CurrentStep} " + $"acc: {Math.Round(cor_agents.Count / (double)this.MyAgentNetwork.Agents.Count, 3)}");
+            Console.WriteLine(
+                $"|step:{this.CurrentStep:D4}|" +
+                $"|cor:{Math.Round(cor_agents.Count / (double)network_size, 3):F3}|" +
+                $"|incor:{Math.Round(incor_agents.Count / (double)network_size, 3):F3}|" +
+                $"|undeter:{Math.Round(undeter_agents.Count / (double)network_size, 3):F3}|");
         }
 
         public virtual void RecordRound()
