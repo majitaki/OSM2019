@@ -53,5 +53,6 @@ namespace OSM2019.OSM
 
             return can_weight;
         }
+
     }
 }

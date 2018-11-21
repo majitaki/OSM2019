@@ -155,6 +155,7 @@
     <Compile Include="OSM\Component\OSMBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\DrawSetting.cs" />
     <Compile Include="Utility\Enum.cs" />
     <Compile Include="Utility\CsvMapper.cs" />
     <Compile Include="Utility\MyMath.cs" />

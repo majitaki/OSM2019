@@ -19,8 +19,8 @@ namespace OSM2019.OSM
         public AgentLink(int link_index)
         {
             this.AgentLinkID = link_index;
-            this.SetInitSourceWeight(0.8);
-            this.SetInitTargetWeight(0.8);
+            this.SetInitSourceWeight(0.6);
+            this.SetInitTargetWeight(0.6);
         }
 
         public AgentLink(int link_index, Agent source_agent, Agent target_agent)
@@ -28,8 +28,8 @@ namespace OSM2019.OSM
             this.AgentLinkID = link_index;
             this.SourceAgent = source_agent;
             this.TargetAgent = target_agent;
-            this.SetInitSourceWeight(0.8);
-            this.SetInitTargetWeight(0.8);
+            this.SetInitSourceWeight(0.6);
+            this.SetInitTargetWeight(0.6);
         }
 
         public AgentLink(AgentLink agent_link)
@@ -62,5 +62,36 @@ namespace OSM2019.OSM
             return this;
         }
 
+        public void SetWeight(Agent agent, double weight)
+        {
+            if (this.SourceAgent == agent)
+            {
+                this.SourceWeight = weight;
+            }
+            else if (this.TargetAgent == agent)
+            {
+                this.TargetWeight = weight;
+            }
+            else
+            {
+                throw new Exception("error illegal agent");
+            }
+        }
+
+        public double GetWeight(Agent agent)
+        {
+            if (this.SourceAgent == agent)
+            {
+                return this.SourceWeight;
+            }
+            else if (this.TargetAgent == agent)
+            {
+                return this.TargetWeight;
+            }
+            else
+            {
+                throw new Exception("error illegal agent");
+            }
+        }
     }
 }

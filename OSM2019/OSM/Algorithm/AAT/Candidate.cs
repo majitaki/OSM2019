@@ -9,7 +9,7 @@ namespace OSM2019.OSM
     class Candidate
     {
         public List<CandidateRecord> DataBase { get; protected set; }
-        List<CandidateRecord> SortedDataBase;
+        public List<CandidateRecord> SortedDataBase { get; protected set; }
         public int SelectSortedIndex;
 
         public Candidate(Agent agent)

@@ -23,13 +23,16 @@ namespace OSM2019.OSM
         public double OpinionIntroInterval { get; protected set; }
         public CalcWeightMode MyCalcWeightMode { get; protected set; }
         AggregationFunctions MyAggFuncs;
-
+        protected Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByStep;
+        protected List<Matrix<double>> AgentReceiveOpinionsByRound;
 
         public OSMBase()
         {
             this.CurrentStep = 0;
             this.CurrentRound = 0;
             this.MyAggFuncs = new AggregationFunctions();
+            this.AgentReceiveOpinionsByStep = new Dictionary<Agent, Matrix<double>>();
+            this.AgentReceiveOpinionsByRound = new List<Matrix<double>>();
         }
 
         public T SetRand(ExtendRandom update_step_rand)
@@ -79,6 +82,14 @@ namespace OSM2019.OSM
         {
             var messages = new List<Message>();
             var op_form_agents = new List<Agent>();
+            this.AgentReceiveOpinionsByStep.Clear();
+
+            foreach (var agent in this.MyAgentNetwork.Agents)
+            {
+                var init_op = agent.Opinion.Clone();
+                init_op.Clear();
+                this.AgentReceiveOpinionsByStep.Add(agent, init_op);
+            }
 
             int end_step = this.CurrentStep + steps;
             for (; this.CurrentStep < end_step; this.CurrentStep++)
@@ -120,7 +131,6 @@ namespace OSM2019.OSM
                 this.RecordRound();
                 this.InitializeToZeroStep();
             }
-
         }
 
         public virtual void InitializeToZeroStep()
@@ -186,6 +196,7 @@ namespace OSM2019.OSM
             }
 
             var updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, weight, receive_op);
+            this.AgentReceiveOpinionsByStep[message.ToAgent] += receive_op;
             message.ToAgent.SetBelief(updated_belief);
         }
 

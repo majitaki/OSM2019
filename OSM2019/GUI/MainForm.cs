@@ -37,8 +37,8 @@ namespace OSM2019
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
             Test();
-            //this.MyAnimationForm.Show();
-            //this.MyAnimationForm.Left = this.Right;
+            this.MyAnimationForm.Show();
+            this.MyAnimationForm.Left = this.Right;
         }
 
         void Test()
@@ -50,8 +50,8 @@ namespace OSM2019
             graph_generator = new WS_GraphGenerator().SetNodeSize(100).SetNearestNeighbors(6).SetRewireP(0.05);
 
             var graph = graph_generator.Generate(0);
-            //var layout = new KK_LayoutGenerator(graph).Generate();
-            var layout = new Circular_LayoutGenerator(graph).Generate();
+            var layout = new KK_LayoutGenerator(graph).Generate();
+            //var layout = new Circular_LayoutGenerator(graph).Generate();
 
             var init_belief_gene = new InitBeliefGenerator()
                                     .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
@@ -118,7 +118,7 @@ namespace OSM2019
             this.MyAnimationForm.RegistOSM(osm);
             //osm.InitializeToZeroStep();
             //osm.UpdateSteps(200);
-            osm.UpdateRounds(10, 200);
+            //osm.UpdateRounds(100, 200);
             //osm.UpdateRounds(1, 10000);
 
         }

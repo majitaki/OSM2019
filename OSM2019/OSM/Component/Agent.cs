@@ -67,5 +67,13 @@ namespace OSM2019.OSM
             //Console.WriteLine(this.Belief.ToString());
             return this;
         }
+
+        public void SetCommonWeight(double common_weight)
+        {
+            foreach (var link in this.AgentLinks)
+            {
+                link.SetWeight(this, common_weight);
+            }
+        }
     }
 }
