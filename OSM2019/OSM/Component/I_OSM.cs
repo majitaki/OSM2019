@@ -16,7 +16,9 @@ namespace OSM2019.OSM
         void InitializeToZeroStep();
         void RecordRound();
         void RecordStep();
+        void UpdateRoundWithoutSteps();
         void UpdateRounds(int rounds, int steps);
         void InitializeToZeroRound();
+        void PrintAgentInfo(Agent agent);
     }
 }

@@ -100,7 +100,7 @@ namespace OSM2019.Utility
 
     class StaticColor
     {
-        static public System.Drawing.Color ConvertHSBtoARGB(float H, float S, float V, byte alpha = 0xff)
+        static public Color ConvertHSBtoARGB(float H, float S, float V, byte alpha = 0xff)
         {
 
             float v = V;

@@ -65,12 +65,13 @@
             this.trackBarRadius.BackColor = System.Drawing.SystemColors.ControlDark;
             this.trackBarRadius.LargeChange = 1;
             this.trackBarRadius.Location = new System.Drawing.Point(406, 3);
-            this.trackBarRadius.Maximum = 20;
+            this.trackBarRadius.Maximum = 50;
             this.trackBarRadius.Minimum = 1;
             this.trackBarRadius.Name = "trackBarRadius";
             this.trackBarRadius.Size = new System.Drawing.Size(151, 45);
             this.trackBarRadius.TabIndex = 40;
             this.trackBarRadius.Value = 10;
+            this.trackBarRadius.Scroll += new System.EventHandler(this.trackBarRadius_Scroll);
             // 
             // comboBoxLayout
             // 
@@ -96,8 +97,8 @@
             this.pictureBoxAnimation.Size = new System.Drawing.Size(820, 542);
             this.pictureBoxAnimation.TabIndex = 29;
             this.pictureBoxAnimation.TabStop = false;
-            this.pictureBoxAnimation.Click += new System.EventHandler(this.pictureBoxAnimation_Click);
             this.pictureBoxAnimation.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBoxAnimation_Paint);
+            this.pictureBoxAnimation.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBoxAnimation_MouseClick);
             // 
             // panel1
             // 

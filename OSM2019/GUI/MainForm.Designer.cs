@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.checkBoxMenu = new System.Windows.Forms.CheckBox();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -56,6 +57,7 @@
             this.radioButtonAgentGUI = new System.Windows.Forms.RadioButton();
             this.radioButtonLearningGUI = new System.Windows.Forms.RadioButton();
             this.radioButtonExperimentGUI = new System.Windows.Forms.RadioButton();
+            this.timerAnimation = new System.Windows.Forms.Timer(this.components);
             this.flowLayoutPanel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.flowLayoutPanel3.SuspendLayout();
@@ -104,7 +106,7 @@
             this.panel3.Controls.Add(this.radioButtonRoundCheck);
             this.panel3.Location = new System.Drawing.Point(51, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(242, 112);
+            this.panel3.Size = new System.Drawing.Size(272, 112);
             this.panel3.TabIndex = 7;
             // 
             // flowLayoutPanel3
@@ -115,7 +117,7 @@
             this.flowLayoutPanel3.Controls.Add(this.radioButtonPlayStep);
             this.flowLayoutPanel3.Location = new System.Drawing.Point(6, 7);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(229, 69);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(263, 69);
             this.flowLayoutPanel3.TabIndex = 31;
             // 
             // radioButtonPlayStop
@@ -130,10 +132,11 @@
             this.radioButtonPlayStop.Image = global::OSM2019.Properties.Resources.icon_stop;
             this.radioButtonPlayStop.Location = new System.Drawing.Point(3, 3);
             this.radioButtonPlayStop.Name = "radioButtonPlayStop";
-            this.radioButtonPlayStop.Size = new System.Drawing.Size(51, 59);
+            this.radioButtonPlayStop.Size = new System.Drawing.Size(58, 58);
             this.radioButtonPlayStop.TabIndex = 3;
             this.radioButtonPlayStop.TabStop = true;
             this.radioButtonPlayStop.UseVisualStyleBackColor = false;
+            this.radioButtonPlayStop.Click += new System.EventHandler(this.radioButtonPlayStop_Click);
             // 
             // radioButtonSeedPlus
             // 
@@ -145,9 +148,9 @@
             this.radioButtonSeedPlus.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDark;
             this.radioButtonSeedPlus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.radioButtonSeedPlus.Image = global::OSM2019.Properties.Resources.icon_seedplus;
-            this.radioButtonSeedPlus.Location = new System.Drawing.Point(60, 3);
+            this.radioButtonSeedPlus.Location = new System.Drawing.Point(67, 3);
             this.radioButtonSeedPlus.Name = "radioButtonSeedPlus";
-            this.radioButtonSeedPlus.Size = new System.Drawing.Size(48, 59);
+            this.radioButtonSeedPlus.Size = new System.Drawing.Size(58, 58);
             this.radioButtonSeedPlus.TabIndex = 4;
             this.radioButtonSeedPlus.TabStop = true;
             this.radioButtonSeedPlus.UseVisualStyleBackColor = false;
@@ -162,12 +165,13 @@
             this.radioButtonPlay.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDark;
             this.radioButtonPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.radioButtonPlay.Image = global::OSM2019.Properties.Resources.icon_play;
-            this.radioButtonPlay.Location = new System.Drawing.Point(114, 3);
+            this.radioButtonPlay.Location = new System.Drawing.Point(131, 3);
             this.radioButtonPlay.Name = "radioButtonPlay";
-            this.radioButtonPlay.Size = new System.Drawing.Size(48, 59);
+            this.radioButtonPlay.Size = new System.Drawing.Size(58, 58);
             this.radioButtonPlay.TabIndex = 5;
             this.radioButtonPlay.TabStop = true;
             this.radioButtonPlay.UseVisualStyleBackColor = false;
+            this.radioButtonPlay.Click += new System.EventHandler(this.radioButtonPlay_Click);
             // 
             // radioButtonPlayStep
             // 
@@ -179,12 +183,13 @@
             this.radioButtonPlayStep.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDark;
             this.radioButtonPlayStep.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.radioButtonPlayStep.Image = global::OSM2019.Properties.Resources.icon_playstep;
-            this.radioButtonPlayStep.Location = new System.Drawing.Point(168, 3);
+            this.radioButtonPlayStep.Location = new System.Drawing.Point(195, 3);
             this.radioButtonPlayStep.Name = "radioButtonPlayStep";
-            this.radioButtonPlayStep.Size = new System.Drawing.Size(50, 59);
+            this.radioButtonPlayStep.Size = new System.Drawing.Size(58, 58);
             this.radioButtonPlayStep.TabIndex = 6;
             this.radioButtonPlayStep.TabStop = true;
             this.radioButtonPlayStep.UseVisualStyleBackColor = false;
+            this.radioButtonPlayStep.Click += new System.EventHandler(this.radioButtonPlayStep_Click);
             // 
             // radioButtonStepCheck
             // 
@@ -220,9 +225,9 @@
             this.panel4.Controls.Add(this.label17);
             this.panel4.Controls.Add(this.numericUpDownControlSeed);
             this.panel4.Controls.Add(this.numericUpDownStepsControl);
-            this.panel4.Location = new System.Drawing.Point(299, 3);
+            this.panel4.Location = new System.Drawing.Point(329, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(241, 112);
+            this.panel4.Size = new System.Drawing.Size(232, 112);
             this.panel4.TabIndex = 9;
             // 
             // label1
@@ -315,6 +320,11 @@
             this.numericUpDownStepsControl.Name = "numericUpDownStepsControl";
             this.numericUpDownStepsControl.Size = new System.Drawing.Size(58, 25);
             this.numericUpDownStepsControl.TabIndex = 23;
+            this.numericUpDownStepsControl.Value = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             // 
             // panel2
             // 
@@ -323,7 +333,7 @@
             this.panel2.Controls.Add(this.buttonGraphShow);
             this.panel2.Controls.Add(this.labelStep);
             this.panel2.Controls.Add(this.labelRound);
-            this.panel2.Location = new System.Drawing.Point(546, 3);
+            this.panel2.Location = new System.Drawing.Point(567, 3);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(232, 112);
             this.panel2.TabIndex = 0;
@@ -470,6 +480,11 @@
             this.radioButtonExperimentGUI.UseVisualStyleBackColor = false;
             this.radioButtonExperimentGUI.CheckedChanged += new System.EventHandler(this.radioButtonSetting_CheckedChanged);
             // 
+            // timerAnimation
+            // 
+            this.timerAnimation.Interval = 1;
+            this.timerAnimation.Tick += new System.EventHandler(this.timerAnimation_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -527,6 +542,7 @@
         private System.Windows.Forms.RadioButton radioButtonSeedPlus;
         private System.Windows.Forms.RadioButton radioButtonPlay;
         private System.Windows.Forms.RadioButton radioButtonPlayStep;
+        private System.Windows.Forms.Timer timerAnimation;
     }
 }
 

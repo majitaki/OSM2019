@@ -18,6 +18,30 @@ namespace OSM2019.OSM
             this.Epsilon = 0.05;
         }
 
+        public override void PrintAgentInfo(Agent agent)
+        {
+            //base.PrintAgentInfo(agent);
+
+            var candidate = this.Candidates[agent];
+            int can_index = 0;
+            foreach (var record in candidate.SortedDataBase)
+            {
+                var select = (candidate.GetCurrentSelectRecord() == record) ? "*" : "";
+                var can_weight = record.CanWeight;
+                var awa_count = record.AwaCount;
+                var h = record.AwaRate;
+                Console.WriteLine($"index: {can_index,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_round: {this.CurrentRound,3} h: {h:f4} {select}");
+                can_index++;
+            }
+        }
+
+        public override void InitializeToZeroRound()
+        {
+            base.InitializeToZeroRound();
+            this.SetAgentNetwork(this.MyAgentNetwork);
+        }
+
+
         public override AAT_OSM SetAgentNetwork(AgentNetwork agent_network)
         {
             this.MyAgentNetwork = agent_network;
@@ -46,18 +70,7 @@ namespace OSM2019.OSM
 
             for (; this.CurrentRound < end_round; this.CurrentRound++)
             {
-                var agent = this.MyAgentNetwork.Agents[0];
-                var candidate = this.Candidates[agent];
-                int can_index = 0;
-                foreach (var record in candidate.SortedDataBase)
-                {
-                    var select = (candidate.GetCurrentSelectRecord() == record) ? "*" : "";
-                    var can_weight = record.CanWeight;
-                    var awa_count = record.AwaCount;
-                    var h = record.AwaRate;
-                    //Console.WriteLine($"index: {can_index,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_round: {this.CurrentRound,3} h: {h:f4} {select}");
-                    can_index++;
-                }
+
 
                 this.UpdateSteps(steps);
                 this.RecordRound();
@@ -65,6 +78,14 @@ namespace OSM2019.OSM
                 this.SelectionWeight();
                 this.InitializeToZeroStep();
             }
+        }
+
+        public override void UpdateRoundWithoutSteps()
+        {
+            this.RecordRound();
+            this.EstimateAwaRate();
+            this.SelectionWeight();
+            this.InitializeToZeroStep();
         }
 
         protected void EstimateAwaRate()

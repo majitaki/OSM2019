@@ -48,6 +48,8 @@ namespace OSM2019.GUI
 
             public bool IsInclude(int x, int y)
             {
+
+
                 var tmp = (this.X - x) * (this.X - x) + (this.Y - y) * (this.Y - y);
                 float R2 = this.R * 3 / 2;
                 if (tmp <= R2 * R2)
@@ -114,6 +116,7 @@ namespace OSM2019.GUI
         int AgentSizeScale;
         DrawSetting MyDrawSetting;
         Pen MyPen;
+        List<AgentView> SelectedAgentViews;
 
         public AnimationForm()
         {
@@ -137,6 +140,7 @@ namespace OSM2019.GUI
             this.ViewOriginX = 0;
             this.ViewOriginY = 0;
             this.AgentSizeScale = this.trackBarRadius.Value;
+            this.SelectedAgentViews = new List<AgentView>();
         }
 
         internal void RegistOSM(I_OSM osm)
@@ -255,9 +259,10 @@ namespace OSM2019.GUI
 
                 //エージェントの位置に移動
                 agentMatrix.Translate(agent_view.X, agent_view.Y);
-                e.Graphics.Transform = agentMatrix.Clone();
+                e.Graphics.Transform = agentMatrix;
 
-                this.DrawNullNode(e, r_outer);
+                //this.DrawNullNode(e, r_outer);
+                this.DrawSquareAgent(e, agent_view);
             }
             return;
         }
@@ -266,6 +271,60 @@ namespace OSM2019.GUI
         void DrawNullNode(PaintEventArgs e, float r_outer)
         {
             e.Graphics.FillEllipse(this.MyDrawSetting.GrayBrush, -r_outer / 2, -r_outer / 2, r_outer, r_outer);
+        }
+
+        void DrawSquareAgent(PaintEventArgs e, AgentView agent_view)
+        {
+            var r = agent_view.R;
+            var length = 2 * r;
+            var height = 2 * r;
+            var base_x = -r;
+            var base_y = -r;
+            SolidBrush tmp_brush;
+            if (this.SelectedAgentViews.Contains(agent_view))
+            {
+                tmp_brush = this.MyDrawSetting.RedBrush;
+            }
+            else
+            {
+                tmp_brush = this.MyDrawSetting.GrayBrush;
+            }
+
+            e.Graphics.FillRectangle(tmp_brush, base_x, base_y, length, height);
+
+            var belief_dim = agent_view.MyAgent.Belief.RowCount;
+            var belief_height = height / belief_dim;
+            SolidBrush dim_brush = null;
+            for (int i = 0; i < belief_dim; i++)
+            {
+                var x = base_x;
+                var y = base_y + belief_height * i;
+                var belief = agent_view.MyAgent.Belief[i, 0];
+                var belief_length = length * (float)belief;
+                var brush = new SolidBrush(StaticColor.ConvertHSBtoARGB(360 * (i / (float)belief_dim), 0.5F, 1.0F));
+                if (i == agent_view.MyAgent.OpinionDim()) dim_brush = brush;
+                e.Graphics.FillRectangle(brush, x, y, belief_length, belief_height);
+            }
+
+            if (agent_view.MyAgent.OpinionDim() != -1)
+            {
+                var pen = new Pen(dim_brush, 3);
+                e.Graphics.DrawRectangle(pen, base_x, base_y, length, height);
+
+            }
+        }
+
+        public void UpdatePictureBox()
+        {
+            this.pictureBoxAnimation.Invalidate();
+            this.UpdateInfo();
+        }
+
+        void UpdateInfo()
+        {
+            if (this.SelectedAgentViews.Count == 0) return;
+            Console.WriteLine("-----");
+            this.MyOSM.PrintAgentInfo(this.SelectedAgentViews.Last().MyAgent);
         }
     }
 

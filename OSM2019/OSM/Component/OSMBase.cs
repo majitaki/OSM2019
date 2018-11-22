@@ -25,6 +25,8 @@ namespace OSM2019.OSM
         AggregationFunctions MyAggFuncs;
         protected Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByStep;
         protected List<Matrix<double>> AgentReceiveOpinionsByRound;
+        List<Message> Messages;
+        List<Agent> OpinionFormedAgents;
 
         public OSMBase()
         {
@@ -33,6 +35,8 @@ namespace OSM2019.OSM
             this.MyAggFuncs = new AggregationFunctions();
             this.AgentReceiveOpinionsByStep = new Dictionary<Agent, Matrix<double>>();
             this.AgentReceiveOpinionsByRound = new List<Matrix<double>>();
+            Messages = new List<Message>();
+            OpinionFormedAgents = new List<Agent>();
         }
 
         public T SetRand(ExtendRandom update_step_rand)
@@ -78,10 +82,30 @@ namespace OSM2019.OSM
             return (T)(object)this;
         }
 
+        public virtual void PrintAgentInfo(Agent agent)
+        {
+            Console.WriteLine($"Agent ID: {agent.AgentID}");
+
+            Console.WriteLine($"Belief");
+            int dim = 0;
+            foreach (var belief in agent.Belief.Column(0).ToList())
+            {
+                Console.WriteLine($"- Dim: {dim} Value{belief}");
+                dim++;
+            }
+
+            Console.WriteLine($"Opinion");
+            dim = 0;
+            foreach (var op in agent.Opinion.Column(0).ToList())
+            {
+                Console.WriteLine($"- Dim: {dim} Value{op}");
+                dim++;
+            }
+
+        }
+
         public virtual void UpdateSteps(int steps)
         {
-            var messages = new List<Message>();
-            var op_form_agents = new List<Agent>();
             this.AgentReceiveOpinionsByStep.Clear();
 
             foreach (var agent in this.MyAgentNetwork.Agents)
@@ -101,22 +125,22 @@ namespace OSM2019.OSM
                     var observe_num = (int)(all_sensors.Count * this.OpinionIntroRate);
                     var observe_sensors = all_sensors.Select(agent => agent.AgentID).OrderBy(a => this.UpdateStepRand.Next()).Take(observe_num).Select(id => this.MyAgentNetwork.Agents[id]).ToList();
                     var env_messages = this.MyEnvManager.SendMessages(observe_sensors, this.UpdateStepRand);
-                    messages.AddRange(env_messages);
+                    Messages.AddRange(env_messages);
                 }
 
                 //agent observe
-                var op_form_messages = this.AgentSendMessages(op_form_agents);
-                messages.AddRange(op_form_messages);
-                op_form_agents.Clear();
+                var op_form_messages = this.AgentSendMessages(OpinionFormedAgents);
+                Messages.AddRange(op_form_messages);
+                OpinionFormedAgents.Clear();
 
                 //agent receive
-                foreach (var message in messages)
+                foreach (var message in Messages)
                 {
                     this.UpdateBeliefByMessage(message);
                     var op_form_agent = this.UpdateOpinion(message);
-                    op_form_agents.Add(op_form_agent);
+                    OpinionFormedAgents.Add(op_form_agent);
                 }
-                messages.Clear();
+                Messages.Clear();
                 //this.RecordStep();
             }
 
@@ -133,6 +157,11 @@ namespace OSM2019.OSM
             }
         }
 
+        public virtual void UpdateRoundWithoutSteps()
+        {
+
+        }
+
         public virtual void InitializeToZeroStep()
         {
             foreach (var agent in this.MyAgentNetwork.Agents)
@@ -141,6 +170,8 @@ namespace OSM2019.OSM
                 agent.Opinion = agent.InitOpinion.Clone();
             }
             this.CurrentStep = 0;
+            this.Messages.Clear();
+            this.OpinionFormedAgents.Clear();
         }
 
         public virtual void RecordStep()

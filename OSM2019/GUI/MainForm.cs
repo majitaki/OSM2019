@@ -28,6 +28,7 @@ namespace OSM2019
         internal LearningGUI MyLearningGUI;
         internal ExperimentGUI MyExperimentGUI;
         internal AnimationForm MyAnimationForm;
+        I_OSM MyOSM;
 
         public MainForm()
         {
@@ -39,6 +40,7 @@ namespace OSM2019
             Test();
             this.MyAnimationForm.Show();
             this.MyAnimationForm.Left = this.Right;
+
         }
 
         void Test()
@@ -46,8 +48,8 @@ namespace OSM2019
 
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(100).SetRandomEdges(3).SetAddTriangleP(0.1);
-            //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(1000);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(100).SetNearestNeighbors(6).SetRewireP(0.05);
+            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(100);
+            //graph_generator = new WS_GraphGenerator().SetNodeSize(1000).SetNearestNeighbors(6).SetRewireP(0.05);
 
             var graph = graph_generator.Generate(0);
             var layout = new KK_LayoutGenerator(graph).Generate();
@@ -58,6 +60,7 @@ namespace OSM2019
 
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
+            var subject_test = new OpinionSubject("test", 5);
 
             double[] conv_array = { 1, 0, 0, 1, 1, 0 };
             var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
@@ -80,6 +83,12 @@ namespace OSM2019
                                 .SetSubject(subject_company)
                                 .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0));
 
+            var sample_agent_test = new SampleAgent()
+                                .SetInitBeliefGene(init_belief_gene)
+                                .SetThreshold(op_form_threshold)
+                                .SetSubject(subject_test)
+                                .SetInitOpinion(Matrix<double>.Build.Dense(5, 1, 0.0));
+
             var sensor_gene = new SensorGenerator()
                             .SetSensorSize(10);
 
@@ -90,9 +99,9 @@ namespace OSM2019
             var agent_network = new AgentNetwork()
                                     .SetRand(agent_gene_rand)
                                     .GenerateNetworkFrame(graph)
-                                    //.ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
-                                    //.ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
+                                    .ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.8)
                                     .ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
+                                    //.ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
                                     .GenerateSensor(sensor_gene)
                                     .SetLayout(layout);
 
@@ -101,7 +110,8 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
             var env_mgr = new EnvironmentManager()
-                            .SetSubject(subject_company)
+                            //.SetSubject(subject_company)
+                            .SetSubject(subject_tv)
                             .SetCorrectDim(0)
                             .SetSensorRate(0.55);
 
@@ -115,6 +125,7 @@ namespace OSM2019
                     .SetOpinionIntroRate(0.1)
                     .SetTargetH(0.9);
 
+            this.MyOSM = osm;
             this.MyAnimationForm.RegistOSM(osm);
             //osm.InitializeToZeroStep();
             //osm.UpdateSteps(200);
@@ -135,9 +146,10 @@ namespace OSM2019
 
             this.radioButtonGraphGUI.Checked = true;
             this.radioButtonStepCheck.Checked = true;
-            this.numericUpDownStepsControl.Value = 3000;
+            this.numericUpDownStepsControl.Value = 1000;
             this.numericUpDownSpeedControl.Value = 1;
-            this.labelRoundNum.Text = 1.ToString();
+            this.labelRoundNum.Text = 0.ToString();
+            this.PlayStopFlag = true;
         }
 
         void InitializeGUIs()
@@ -225,6 +237,98 @@ namespace OSM2019
         }
 
         #endregion
-    }
 
+        void PlayOneStep()
+        {
+            var control_seed = (int)this.numericUpDownControlSeed.Value;
+            var control_speed = (int)this.numericUpDownSpeedControl.Value;
+            var max_steps = (int)this.numericUpDownStepsControl.Value;
+
+            var current_rounds = int.Parse(this.labelRoundNum.Text);
+            var current_steps = int.Parse(this.labelStepNum.Text);
+
+            control_seed += int.Parse(this.labelStepNum.Text);
+            control_seed += int.Parse(this.labelRoundNum.Text);
+            this.MyOSM.UpdateSteps(control_speed);
+            this.labelStepNum.Text = (current_steps + control_speed).ToString();
+            current_steps += control_speed;
+
+            if (this.radioButtonRoundCheck.Checked)
+            {
+                if (max_steps <= current_steps)
+                {
+                    this.MyOSM.UpdateRoundWithoutSteps();
+                    this.labelStepNum.Text = 0.ToString();
+                    this.labelRoundNum.Text = (current_rounds + 1).ToString();
+                }
+            }
+
+            this.MyAnimationForm.UpdatePictureBox();
+        }
+
+        private void timerAnimation_Tick(object sender, EventArgs e)
+        {
+            this.PlayOneStep();
+        }
+
+
+        bool PlayStopFlag;
+        void ChangePlayButton(bool turn_mode)
+        {
+            if (turn_mode)
+            {
+                this.PlayStopFlag = !this.PlayStopFlag;
+            }
+
+            if (!this.PlayStopFlag)
+            {
+                this.timerAnimation.Enabled = true;
+                this.radioButtonPlay.Image = Properties.Resources.icon_pause;
+            }
+            else
+            {
+                this.timerAnimation.Enabled = false;
+                this.radioButtonPlay.Image = Properties.Resources.icon_play;
+            }
+
+        }
+
+        private void radioButtonPlay_Click(object sender, EventArgs e)
+        {
+            this.ChangePlayButton(true);
+        }
+
+        internal void PlayStop()
+        {
+            this.PlayStopFlag = true;
+            this.ChangePlayButton(false);
+            if (this.MyOSM == null) return;
+
+            int step_num = 0;
+            if (this.radioButtonStepCheck.Checked)
+            {
+                this.labelStepNum.Text = step_num.ToString();
+                this.MyOSM.InitializeToZeroStep();
+            }
+            else if (this.radioButtonRoundCheck.Checked)
+            {
+                int round_num = 0;
+                this.labelRoundNum.Text = round_num.ToString();
+                this.labelStepNum.Text = step_num.ToString();
+                this.MyOSM.InitializeToZeroRound();
+            }
+            this.MyAnimationForm.UpdatePictureBox();
+
+        }
+
+        private void radioButtonPlayStop_Click(object sender, EventArgs e)
+        {
+            this.PlayStop();
+        }
+
+        private void radioButtonPlayStep_Click(object sender, EventArgs e)
+        {
+            this.PlayOneStep();
+        }
+    }
 }
