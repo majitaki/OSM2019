@@ -45,11 +45,10 @@ namespace OSM2019
 
         void Test()
         {
-
             GraphGeneratorBase graph_generator;
-            //graph_generator = new PC_GraphGenerator().SetNodeSize(100).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(100);
-            //graph_generator = new WS_GraphGenerator().SetNodeSize(1000).SetNearestNeighbors(6).SetRewireP(0.05);
+            //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(500).SetNearestNeighbors(6).SetRewireP(0.05);
+            //graph_generator = new BA_GraphGenerator().SetNodeSize(1000).SetAttachEdges(3);
 
             var graph = graph_generator.Generate(0);
             var layout = new KK_LayoutGenerator(graph).Generate();
@@ -90,7 +89,7 @@ namespace OSM2019
                                 .SetInitOpinion(Matrix<double>.Build.Dense(5, 1, 0.0));
 
             var sensor_gene = new SensorGenerator()
-                            .SetSensorSize(10);
+                            .SetSensorSize((int)(0.1 * graph.Nodes.Count));
 
             int agent_gene_seed = 0;
             var agent_gene_rand = new ExtendRandom(agent_gene_seed);
@@ -99,9 +98,9 @@ namespace OSM2019
             var agent_network = new AgentNetwork()
                                     .SetRand(agent_gene_rand)
                                     .GenerateNetworkFrame(graph)
-                                    .ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.8)
-                                    .ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
-                                    //.ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
+                                    //.ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
+                                    //.ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
+                                    .ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
                                     .GenerateSensor(sensor_gene)
                                     .SetLayout(layout);
 
@@ -111,7 +110,7 @@ namespace OSM2019
 
             var env_mgr = new EnvironmentManager()
                             //.SetSubject(subject_company)
-                            .SetSubject(subject_tv)
+                            .SetSubject(subject_test)
                             .SetCorrectDim(0)
                             .SetSensorRate(0.55);
 
@@ -121,9 +120,10 @@ namespace OSM2019
                     .SetEnvManager(env_mgr)
                     .SetSubjectManager(subject_manager)
                     .SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion)
-                    .SetOpinionIntroInterval(10)
+                    .SetOpinionIntroInterval(20)
                     .SetOpinionIntroRate(0.1)
                     .SetTargetH(0.9);
+
 
             this.MyOSM = osm;
             this.MyAnimationForm.RegistOSM(osm);
@@ -238,7 +238,7 @@ namespace OSM2019
 
         #endregion
 
-        void PlayOneStep()
+        void PlayOne()
         {
             var control_seed = (int)this.numericUpDownControlSeed.Value;
             var control_speed = (int)this.numericUpDownSpeedControl.Value;
@@ -257,18 +257,29 @@ namespace OSM2019
             {
                 if (max_steps <= current_steps)
                 {
+                    this.MyOSM.IntegrateReceiveOpinion();
                     this.MyOSM.UpdateRoundWithoutSteps();
+                    this.MyAnimationForm.UpdatePictureBox();
+                    this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveOpinionsByRound[agent].Clear());
                     this.labelStepNum.Text = 0.ToString();
                     this.labelRoundNum.Text = (current_rounds + 1).ToString();
                 }
+                else
+                {
+                    this.MyAnimationForm.UpdatePictureBox();
+                }
+            }
+            else
+            {
+                this.MyAnimationForm.UpdatePictureBox();
+
             }
 
-            this.MyAnimationForm.UpdatePictureBox();
         }
 
         private void timerAnimation_Tick(object sender, EventArgs e)
         {
-            this.PlayOneStep();
+            this.PlayOne();
         }
 
 
@@ -317,8 +328,8 @@ namespace OSM2019
                 this.labelStepNum.Text = step_num.ToString();
                 this.MyOSM.InitializeToZeroRound();
             }
+            this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveOpinionsByStep[agent].Clear());
             this.MyAnimationForm.UpdatePictureBox();
-
         }
 
         private void radioButtonPlayStop_Click(object sender, EventArgs e)
@@ -328,7 +339,7 @@ namespace OSM2019
 
         private void radioButtonPlayStep_Click(object sender, EventArgs e)
         {
-            this.PlayOneStep();
+            this.PlayOne();
         }
     }
 }

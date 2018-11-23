@@ -15,12 +15,13 @@ namespace OSM2019.OSM
 
         public AAT_OSM() : base()
         {
-            this.Epsilon = 0.05;
+            //this.Epsilon = 0.05;
+            this.Epsilon = 0.00;
         }
 
         public override void PrintAgentInfo(Agent agent)
         {
-            //base.PrintAgentInfo(agent);
+            base.PrintAgentInfo(agent);
 
             var candidate = this.Candidates[agent];
             int can_index = 0;
@@ -28,9 +29,10 @@ namespace OSM2019.OSM
             {
                 var select = (candidate.GetCurrentSelectRecord() == record) ? "*" : "";
                 var can_weight = record.CanWeight;
+                var req_num = record.RequireOpinionNum;
                 var awa_count = record.AwaCount;
                 var h = record.AwaRate;
-                Console.WriteLine($"index: {can_index,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_round: {this.CurrentRound,3} h: {h:f4} {select}");
+                Console.WriteLine($"index: {can_index,3} req: {req_num,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_round: {this.CurrentRound,3} h: {h:f4} {select}");
                 can_index++;
             }
         }
@@ -44,7 +46,7 @@ namespace OSM2019.OSM
 
         public override AAT_OSM SetAgentNetwork(AgentNetwork agent_network)
         {
-            this.MyAgentNetwork = agent_network;
+            base.SetAgentNetwork(agent_network);
             this.Candidates = new Dictionary<Agent, Candidate>();
 
             foreach (var agent in this.MyAgentNetwork.Agents)
@@ -68,31 +70,33 @@ namespace OSM2019.OSM
         {
             int end_round = this.CurrentRound + rounds;
 
+            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByStep[agent].Clear());
             for (; this.CurrentRound < end_round; this.CurrentRound++)
             {
-
-
                 this.UpdateSteps(steps);
-                this.RecordRound();
+                this.IntegrateReceiveOpinion();
+                this.PrintRound();
                 this.EstimateAwaRate();
                 this.SelectionWeight();
                 this.InitializeToZeroStep();
             }
+            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByRound[agent].Clear());
         }
 
         public override void UpdateRoundWithoutSteps()
         {
-            this.RecordRound();
+            this.PrintRound();
             this.EstimateAwaRate();
             this.SelectionWeight();
             this.InitializeToZeroStep();
+            this.CurrentRound++;
         }
 
         protected void EstimateAwaRate()
         {
             foreach (var candidate in this.Candidates)
             {
-                var received_sum_op = this.AgentReceiveOpinionsByStep[candidate.Key];
+                var received_sum_op = this.AgentReceiveOpinionsByRound[candidate.Key];
                 double obs_u = this.GetObsU(received_sum_op);
                 if (obs_u == 0) continue;
                 this.UpdateAveAwaRates(candidate.Key, candidate.Value, obs_u);
@@ -103,9 +107,9 @@ namespace OSM2019.OSM
         {
             foreach (var candidate in this.Candidates)
             {
-                var current_h = candidate.Value.GetSelectCanWeight();
+                var current_h = candidate.Value.GetCurrentSelectRecord().AwaRate;
                 var current_l = candidate.Value.SelectSortedIndex;
-                var can_size = candidate.Value.DataBase.Count;
+                var can_size = candidate.Value.SortedDataBase.Count;
 
                 if (current_l < can_size - 1 && current_h < this.TargetH)
                 {
@@ -113,8 +117,8 @@ namespace OSM2019.OSM
                 }
                 else if (current_l > 0)
                 {
-                    var pre_h = candidate.Value.GetSortedRecord(current_l - 1).CanWeight;
-                    if (pre_h > (this.TargetH + this.Epsilon))
+                    var pre_h = candidate.Value.GetSortedRecord(current_l - 1).AwaRate;
+                    if (pre_h >= (this.TargetH + this.Epsilon))
                     {
                         candidate.Value.SelectSortedIndex--;
                     }
@@ -145,7 +149,7 @@ namespace OSM2019.OSM
             var select_record = candidate.GetCurrentSelectRecord();
             var current_round = this.CurrentRound;
 
-            foreach (var record in candidate.DataBase)
+            foreach (var record in candidate.SortedDataBase)
             {
                 if (this.IsEvsOpinionFormed(agent, select_record, record, obs_u))
                 {
@@ -165,10 +169,11 @@ namespace OSM2019.OSM
 
         bool IsDetermined(Agent agent)
         {
-            var undeter_op = agent.Opinion;
+            var undeter_op = agent.Opinion.Clone();
             undeter_op.Clear();
 
-            return (agent.Opinion != undeter_op) ? true : false;
+            return (!agent.Opinion.Equals(undeter_op)) ? true : false;
+            //return (agent.Opinion != undeter_op) ? true : false;
         }
 
         bool IsBiggerWeight(CandidateRecord select_record, CandidateRecord other_record)

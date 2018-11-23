@@ -23,8 +23,8 @@ namespace OSM2019.OSM
         public double OpinionIntroInterval { get; protected set; }
         public CalcWeightMode MyCalcWeightMode { get; protected set; }
         AggregationFunctions MyAggFuncs;
-        protected Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByStep;
-        protected List<Matrix<double>> AgentReceiveOpinionsByRound;
+        public Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByStep { get; set; }
+        public Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByRound { get; set; }
         List<Message> Messages;
         List<Agent> OpinionFormedAgents;
 
@@ -34,7 +34,7 @@ namespace OSM2019.OSM
             this.CurrentRound = 0;
             this.MyAggFuncs = new AggregationFunctions();
             this.AgentReceiveOpinionsByStep = new Dictionary<Agent, Matrix<double>>();
-            this.AgentReceiveOpinionsByRound = new List<Matrix<double>>();
+            this.AgentReceiveOpinionsByRound = new Dictionary<Agent, Matrix<double>>();
             Messages = new List<Message>();
             OpinionFormedAgents = new List<Agent>();
         }
@@ -48,6 +48,8 @@ namespace OSM2019.OSM
         public virtual T SetAgentNetwork(AgentNetwork agent_network)
         {
             this.MyAgentNetwork = agent_network;
+            this.InitialReceiveOpinionsByStep();
+            this.InitialReceiveOpinionsByRound();
             return (T)(object)this;
         }
 
@@ -102,19 +104,51 @@ namespace OSM2019.OSM
                 dim++;
             }
 
+            Console.WriteLine($"Receive");
+            var receive_op = this.AgentReceiveOpinionsByRound[agent];
+            dim = 0;
+            foreach (var op in receive_op.Column(0).ToList())
+            {
+                Console.WriteLine($"- Dim: {dim} Value{op}");
+                dim++;
+            }
+        }
+
+        public void InitialReceiveOpinionsByStep()
+        {
+            this.AgentReceiveOpinionsByStep.Clear();
+            foreach (var agent in this.MyAgentNetwork.Agents)
+            {
+                var init_op = agent.InitOpinion.Clone();
+                init_op.Clear();
+                this.AgentReceiveOpinionsByStep.Add(agent, init_op);
+            }
+        }
+
+        public void InitialReceiveOpinionsByRound()
+        {
+            this.AgentReceiveOpinionsByRound.Clear();
+            foreach (var agent in this.MyAgentNetwork.Agents)
+            {
+                var init_op = agent.InitOpinion.Clone();
+                init_op.Clear();
+                this.AgentReceiveOpinionsByRound.Add(agent, init_op);
+            }
+        }
+
+        public void IntegrateReceiveOpinion()
+        {
+            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByRound[agent].Clear());
+            foreach (var agent in this.MyAgentNetwork.Agents)
+            {
+                var rec_op_step = this.AgentReceiveOpinionsByStep[agent];
+                this.AgentReceiveOpinionsByRound[agent] += rec_op_step;
+            }
+            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByStep[agent].Clear());
         }
 
         public virtual void UpdateSteps(int steps)
         {
-            this.AgentReceiveOpinionsByStep.Clear();
-
-            foreach (var agent in this.MyAgentNetwork.Agents)
-            {
-                var init_op = agent.Opinion.Clone();
-                init_op.Clear();
-                this.AgentReceiveOpinionsByStep.Add(agent, init_op);
-            }
-
             int end_step = this.CurrentStep + steps;
             for (; this.CurrentStep < end_step; this.CurrentStep++)
             {
@@ -143,23 +177,28 @@ namespace OSM2019.OSM
                 Messages.Clear();
                 //this.RecordStep();
             }
-
         }
 
         public virtual void UpdateRounds(int rounds, int steps)
         {
             int end_round = this.CurrentRound + rounds;
+
+            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByStep[agent].Clear());
             for (; this.CurrentRound < end_round; this.CurrentRound++)
             {
                 this.UpdateSteps(steps);
-                this.RecordRound();
+                this.IntegrateReceiveOpinion();
+                this.PrintRound();
                 this.InitializeToZeroStep();
             }
+            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByRound[agent].Clear());
         }
 
         public virtual void UpdateRoundWithoutSteps()
         {
-
+            this.PrintRound();
+            this.InitializeToZeroStep();
+            this.CurrentRound++;
         }
 
         public virtual void InitializeToZeroStep()
@@ -174,7 +213,7 @@ namespace OSM2019.OSM
             this.OpinionFormedAgents.Clear();
         }
 
-        public virtual void RecordStep()
+        public virtual void PrintStep()
         {
             var cor_dim = this.MyEnvManager.CorrectDim;
             var cor_agents = this.MyAgentNetwork.Agents.Where(agent => agent.OpinionDim() == cor_dim).ToList();
@@ -189,7 +228,7 @@ namespace OSM2019.OSM
                 $"|undeter:{Math.Round(undeter_agents.Count / (double)network_size, 3):F3}|");
         }
 
-        public virtual void RecordRound()
+        public virtual void PrintRound()
         {
             var cor_dim = this.MyEnvManager.CorrectDim;
             var cor_agents = this.MyAgentNetwork.Agents.Where(agent => agent.OpinionDim() == cor_dim).ToList();

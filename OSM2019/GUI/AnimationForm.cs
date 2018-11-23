@@ -280,6 +280,8 @@ namespace OSM2019.GUI
             var height = 2 * r;
             var base_x = -r;
             var base_y = -r;
+
+            //select
             SolidBrush tmp_brush;
             if (this.SelectedAgentViews.Contains(agent_view))
             {
@@ -292,6 +294,7 @@ namespace OSM2019.GUI
 
             e.Graphics.FillRectangle(tmp_brush, base_x, base_y, length, height);
 
+            //belief
             var belief_dim = agent_view.MyAgent.Belief.RowCount;
             var belief_height = height / belief_dim;
             SolidBrush dim_brush = null;
@@ -306,12 +309,21 @@ namespace OSM2019.GUI
                 e.Graphics.FillRectangle(brush, x, y, belief_length, belief_height);
             }
 
+            //opinion 
             if (agent_view.MyAgent.OpinionDim() != -1)
             {
                 var pen = new Pen(dim_brush, 3);
                 e.Graphics.DrawRectangle(pen, base_x, base_y, length, height);
-
             }
+
+            //sensor
+            if (agent_view.MyAgent.IsSensor)
+            {
+                var pen = MyDrawSetting.SensorPen; 
+                e.Graphics.DrawRectangle(pen, base_x, base_y, length, height);
+            }
+
+
         }
 
         public void UpdatePictureBox()
