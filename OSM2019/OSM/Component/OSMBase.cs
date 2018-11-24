@@ -52,6 +52,7 @@ namespace OSM2019.OSM
             this.MyAgentNetwork = agent_network;
             this.InitialReceiveOpinionsByStep();
             this.InitialReceiveOpinionsByRound();
+            this.InitialReceiveRounds();
             return (T)(object)this;
         }
 
@@ -114,6 +115,8 @@ namespace OSM2019.OSM
                 Console.WriteLine($"- Dim: {dim} Value{op}");
                 dim++;
             }
+
+            Console.WriteLine($"Receive Rounds :{this.AgentReceiveRounds[agent].Count}");
         }
 
         public void InitialReceiveOpinionsByStep()
@@ -138,13 +141,25 @@ namespace OSM2019.OSM
             }
         }
 
+        public void InitialReceiveRounds()
+        {
+            this.AgentReceiveRounds.Clear();
+            foreach (var agent in this.MyAgentNetwork.Agents)
+            {
+                var rounds = new List<int>();
+                this.AgentReceiveRounds.Add(agent, rounds);
+            }
+        }
+
         public void IntegrateReceiveOpinion()
         {
             this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByRound[agent].Clear());
+            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveRounds[agent].Clear());
             foreach (var agent in this.MyAgentNetwork.Agents)
             {
                 var rec_op_step = this.AgentReceiveOpinionsByStep[agent];
                 this.AgentReceiveOpinionsByRound[agent] += rec_op_step;
+                if (agent.IsReceived) this.AgentReceiveRounds[agent].Add(this.CurrentRound);
             }
             this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByStep[agent].Clear());
         }
@@ -187,6 +202,7 @@ namespace OSM2019.OSM
             int end_round = this.CurrentRound + rounds;
 
             this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByStep[agent].Clear());
+            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveRounds[agent].Clear());
             for (; this.CurrentRound < end_round; this.CurrentRound++)
             {
                 this.UpdateSteps(steps);
@@ -210,6 +226,7 @@ namespace OSM2019.OSM
             {
                 agent.SetBelief(agent.InitBelief.Clone());
                 agent.Opinion = agent.InitOpinion.Clone();
+                agent.IsReceived = false;
             }
             this.CurrentStep = 0;
             this.Messages.Clear();
@@ -277,6 +294,7 @@ namespace OSM2019.OSM
 
             this.AgentReceiveOpinionsByStep[message.ToAgent] += receive_op;
             message.ToAgent.SetBelief(updated_belief);
+            message.ToAgent.IsReceived = true;
         }
 
         protected virtual Agent UpdateOpinion(Message message)

@@ -71,6 +71,7 @@ namespace OSM2019.OSM
             int end_round = this.CurrentRound + rounds;
 
             this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByStep[agent].Clear());
+            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveRounds[agent].Clear());
             for (; this.CurrentRound < end_round; this.CurrentRound++)
             {
                 this.UpdateSteps(steps);

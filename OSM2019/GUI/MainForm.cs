@@ -260,6 +260,7 @@ namespace OSM2019
                     this.MyOSM.UpdateRoundWithoutSteps();
                     this.MyAnimationForm.UpdatePictureBox();
                     this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveOpinionsByRound[agent].Clear());
+                    this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveRounds[agent].Clear());
                     this.labelStepNum.Text = 0.ToString();
                     this.labelRoundNum.Text = (current_rounds + 1).ToString();
                 }
@@ -328,6 +329,7 @@ namespace OSM2019
                 this.MyOSM.InitializeToZeroRound();
             }
             this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveOpinionsByStep[agent].Clear());
+            this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveRounds[agent].Clear());
             this.MyAnimationForm.UpdatePictureBox();
         }
 

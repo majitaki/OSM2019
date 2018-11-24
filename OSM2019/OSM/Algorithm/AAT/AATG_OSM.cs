@@ -16,6 +16,7 @@ namespace OSM2019.OSM
             this.QueueRange = 2;
             this.SetTargetH(1.0);
         }
+
         public override AAT_OSM SetAgentNetwork(AgentNetwork agent_network)
         {
             base.SetAgentNetwork(agent_network);
@@ -35,6 +36,7 @@ namespace OSM2019.OSM
             var select_record = candidate.GetCurrentSelectRecord();
             var current_round = this.CurrentRound;
             var obs_weight = candidate.SortedDataBase.OrderBy(record => Math.Abs(record.RequireOpinionNum - obs_u)).First().CanWeight;
+            var receive_rounds = this.AgentReceiveRounds[agent].Count;
 
             foreach (var record in candidate.SortedDataBase)
             {
@@ -42,7 +44,8 @@ namespace OSM2019.OSM
                 {
                     record.AwaCount += 1;
                 }
-                record.AwaRate = record.AwaCount / (double)(current_round + 1);
+                //record.AwaRate = record.AwaCount / (double)(current_round + 1);
+                record.AwaRate = record.AwaCount / (double)(receive_rounds);
             }
         }
 

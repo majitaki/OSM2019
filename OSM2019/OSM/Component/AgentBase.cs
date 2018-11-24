@@ -17,6 +17,7 @@ namespace OSM2019.OSM
         public Matrix<double> Opinion { get; set; }
         public List<AgentLink> AgentLinks { get; protected set; }
         public double OpinionThreshold { get; protected set; }
+        public bool IsReceived;
 
         public int OpinionDim()
         {

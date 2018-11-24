@@ -14,6 +14,7 @@ namespace OSM2019.OSM
         AgentNetwork MyAgentNetwork { get; set; }
         Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByStep { get; set; }
         Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByRound { get; set; }
+        Dictionary<Agent, List<int>> AgentReceiveRounds { get; set; }
 
         void UpdateSteps(int steps);
         void InitializeToZeroStep();
