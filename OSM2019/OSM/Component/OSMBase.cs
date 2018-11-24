@@ -25,6 +25,7 @@ namespace OSM2019.OSM
         AggregationFunctions MyAggFuncs;
         public Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByStep { get; set; }
         public Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByRound { get; set; }
+        public Dictionary<Agent, List<int>> AgentReceiveRounds { get; set; }
         List<Message> Messages;
         List<Agent> OpinionFormedAgents;
 
@@ -35,6 +36,7 @@ namespace OSM2019.OSM
             this.MyAggFuncs = new AggregationFunctions();
             this.AgentReceiveOpinionsByStep = new Dictionary<Agent, Matrix<double>>();
             this.AgentReceiveOpinionsByRound = new Dictionary<Agent, Matrix<double>>();
+            this.AgentReceiveRounds = new Dictionary<Agent, List<int>>();
             Messages = new List<Message>();
             OpinionFormedAgents = new List<Agent>();
         }
@@ -146,6 +148,7 @@ namespace OSM2019.OSM
             }
             this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByStep[agent].Clear());
         }
+
 
         public virtual void UpdateSteps(int steps)
         {
@@ -262,10 +265,16 @@ namespace OSM2019.OSM
             }
             else
             {
-                receive_op = message.Opinion;
+                receive_op = message.Opinion.Clone();
             }
 
             var updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, weight, receive_op);
+            if (message.FromAgent.AgentID < 0)
+            {
+                var sensor_rate = this.MyEnvManager.SensorRate;
+                updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, sensor_rate, receive_op);
+            }
+
             this.AgentReceiveOpinionsByStep[message.ToAgent] += receive_op;
             message.ToAgent.SetBelief(updated_belief);
         }

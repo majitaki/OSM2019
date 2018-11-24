@@ -29,6 +29,21 @@ namespace OSM2019.OSM
             return -1;
         }
 
+        public bool IsDetermined()
+        {
+            var undeter_op = this.Opinion.Clone();
+            undeter_op.Clear();
+
+            return (!this.Opinion.Equals(undeter_op)) ? true : false;
+        }
+
+        public bool IsChanged()
+        {
+            var init_op = this.InitOpinion.Clone();
+
+            return (!this.Opinion.Equals(init_op)) ? true : false;
+        }
+
         public List<T> GetNeighbors()
         {
             var neighbors = new List<T>();

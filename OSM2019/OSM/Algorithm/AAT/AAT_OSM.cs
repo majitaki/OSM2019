@@ -9,9 +9,9 @@ namespace OSM2019.OSM
 {
     class AAT_OSM : OSMBase<AAT_OSM>
     {
-        double TargetH;
-        double Epsilon;
-        Dictionary<Agent, Candidate> Candidates;
+        protected double TargetH;
+        protected double Epsilon;
+        protected Dictionary<Agent, Candidate> Candidates;
 
         public AAT_OSM() : base()
         {
@@ -92,7 +92,7 @@ namespace OSM2019.OSM
             this.CurrentRound++;
         }
 
-        protected void EstimateAwaRate()
+        protected virtual void EstimateAwaRate()
         {
             foreach (var candidate in this.Candidates)
             {
@@ -103,7 +103,7 @@ namespace OSM2019.OSM
             }
         }
 
-        protected void SelectionWeight()
+        protected virtual void SelectionWeight()
         {
             foreach (var candidate in this.Candidates)
             {
@@ -128,7 +128,6 @@ namespace OSM2019.OSM
             }
         }
 
-
         double GetObsU(Matrix<double> received_sum_op)
         {
             List<double> op_list = received_sum_op.Column(0).ToList();
@@ -144,7 +143,7 @@ namespace OSM2019.OSM
             return max_op_len;
         }
 
-        void UpdateAveAwaRates(Agent agent, Candidate candidate, double obs_u)
+        protected virtual void UpdateAveAwaRates(Agent agent, Candidate candidate, double obs_u)
         {
             var select_record = candidate.GetCurrentSelectRecord();
             var current_round = this.CurrentRound;
@@ -159,7 +158,7 @@ namespace OSM2019.OSM
             }
         }
 
-        bool IsEvsOpinionFormed(Agent agent, CandidateRecord select_record, CandidateRecord other_record, double obs_u)
+        protected virtual bool IsEvsOpinionFormed(Agent agent, CandidateRecord select_record, CandidateRecord other_record, double obs_u)
         {
             bool evs1 = this.IsDetermined(agent) && this.IsBiggerWeight(select_record, other_record);
             bool evs2 = this.IsSmallerU(other_record, agent, obs_u) && (other_record.CanWeight != select_record.CanWeight);
@@ -167,16 +166,16 @@ namespace OSM2019.OSM
             return evs1 || evs2;
         }
 
-        bool IsDetermined(Agent agent)
+        protected virtual bool IsDetermined(Agent agent)
         {
-            var undeter_op = agent.Opinion.Clone();
-            undeter_op.Clear();
+            return agent.IsDetermined();
+            //var undeter_op = agent.Opinion.Clone();
+            //undeter_op.Clear();
 
-            return (!agent.Opinion.Equals(undeter_op)) ? true : false;
-            //return (agent.Opinion != undeter_op) ? true : false;
+            //return (!agent.Opinion.Equals(undeter_op)) ? true : false;
         }
 
-        bool IsBiggerWeight(CandidateRecord select_record, CandidateRecord other_record)
+        protected virtual bool IsBiggerWeight(CandidateRecord select_record, CandidateRecord other_record)
         {
             double other_canwei = other_record.CanWeight;
             double select_canwei = select_record.CanWeight;
@@ -184,7 +183,7 @@ namespace OSM2019.OSM
             return (other_canwei >= select_canwei) ? true : false;
         }
 
-        bool IsSmallerU(CandidateRecord other_record, Agent agent, double obs_u)
+        protected virtual bool IsSmallerU(CandidateRecord other_record, Agent agent, double obs_u)
         {
             int req_u = other_record.RequireOpinionNum;
             return (obs_u >= req_u) ? true : false;

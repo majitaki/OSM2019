@@ -47,8 +47,8 @@ namespace OSM2019
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(500).SetNearestNeighbors(6).SetRewireP(0.05);
-            //graph_generator = new BA_GraphGenerator().SetNodeSize(1000).SetAttachEdges(3);
+            //graph_generator = new WS_GraphGenerator().SetNodeSize(300).SetNearestNeighbors(6).SetRewireP(0.05);
+            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(300);
 
             var graph = graph_generator.Generate(0);
             var layout = new KK_LayoutGenerator(graph).Generate();
@@ -98,9 +98,9 @@ namespace OSM2019
             var agent_network = new AgentNetwork()
                                     .SetRand(agent_gene_rand)
                                     .GenerateNetworkFrame(graph)
-                                    //.ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
-                                    //.ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
-                                    .ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
+                                    .ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
+                                    .ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
+                                    //.ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
                                     .GenerateSensor(sensor_gene)
                                     .SetLayout(layout);
 
@@ -109,20 +109,19 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
             var env_mgr = new EnvironmentManager()
-                            //.SetSubject(subject_company)
-                            .SetSubject(subject_test)
+                            .SetSubject(subject_tv)
+                            //.SetSubject(subject_test)
                             .SetCorrectDim(0)
                             .SetSensorRate(0.55);
 
-            OSMBase<AAT_OSM> osm = new AAT_OSM()
+            OSMBase<AAT_OSM> osm = new AATG_OSM()
                     .SetRand(update_step_rand)
                     .SetAgentNetwork(agent_network)
                     .SetEnvManager(env_mgr)
                     .SetSubjectManager(subject_manager)
                     .SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion)
-                    .SetOpinionIntroInterval(20)
-                    .SetOpinionIntroRate(0.1)
-                    .SetTargetH(0.9);
+                    .SetOpinionIntroInterval(10)
+                    .SetOpinionIntroRate(0.1);
 
 
             this.MyOSM = osm;
