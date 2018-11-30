@@ -8,13 +8,13 @@ namespace OSM2019.OSM
 {
     class Candidate
     {
-        //public List<CandidateRecord> DataBase { get; protected set; }
+        public List<CandidateRecord> DataBase { get; protected set; }
         public List<CandidateRecord> SortedDataBase { get; protected set; }
         public int SelectSortedIndex;
 
         public Candidate(Agent agent)
         {
-            this.SortedDataBase = new List<CandidateRecord>();
+            this.DataBase = new List<CandidateRecord>();
             if (agent.GetNeighbors().Count == 0) return;
 
             int max_require_num = agent.GetNeighbors().Count;
@@ -24,11 +24,11 @@ namespace OSM2019.OSM
             {
                 for (int req_num = 1; req_num <= max_require_num; req_num++)
                 {
-                    this.SortedDataBase.Add(new CandidateRecord(dim, req_num, agent));
+                    this.DataBase.Add(new CandidateRecord(dim, req_num, agent));
                 }
             }
 
-            this.SortedDataBase = this.SortedDataBase.OrderBy(record => record.CanWeight).ToList();
+            this.SortedDataBase = this.DataBase.OrderBy(record => record.CanWeight).ToList();
             this.SelectSortedIndex = 0;
         }
 
