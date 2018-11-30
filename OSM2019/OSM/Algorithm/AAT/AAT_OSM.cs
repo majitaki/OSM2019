@@ -66,26 +66,12 @@ namespace OSM2019.OSM
         }
 
 
-        public override void UpdateRounds(int rounds, int steps)
-        {
-            int end_round = this.CurrentRound + rounds;
-
-            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByStep[agent].Clear());
-            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveRounds[agent].Clear());
-            for (; this.CurrentRound < end_round; this.CurrentRound++)
-            {
-                this.UpdateSteps(steps);
-                this.IntegrateReceiveOpinion();
-                this.PrintRound();
-                this.EstimateAwaRate();
-                this.SelectionWeight();
-                this.InitializeToZeroStep();
-            }
-            this.MyAgentNetwork.Agents.ForEach(agent => this.AgentReceiveOpinionsByRound[agent].Clear());
-        }
-
         public override void UpdateRoundWithoutSteps()
         {
+            var record_round = new RecordRound(this.CurrentStep, this.MyAgentNetwork.Agents);
+            record_round.RecordSteps(this.MyRecordSteps);
+            this.MyRecordRounds.Add(this.CurrentRound, record_round);
+
             this.PrintRound();
             this.EstimateAwaRate();
             this.SelectionWeight();
@@ -97,7 +83,7 @@ namespace OSM2019.OSM
         {
             foreach (var candidate in this.Candidates)
             {
-                var received_sum_op = this.AgentReceiveOpinionsByRound[candidate.Key];
+                var received_sum_op = this.MyRecordRounds.Last().Value.AgentReceiveOpinionsInRound[candidate.Key];
                 double obs_u = this.GetObsU(received_sum_op);
                 if (obs_u == 0) continue;
                 this.UpdateAveAwaRates(candidate.Key, candidate.Value, obs_u);

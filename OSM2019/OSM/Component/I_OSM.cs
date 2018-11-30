@@ -12,15 +12,9 @@ namespace OSM2019.OSM
         int CurrentStep { get; set; }
         int CurrentRound { get; set; }
         AgentNetwork MyAgentNetwork { get; set; }
-        Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByStep { get; set; }
-        Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsByRound { get; set; }
-        Dictionary<Agent, List<int>> AgentReceiveRounds { get; set; }
 
         void UpdateSteps(int steps);
         void InitializeToZeroStep();
-        void InitialReceiveOpinionsByRound();
-        void InitialReceiveOpinionsByStep();
-        void IntegrateReceiveOpinion();
         void PrintRound();
         void PrintStep();
         void UpdateRoundWithoutSteps();

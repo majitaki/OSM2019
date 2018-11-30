@@ -30,6 +30,7 @@ namespace OSM2019
         internal AnimationForm MyAnimationForm;
         I_OSM MyOSM;
 
+
         public MainForm()
         {
             this.MyGUIEnum = GUIEnum.MainFormGUI;
@@ -98,9 +99,9 @@ namespace OSM2019
             var agent_network = new AgentNetwork()
                                     .SetRand(agent_gene_rand)
                                     .GenerateNetworkFrame(graph)
-                                    .ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
-                                    .ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
-                                    //.ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
+                                    //.ApplySampleAgent(sample_agent_1, mode: SampleAgentSetMode.RandomSetRate, random_set_rate: 0.5)
+                                    //.ApplySampleAgent(sample_agent_2, mode: SampleAgentSetMode.RemainSet)
+                                    .ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
                                     .GenerateSensor(sensor_gene)
                                     .SetLayout(layout);
 
@@ -109,21 +110,21 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
             var env_mgr = new EnvironmentManager()
-                            .SetSubject(subject_tv)
-                            //.SetSubject(subject_test)
+                            //.SetSubject(subject_tv)
+                            .SetSubject(subject_test)
                             .SetCorrectDim(0)
                             .SetSensorRate(0.55);
 
-            OSMBase<AAT_OSM> osm = new AATG_OSM()
+            OSMBase<AAT_OSM> osm = new AAT_OSM()
                     .SetRand(update_step_rand)
                     .SetAgentNetwork(agent_network)
                     .SetEnvManager(env_mgr)
                     .SetSubjectManager(subject_manager)
                     .SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion)
                     .SetOpinionIntroInterval(10)
-                    .SetOpinionIntroRate(0.1);
-
-
+                    .SetOpinionIntroRate(0.1)
+                    .SetTargetH(0.9);
+                    
             this.MyOSM = osm;
             this.MyAnimationForm.RegistOSM(osm);
             //osm.InitializeToZeroStep();
@@ -149,6 +150,7 @@ namespace OSM2019
             this.numericUpDownSpeedControl.Value = 1;
             this.labelRoundNum.Text = 0.ToString();
             this.PlayStopFlag = true;
+
         }
 
         void InitializeGUIs()
@@ -243,38 +245,22 @@ namespace OSM2019
             var control_speed = (int)this.numericUpDownSpeedControl.Value;
             var max_steps = (int)this.numericUpDownStepsControl.Value;
 
-            var current_rounds = int.Parse(this.labelRoundNum.Text);
-            var current_steps = int.Parse(this.labelStepNum.Text);
-
             control_seed += int.Parse(this.labelStepNum.Text);
             control_seed += int.Parse(this.labelRoundNum.Text);
+
             this.MyOSM.UpdateSteps(control_speed);
-            this.labelStepNum.Text = (current_steps + control_speed).ToString();
-            current_steps += control_speed;
 
             if (this.radioButtonRoundCheck.Checked)
             {
-                if (max_steps <= current_steps)
+                if (max_steps <= this.MyOSM.CurrentStep)
                 {
-                    this.MyOSM.IntegrateReceiveOpinion();
                     this.MyOSM.UpdateRoundWithoutSteps();
-                    this.MyAnimationForm.UpdatePictureBox();
-                    this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveOpinionsByRound[agent].Clear());
-                    this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveRounds[agent].Clear());
-                    this.labelStepNum.Text = 0.ToString();
-                    this.labelRoundNum.Text = (current_rounds + 1).ToString();
-                }
-                else
-                {
-                    this.MyAnimationForm.UpdatePictureBox();
                 }
             }
-            else
-            {
-                this.MyAnimationForm.UpdatePictureBox();
 
-            }
-
+            this.labelStepNum.Text = this.MyOSM.CurrentStep.ToString();
+            this.labelRoundNum.Text = this.MyOSM.CurrentRound.ToString();
+            this.MyAnimationForm.UpdatePictureBox();
         }
 
         private void timerAnimation_Tick(object sender, EventArgs e)
@@ -315,21 +301,17 @@ namespace OSM2019
             this.ChangePlayButton(false);
             if (this.MyOSM == null) return;
 
-            int step_num = 0;
             if (this.radioButtonStepCheck.Checked)
             {
-                this.labelStepNum.Text = step_num.ToString();
                 this.MyOSM.InitializeToZeroStep();
+                this.labelStepNum.Text = this.MyOSM.CurrentStep.ToString();
             }
             else if (this.radioButtonRoundCheck.Checked)
             {
-                int round_num = 0;
-                this.labelRoundNum.Text = round_num.ToString();
-                this.labelStepNum.Text = step_num.ToString();
                 this.MyOSM.InitializeToZeroRound();
+                this.labelRoundNum.Text = this.MyOSM.CurrentRound.ToString();
+                this.labelStepNum.Text = this.MyOSM.CurrentStep.ToString();
             }
-            this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveOpinionsByStep[agent].Clear());
-            this.MyOSM.MyAgentNetwork.Agents.ForEach(agent => this.MyOSM.AgentReceiveRounds[agent].Clear());
             this.MyAnimationForm.UpdatePictureBox();
         }
 

@@ -154,6 +154,7 @@
     <Compile Include="OSM\Component\Message.cs" />
     <Compile Include="OSM\Component\OpinionSubject.cs" />
     <Compile Include="OSM\Component\OSMBase.cs" />
+    <Compile Include="OSM\RecordRound.cs" />
     <Compile Include="OSM\RecordStep.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

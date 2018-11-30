@@ -36,7 +36,7 @@ namespace OSM2019.OSM
             var select_record = candidate.GetCurrentSelectRecord();
             var current_round = this.CurrentRound;
             var obs_weight = candidate.SortedDataBase.OrderBy(record => Math.Abs(record.RequireOpinionNum - obs_u)).First().CanWeight;
-            var receive_rounds = this.AgentReceiveRounds[agent].Count;
+            var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.Value.IsReceived(agent)).Count();
 
             foreach (var record in candidate.SortedDataBase)
             {
