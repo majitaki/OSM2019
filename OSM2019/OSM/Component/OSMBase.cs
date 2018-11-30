@@ -85,7 +85,7 @@ namespace OSM2019.OSM
         public virtual void PrintAgentInfo(Agent agent)
         {
             Console.WriteLine($"Agent ID: {agent.AgentID}");
-
+            Console.WriteLine($"Sensor: {agent.IsSensor}");
             Console.WriteLine($"Belief");
             int dim = 0;
             foreach (var belief in agent.Belief.Column(0).ToList())
@@ -94,24 +94,25 @@ namespace OSM2019.OSM
                 dim++;
             }
 
-            //Console.WriteLine($"Opinion");
-            //dim = 0;
-            //foreach (var op in agent.Opinion.Column(0).ToList())
-            //{
-            //    Console.WriteLine($"- Dim: {dim} Value{op}");
-            //    dim++;
-            //}
+            Console.WriteLine($"Opinion");
+            dim = 0;
+            foreach (var op in agent.Opinion.Column(0).ToList())
+            {
+                Console.WriteLine($"- Dim: {dim} Value{op}");
+                dim++;
+            }
 
-            //Console.WriteLine($"Receive");
-            //var receive_op = this.AgentReceiveOpinionsByRound[agent];
-            //dim = 0;
-            //foreach (var op in receive_op.Column(0).ToList())
-            //{
-            //    Console.WriteLine($"- Dim: {dim} Value{op}");
-            //    dim++;
-            //}
+            if (this.MyRecordRounds.Count == 0) return;
+            var is_recived = this.MyRecordRounds.Last().Value.IsReceived(agent);
+            Console.WriteLine($"Receive Opinion (Received:{is_recived})");
+            var receive_op = this.MyRecordRounds.Last().Value.AgentReceiveOpinionsInRound[agent];
+            dim = 0;
+            foreach (var op in receive_op.Column(0).ToList())
+            {
+                Console.WriteLine($"- Dim: {dim} Value{op}");
+                dim++;
+            }
 
-            //Console.WriteLine($"Receive Rounds :{this.AgentReceiveRounds[agent].Count}");
         }
 
         protected virtual void UpdateStep()

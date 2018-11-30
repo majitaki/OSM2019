@@ -17,7 +17,7 @@ namespace OSM2019.OSM
         protected abstract string GeneratePath { get; }
         protected abstract RawGraph MyGraph { get; }
 
-        public Layout Generate()
+        public virtual Layout Generate()
         {
             var state = 0;
             switch (state)
@@ -45,7 +45,7 @@ namespace OSM2019.OSM
             }
         }
 
-        bool DeleteLayout()
+        protected bool DeleteLayout()
         {
             var path = Properties.Settings.Default.WorkingFolderPath;
 
@@ -78,7 +78,7 @@ namespace OSM2019.OSM
             }
         }
 
-        bool DeleteTmpGraphJSON()
+        protected bool DeleteTmpGraphJSON()
         {
             var path = Properties.Settings.Default.WorkingFolderPath;
 
@@ -110,7 +110,7 @@ namespace OSM2019.OSM
             }
         }
 
-        bool PythonLayoutGenerate(RawGraph graph)
+        protected bool PythonLayoutGenerate(RawGraph graph)
         {
             graph.OutputGraphJSON();
             PythonProxy.ExecutePythonScript(this.GeneratePath);
@@ -131,7 +131,7 @@ namespace OSM2019.OSM
             return true;
         }
 
-        Layout ReadLayout()
+        protected Layout ReadLayout()
         {
             var working_path = Properties.Settings.Default.WorkingFolderPath;
             string layout_filepath = Properties.Settings.Default.LayoutFile;

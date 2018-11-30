@@ -49,10 +49,10 @@ namespace OSM2019
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
             //graph_generator = new WS_GraphGenerator().SetNodeSize(300).SetNearestNeighbors(6).SetRewireP(0.05);
-            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(300);
+            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(500);
 
             var graph = graph_generator.Generate(0);
-            var layout = new KK_LayoutGenerator(graph).Generate();
+            var layout = new Square_LayoutGenerator(graph).Generate();
             //var layout = new Circular_LayoutGenerator(graph).Generate();
 
             var init_belief_gene = new InitBeliefGenerator()
@@ -115,16 +115,16 @@ namespace OSM2019
                             .SetCorrectDim(0)
                             .SetSensorRate(0.55);
 
-            OSMBase<AAT_OSM> osm = new AAT_OSM()
+            OSMBase<AAT_OSM> osm = new AATG_OSM()
                     .SetRand(update_step_rand)
                     .SetAgentNetwork(agent_network)
                     .SetEnvManager(env_mgr)
                     .SetSubjectManager(subject_manager)
                     .SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion)
+                    //.SetTargetH(0.9)
                     .SetOpinionIntroInterval(10)
-                    .SetOpinionIntroRate(0.1)
-                    .SetTargetH(0.9);
-                    
+                    .SetOpinionIntroRate(0.1);
+
             this.MyOSM = osm;
             this.MyAnimationForm.RegistOSM(osm);
             //osm.InitializeToZeroStep();
