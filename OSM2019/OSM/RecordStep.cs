@@ -16,6 +16,7 @@ namespace OSM2019.OSM
         public List<Message> StepMessages { get; private set; }
         public Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsInStep { get; private set; }
         public int NetworkSize { get; private set; }
+        public bool IsFinished { get; private set; }
 
         public RecordStep(int cur_step, List<Agent> agents)
         {
@@ -32,6 +33,10 @@ namespace OSM2019.OSM
                 undeter_op.Clear();
                 this.AgentReceiveOpinionsInStep.Add(agent, undeter_op);
             }
+
+            this.IsFinished = false;
+            var not_formed_sensor_num = agents.Where(agent => agent.IsSensor).Where(sensor => sensor.Opinion.Equals(sensor.InitOpinion)).Count();
+            if (not_formed_sensor_num == 0) this.IsFinished = true;
         }
 
         public void RecordStepAgents(List<Agent> agents, EnvironmentManager env_mgr)

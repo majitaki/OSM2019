@@ -48,8 +48,8 @@ namespace OSM2019
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            //graph_generator = new WS_GraphGenerator().SetNodeSize(300).SetNearestNeighbors(6).SetRewireP(0.05);
-            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(500);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(500).SetNearestNeighbors(6).SetRewireP(0.05);
+            //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(500);
 
             var graph = graph_generator.Generate(0);
             var layout = new Square_LayoutGenerator(graph).Generate();
@@ -60,7 +60,7 @@ namespace OSM2019
 
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
-            var subject_test = new OpinionSubject("test", 5);
+            var subject_test = new OpinionSubject("test", 2);
 
             double[] conv_array = { 1, 0, 0, 1, 1, 0 };
             var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
@@ -87,7 +87,7 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_test)
-                                .SetInitOpinion(Matrix<double>.Build.Dense(5, 1, 0.0));
+                                .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0));
 
             var sensor_gene = new SensorGenerator()
                             .SetSensorSize((int)(0.1 * graph.Nodes.Count));
@@ -145,8 +145,8 @@ namespace OSM2019
             }
 
             this.radioButtonGraphGUI.Checked = true;
-            this.radioButtonStepCheck.Checked = true;
-            this.numericUpDownStepsControl.Value = 1000;
+            this.radioButtonRoundCheck.Checked = true;
+            this.numericUpDownStepsControl.Value = 3000;
             this.numericUpDownSpeedControl.Value = 1;
             this.labelRoundNum.Text = 0.ToString();
             this.PlayStopFlag = true;
@@ -252,7 +252,7 @@ namespace OSM2019
 
             if (this.radioButtonRoundCheck.Checked)
             {
-                if (max_steps <= this.MyOSM.CurrentStep)
+                if (max_steps <= this.MyOSM.CurrentStep || this.MyOSM.MyRecordSteps.Last().Value.IsFinished)
                 {
                     this.MyOSM.UpdateRoundWithoutSteps();
                 }

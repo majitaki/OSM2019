@@ -63,5 +63,10 @@ namespace OSM2019.OSM
             if (this.AgentReceiveOpinionsInRound[agent].L2Norm() == 0) return false;
             return true;
         }
+
+        public int GetFinalStep()
+        {
+            return this.MyRecordSteps.Last().Value.Step;
+        }
     }
 }

@@ -25,8 +25,8 @@ namespace OSM2019.OSM
         AggregationFunctions MyAggFuncs;
         List<Message> Messages;
         List<Agent> OpinionFormedAgents;
-        public Dictionary<int, RecordStep> MyRecordSteps { get; protected set; }
-        public Dictionary<int, RecordRound> MyRecordRounds { get; protected set; }
+        public Dictionary<int, RecordStep> MyRecordSteps { get; set; }
+        public Dictionary<int, RecordRound> MyRecordRounds { get; set; }
 
         public OSMBase()
         {
@@ -155,6 +155,10 @@ namespace OSM2019.OSM
             int end_step = this.CurrentStep + steps;
             for (; cur_step < end_step; cur_step++)
             {
+                if (this.MyRecordSteps.Count > 0)
+                {
+                    if (this.MyRecordSteps.Last().Value.IsFinished) return;
+                }
                 this.UpdateStep();
             }
         }
