@@ -40,7 +40,7 @@ namespace OSM2019
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
             //Test();
-            var exp = new NetworkSize_Experiment(100, 500, 100);
+            var exp = new NetworkSize_Experiment(500, 500, 100);
             exp.Run();
             Environment.Exit(0);
             //this.MyAnimationForm.Show();
