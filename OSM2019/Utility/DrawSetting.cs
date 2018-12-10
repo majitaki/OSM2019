@@ -73,7 +73,7 @@ namespace OSM2019.Utility
             this.SelectedLinkPen.Width = 3f;
             this.SelectedPen = new Pen(Color.DarkRed);
             this.SelectedPen.Width = 3f;
-            this.SensorPen = new Pen(Color.OrangeRed);
+            this.SensorPen = new Pen(Color.Orange);
             //this.SensorPen = new Pen(Color.MediumBlue);
             this.SensorPen.Width = 3f;
             this.SensorNetworkPen = new Pen(OrangeColor);

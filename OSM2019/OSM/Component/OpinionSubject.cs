@@ -24,7 +24,7 @@ namespace OSM2019.OSM
             this.MySubjectManager = subject_manager;
         }
 
-        public Matrix<double> ConvertOpinionForSubject(Matrix<double> opinion, OpinionSubject to_subject)
+        public Vector<double> ConvertOpinionForSubject(Vector<double> opinion, OpinionSubject to_subject)
         {
             var conv_matrix = this.MySubjectManager.GetConversionMatrix(this, to_subject);
             return conv_matrix * opinion;

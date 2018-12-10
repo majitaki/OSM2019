@@ -13,13 +13,13 @@ namespace OSM2019.OSM
         public Agent FromAgent { get; private set; }
         public Agent ToAgent { get; private set; }
         public OpinionSubject Subject { get; private set; }
-        public Matrix<double> Opinion { get; private set; }
+        public Vector<double> Opinion { get; private set; }
 
         public Message()
         {
         }
 
-        public Message(Agent from_agent, Agent to_agent, AgentLink agent_link, Matrix<double> opinion)
+        public Message(Agent from_agent, Agent to_agent, AgentLink agent_link, Vector<double> opinion)
         {
             this.FromAgent = from_agent;
             this.ToAgent = to_agent;

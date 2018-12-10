@@ -1,6 +1,9 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using CsvHelper;
+using MathNet.Numerics.LinearAlgebra;
+using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,15 +13,17 @@ namespace OSM2019.OSM
     class RecordRound
     {
         public int Round { get; private set; }
-        public Dictionary<int, RecordStep> MyRecordSteps { get; private set; }
         public int NetworkSize { get; private set; }
-        public Dictionary<Agent, Matrix<double>> AgentReceiveOpinionsInRound { get; private set; }
+        public Dictionary<Agent, Vector<double>> AgentReceiveOpinionsInRound { get; private set; }
+        public int CorrectSize { get; private set; }
+        public int IncorrectSize { get; private set; }
+        public int UndeterSize { get; private set; }
+        public int FinalStep { get; private set; }
 
         public RecordRound(int cur_round, List<Agent> agents)
         {
             this.Round = cur_round;
-            this.MyRecordSteps = new Dictionary<int, RecordStep>();
-            this.AgentReceiveOpinionsInRound = new Dictionary<Agent, Matrix<double>>();
+            this.AgentReceiveOpinionsInRound = new Dictionary<Agent, Vector<double>>();
 
             foreach (var agent in agents)
             {
@@ -30,7 +35,11 @@ namespace OSM2019.OSM
 
         public void RecordSteps(Dictionary<int, RecordStep> record_steps)
         {
-            this.MyRecordSteps.Union(record_steps);
+            this.CorrectSize = record_steps.Last().Value.CorrectSize;
+            this.IncorrectSize = record_steps.Last().Value.IncorrectSize;
+            this.UndeterSize = record_steps.Last().Value.UndeterSize;
+            this.FinalStep = record_steps.Last().Value.Step;
+            this.NetworkSize = record_steps.Last().Value.NetworkSize;
 
             foreach (var record_step in record_steps)
             {
@@ -43,30 +52,10 @@ namespace OSM2019.OSM
             }
         }
 
-        public List<int> GetCorrectAgentIDs(EnvironmentManager env_mgr)
-        {
-            return this.MyRecordSteps.Last().Value.CorrectAgentIDs;
-        }
-
-        public List<int> GetIncorrectAgentIDs(EnvironmentManager env_mgr)
-        {
-            return this.MyRecordSteps.Last().Value.IncorrectAgentIDs;
-        }
-
-        public List<int> GetUndeterAgentIDs(EnvironmentManager env_mgr)
-        {
-            return this.MyRecordSteps.Last().Value.UndeterAgentIDs;
-        }
-
         public bool IsReceived(Agent agent)
         {
             if (this.AgentReceiveOpinionsInRound[agent].L2Norm() == 0) return false;
             return true;
-        }
-
-        public int GetFinalStep()
-        {
-            return this.MyRecordSteps.Last().Value.Step;
         }
     }
 }

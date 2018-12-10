@@ -42,7 +42,7 @@ namespace OSM2019.OSM
             return this;
         }
 
-        protected Hexagonal_GraphGenerator SetNodeSize(int n)
+        public Hexagonal_GraphGenerator SetNodeSize(int n)
         {
             var upper = Math.Ceiling(Math.Sqrt(n));
             var lower = Math.Floor(Math.Sqrt(n));

@@ -9,8 +9,8 @@ namespace OSM2019.OSM
 {
     class Agent : AgentBase<Agent>
     {
-        public Matrix<double> InitBelief { get; private set; }
-        public Matrix<double> Belief { get; private set; }
+        public Vector<double> InitBelief { get; private set; }
+        public Vector<double> Belief { get; private set; }
 
         public Agent()
         {
@@ -36,33 +36,33 @@ namespace OSM2019.OSM
             return this;
         }
 
-        public Agent SetInitBelief(Matrix<double> init_belief)
+        public Agent SetInitBelief(Vector<double> init_belief)
         {
             this.InitBelief = init_belief.Clone();
             this.Belief = init_belief.Clone();
             return this;
         }
 
-        public Agent SetBelief(Matrix<double> beliefs)
+        public Agent SetBelief(Vector<double> belief)
         {
-            if (Belief.RowCount != beliefs.RowCount)
+            if (Belief.Count != belief.Count)
             {
                 throw new Exception(nameof(Agent) + " Error irregular beleif dim");
             }
 
-            this.Belief = beliefs.Clone();
+            this.Belief = belief.Clone();
             return this;
         }
 
 
         public Agent SetBeliefFromList(List<double> belief_list)
         {
-            if (Belief.RowCount != belief_list.Count)
+            if (Belief.Count != belief_list.Count)
             {
                 throw new Exception(nameof(Agent) + " Error irregular beleif list");
             }
 
-            var new_belief = Matrix<double>.Build.DenseOfColumnVectors(Vector<double>.Build.Dense(belief_list.ToArray()));
+            var new_belief = Vector<double>.Build.Dense(belief_list.ToArray());
             this.Belief = new_belief;
             //Console.WriteLine(this.Belief.ToString());
             return this;

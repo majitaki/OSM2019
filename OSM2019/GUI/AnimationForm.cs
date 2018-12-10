@@ -292,23 +292,30 @@ namespace OSM2019.GUI
 
             e.Graphics.FillRectangle(tmp_brush, base_x, base_y, length, height);
 
-            var belief_dim = agent_view.MyAgent.Belief.RowCount;
+            var belief_dim = agent_view.MyAgent.Belief.Count;
             var belief_height = height / belief_dim;
             SolidBrush dim_brush = null;
             for (int i = 0; i < belief_dim; i++)
             {
                 var x = base_x;
                 var y = base_y + belief_height * i;
-                var belief = agent_view.MyAgent.Belief[i, 0];
+                var belief = agent_view.MyAgent.Belief[i];
                 var belief_length = length * (float)belief;
                 var brush = new SolidBrush(StaticColor.ConvertHSBtoARGB(360 * (i / (float)belief_dim), 0.5F, 1.0F));
-                if (i == agent_view.MyAgent.OpinionDim()) dim_brush = brush;
+                if (i == agent_view.MyAgent.GetOpinionDim()) dim_brush = brush;
                 e.Graphics.FillRectangle(brush, x, y, belief_length, belief_height);
             }
 
-            if (agent_view.MyAgent.OpinionDim() != -1)
+            if (agent_view.MyAgent.GetOpinionDim() != -1)
             {
-                var pen = new Pen(dim_brush, 3);
+                var pen = new Pen(dim_brush, 5);
+                e.Graphics.DrawRectangle(pen, base_x, base_y, length, height);
+            }
+
+            if (agent_view.MyAgent.IsSensor)
+            {
+                //var pen = new Pen(dim_brush, 3);
+                var pen = this.MyDrawSetting.SensorPen;
                 e.Graphics.DrawRectangle(pen, base_x, base_y, length, height);
 
             }

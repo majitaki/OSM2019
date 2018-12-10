@@ -35,8 +35,8 @@ namespace OSM2019.OSM
         public void AddEnvironment(AgentNetwork agent_network)
         {
             this.EnvironmentAgent = new Agent(-1).SetSubject(this.EnvSubject);
-            var op_matrix = Matrix<double>.Build.Dense(this.EnvSubject.SubjectDimSize, 1, 0.0);
-            this.EnvironmentAgent.SetInitOpinion(op_matrix);
+            var op_vector = Vector<double>.Build.Dense(this.EnvSubject.SubjectDimSize, 0.0);
+            this.EnvironmentAgent.SetInitOpinion(op_vector);
             List<AgentLink> env_links = new List<AgentLink>();
             var sensors = agent_network.Agents.Where(agent => agent.IsSensor).ToList();
 
@@ -66,13 +66,13 @@ namespace OSM2019.OSM
 
                 if (update_step_rand.NextDouble() < this.SensorRate)
                 {
-                    opinion[this.CorrectDim, 0] = 1.0;
+                    opinion[this.CorrectDim] = 1.0;
                 }
                 else
                 {
-                    List<int> incor_dim_list = Enumerable.Range(0, opinion.RowCount).Where(i => i != this.CorrectDim).ToList();
+                    List<int> incor_dim_list = Enumerable.Range(0, opinion.Count).Where(i => i != this.CorrectDim).ToList();
                     int incor_dim = incor_dim_list.OrderBy(_ => update_step_rand.Next()).First();
-                    opinion[incor_dim, 0] = 1.0;
+                    opinion[incor_dim] = 1.0;
                 }
 
                 messages.Add(new Message(this.EnvironmentAgent, sensor_agent, agent_link, opinion));

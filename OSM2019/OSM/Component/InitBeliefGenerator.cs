@@ -24,16 +24,16 @@ namespace OSM2019.OSM
             return this;
         }
 
-        public Matrix<double> Generate(Matrix<double> init_op, ExtendRandom agent_gene_rand)
+        public Vector<double> Generate(Vector<double> init_op, ExtendRandom agent_gene_rand)
         {
-            var op_dim_size = init_op.RowCount;
+            var op_dim_size = init_op.Count;
             var init_belief_list = new List<double>();
             var last_belief = 0.0;
             var remain_belief = 1.0;
             var bound_rate = 0.5;
             var mu = remain_belief / op_dim_size;
             double stddev = 0.0;
-            Matrix<double> init_belief_matrix = init_op.Clone();
+            Vector<double> init_belief_vector = init_op.Clone();
 
             switch (this.Mode)
             {
@@ -72,10 +72,10 @@ namespace OSM2019.OSM
 
             for (int index = 0; index < init_belief_list.Count; index++)
             {
-                init_belief_matrix[index, 0] = init_belief_list[index];
+                init_belief_vector[index] = init_belief_list[index];
             }
 
-            return init_belief_matrix;
+            return init_belief_vector;
         }
     }
 }

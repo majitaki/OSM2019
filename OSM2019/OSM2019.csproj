@@ -77,6 +77,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Experiment\NetworkSize_Experiment.cs" />
     <Compile Include="GUI\AnimationEvent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -134,8 +135,8 @@
     <Compile Include="OSM\LayoutGenerator\Spectral_LayoutGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Shell_LayoutGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Random_LayoutGenerator.cs" />
-    <Compile Include="OSM\LayoutGenerator\KK_LayoutGenerator.cs" />
-    <Compile Include="OSM\LayoutGenerator\FR_LayoutGenerator.cs" />
+    <Compile Include="OSM\LayoutGenerator\KamadaKawai_LayoutGenerator.cs" />
+    <Compile Include="OSM\LayoutGenerator\FruchtermanReingold_LayoutGenerator.cs" />
     <Compile Include="OSM\LayoutGenerator\Circular_LayoutGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\BA_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\ConnectedWS_GraphGenerator.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Utility\Enum.cs" />
     <Compile Include="Utility\CsvMapper.cs" />
     <Compile Include="Utility\MyMath.cs" />
+    <Compile Include="Utility\Output.cs" />
     <Compile Include="Utility\PythonProxy.cs" />
     <Compile Include="OSM\Component\RandomNumberManager.cs" />
     <EmbeddedResource Include="GUI\AgentGUI.resx">

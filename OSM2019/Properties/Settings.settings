@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="AnacondaPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\takadamalab\Anaconda3\Scripts\activate.bat </Value>
+      <Value Profile="(Default)">C:\Users\majitaki\Anaconda3\Scripts\activate.bat</Value>
     </Setting>
     <Setting Name="AnacondaEnv" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -43,6 +43,9 @@
     </Setting>
     <Setting Name="TmpGraphFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">tmp_graph.json</Value>
+    </Setting>
+    <Setting Name="OutputLogPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">./OutputLog</Value>
     </Setting>
   </Settings>
 </SettingsFile>

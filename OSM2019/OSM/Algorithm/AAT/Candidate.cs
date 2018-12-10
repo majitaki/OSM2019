@@ -18,7 +18,7 @@ namespace OSM2019.OSM
             if (agent.GetNeighbors().Count == 0) return;
 
             int max_require_num = agent.GetNeighbors().Count;
-            int dim_size = agent.Belief.RowCount;
+            int dim_size = agent.Belief.Count;
 
             for (int dim = 0; dim < dim_size; dim++)
             {

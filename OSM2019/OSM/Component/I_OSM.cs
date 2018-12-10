@@ -20,6 +20,7 @@ namespace OSM2019.OSM
         void InitializeToZeroStep();
         void PrintRound();
         void PrintStep();
+        void UpdateRecordRound();
         void UpdateRoundWithoutSteps();
         void UpdateRounds(int rounds, int steps);
         void InitializeToZeroRound();

@@ -9,13 +9,13 @@ namespace OSM2019.OSM
 {
     class AggregationFunctions
     {
-        public Matrix<double> UpdateBelief(Matrix<double> belief, double weight, Matrix<double> receive_opinion)
+        public Vector<double> UpdateBelief(Vector<double> belief, double weight, Vector<double> receive_opinion)
         {
-            var pre_belief_list = belief.Column(0).ToList();
-            var op_list = new List<double>();
-            op_list = receive_opinion.Column(0).ToList();
+            var pre_belief_list = belief.Clone();
+            var op_list = receive_opinion.Clone();
 
-            for (int op_dim = 0; op_dim < op_list.Count; op_dim++)
+            var max_op_dim = op_list.Count;
+            for (int op_dim = 0; op_dim < max_op_dim; op_dim++)
             {
                 var op = op_list[op_dim];
                 int op_num = (int)Math.Floor(op);
@@ -23,8 +23,9 @@ namespace OSM2019.OSM
 
                 for (int i = 0; i < op_num; i++)
                 {
-                    var post_belief_list = new List<double>(pre_belief_list);
-                    for (int belief_dim = 0; belief_dim < pre_belief_list.Count; belief_dim++)
+                    var post_belief_list = pre_belief_list.Clone();
+                    var max_belief_dim = pre_belief_list.Count;
+                    for (int belief_dim = 0; belief_dim < max_belief_dim; belief_dim++)
                     {
                         double post_belief;
                         post_belief = this.CalcSingleBelief(pre_belief_list, belief_dim, op_dim, weight);
@@ -35,8 +36,9 @@ namespace OSM2019.OSM
 
                 if (op_dust > 0)
                 {
-                    var post_belief_list = new List<double>(pre_belief_list);
-                    for (int belief_dim = 0; belief_dim < pre_belief_list.Count; belief_dim++)
+                    var post_belief_list = pre_belief_list.Clone();
+                    var max_belief_dim = pre_belief_list.Count;
+                    for (int belief_dim = 0; belief_dim < max_belief_dim; belief_dim++)
                     {
                         double post_belief;
                         post_belief = this.CalcSingleBelief(pre_belief_list, belief_dim, op_dim, weight, op_dust);
@@ -46,11 +48,11 @@ namespace OSM2019.OSM
                 }
             }
 
-            var new_belief = Matrix<double>.Build.DenseOfColumnVectors(Vector<double>.Build.Dense(pre_belief_list.ToArray()));
+            var new_belief = Vector<double>.Build.Dense(pre_belief_list.ToArray());
             return new_belief;
         }
 
-        public double CalcSingleBelief(List<double> pre_beliefs, int belief_dim, int op_dim, double weight, double op_dust = 0.0)
+        public double CalcSingleBelief(Vector<double> pre_beliefs, int belief_dim, int op_dim, double weight, double op_dust = 0.0)
         {
             var upper = pre_beliefs[belief_dim] * this.ConvertWeight(weight, belief_dim, op_dim, pre_beliefs.Count, op_dust);
 

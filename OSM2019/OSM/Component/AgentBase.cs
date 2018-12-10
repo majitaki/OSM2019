@@ -13,18 +13,18 @@ namespace OSM2019.OSM
         public int AgentID { get; protected set; }
         public bool IsSensor { get; set; }
         public OpinionSubject MySubject { get; protected set; }
-        public Matrix<double> InitOpinion { get; protected set; }
-        public Matrix<double> Opinion { get; set; }
+        public Vector<double> InitOpinion { get; protected set; }
+        public Vector<double> Opinion { get; set; }
         public List<AgentLink> AgentLinks { get; protected set; }
         public double OpinionThreshold { get; protected set; }
 
-        public int OpinionDim()
+        public int GetOpinionDim()
         {
-            var op_list = Opinion.Column(0).ToList();
+            var max_dim = Opinion.Count;
 
-            for (int dim = 0; dim < op_list.Count; dim++)
+            for (int dim = 0; dim < max_dim; dim++)
             {
-                if (op_list[dim] == 1) return dim;
+                if (this.Opinion[dim] == 1) return dim;
             }
             return -1;
         }
@@ -61,19 +61,19 @@ namespace OSM2019.OSM
         public T SetSubject(OpinionSubject subject)
         {
             this.MySubject = subject;
-            var op_matrix = Matrix<double>.Build.Dense(this.MySubject.SubjectDimSize, 1, 0.0);
-            this.SetInitOpinion(op_matrix);
+            var op_vector = Vector<double>.Build.Dense(this.MySubject.SubjectDimSize, 0.0);
+            this.SetInitOpinion(op_vector);
             return (T)(object)this;
         }
 
-        public T SetInitOpinion(Matrix<double> init_op_matrix)
+        public T SetInitOpinion(Vector<double> init_op_vector)
         {
-            if (this.MySubject.SubjectDimSize != init_op_matrix.RowCount)
+            if (this.MySubject.SubjectDimSize != init_op_vector.Count)
             {
                 throw new Exception("error not equal subject dim and init op dim");
             }
-            this.InitOpinion = init_op_matrix.Clone();
-            this.Opinion = init_op_matrix.Clone();
+            this.InitOpinion = init_op_vector.Clone();
+            this.Opinion = init_op_vector.Clone();
             return (T)(object)this;
         }
 

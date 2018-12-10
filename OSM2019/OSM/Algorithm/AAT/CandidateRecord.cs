@@ -30,18 +30,18 @@ namespace OSM2019.OSM
         double GetCanWeight(int belief_dim, int requre_num, Agent agent)
         {
             var diff = 0.01;
-            var init_can_weight = (1.0 / agent.InitBelief.RowCount) + diff;
+            var init_can_weight = (1.0 / agent.InitBelief.Count) + diff;
             init_can_weight = Math.Round(init_can_weight, 4);
             var init_belief = agent.InitBelief;
-            Matrix<double> receive_op = agent.InitOpinion.Clone();
+            Vector<double> receive_op = agent.InitOpinion.Clone();
             receive_op.Clear();
-            receive_op[belief_dim, 0] = requre_num;
+            receive_op[belief_dim] = requre_num;
 
             double can_weight = 0.00;
             for (can_weight = init_can_weight; can_weight < 1.0; can_weight += diff)
             {
                 var belief = this.MyAggFuncs.UpdateBelief(init_belief, can_weight, receive_op);
-                if (belief[belief_dim, 0] >= agent.OpinionThreshold) break;
+                if (belief[belief_dim] >= agent.OpinionThreshold) break;
             }
 
             if (can_weight >= 1)

@@ -1,6 +1,7 @@
 ﻿using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Random;
+using OSM2019.Experiment;
 using OSM2019.GUI;
 using OSM2019.OSM;
 using OSM2019.Utility;
@@ -38,22 +39,24 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
-            Test();
-            this.MyAnimationForm.Show();
-            this.MyAnimationForm.Left = this.Right;
-
+            //Test();
+            var exp = new NetworkSize_Experiment(100, 500, 100);
+            exp.Run();
+            Environment.Exit(0);
+            //this.MyAnimationForm.Show();
+            //this.MyAnimationForm.Left = this.Right;
         }
 
         void Test()
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(500).SetNearestNeighbors(6).SetRewireP(0.05);
-            //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(500);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(100).SetNearestNeighbors(6).SetRewireP(0.01);
+            //graph_generator = new Hexagonal_GraphGenerator().SetNodeSize(100);
 
             var graph = graph_generator.Generate(0);
-            var layout = new Square_LayoutGenerator(graph).Generate();
-            //var layout = new Circular_LayoutGenerator(graph).Generate();
+            //var layout = new KamadaKawai_LayoutGenerator(graph).Generate();
+            var layout = new Circular_LayoutGenerator(graph).Generate();
 
             var init_belief_gene = new InitBeliefGenerator()
                                     .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
@@ -74,23 +77,24 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_tv)
-                                .SetInitOpinion(Matrix<double>.Build.Dense(3, 1, 0.0));
+                                .SetInitOpinion(Vector<double>.Build.Dense(3, 0.0));
 
 
             var sample_agent_2 = new SampleAgent()
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_company)
-                                .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0));
+                                .SetInitOpinion(Vector<double>.Build.Dense(2, 0.0));
 
             var sample_agent_test = new SampleAgent()
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_test)
-                                .SetInitOpinion(Matrix<double>.Build.Dense(2, 1, 0.0));
+                                .SetInitOpinion(Vector<double>.Build.Dense(2, 0.0));
 
             var sensor_gene = new SensorGenerator()
                             .SetSensorSize((int)(0.1 * graph.Nodes.Count));
+            //.SetSensorSize((int)10);
 
             int agent_gene_seed = 0;
             var agent_gene_rand = new ExtendRandom(agent_gene_seed);
@@ -122,15 +126,11 @@ namespace OSM2019
                     .SetSubjectManager(subject_manager)
                     .SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion)
                     //.SetTargetH(0.9)
-                    .SetOpinionIntroInterval(10)
+                    .SetOpinionIntroInterval(1)
                     .SetOpinionIntroRate(0.1);
 
             this.MyOSM = osm;
             this.MyAnimationForm.RegistOSM(osm);
-            //osm.InitializeToZeroStep();
-            //osm.UpdateSteps(200);
-            //osm.UpdateRounds(100, 200);
-            //osm.UpdateRounds(1, 10000);
 
         }
 
@@ -239,7 +239,7 @@ namespace OSM2019
 
         #endregion
 
-        void PlayOne()
+        void PlayStep()
         {
             var control_seed = (int)this.numericUpDownControlSeed.Value;
             var control_speed = (int)this.numericUpDownSpeedControl.Value;
@@ -250,22 +250,29 @@ namespace OSM2019
 
             this.MyOSM.UpdateSteps(control_speed);
 
-            if (this.radioButtonRoundCheck.Checked)
-            {
-                if (max_steps <= this.MyOSM.CurrentStep || this.MyOSM.MyRecordSteps.Last().Value.IsFinished)
-                {
-                    this.MyOSM.UpdateRoundWithoutSteps();
-                }
-            }
-
             this.labelStepNum.Text = this.MyOSM.CurrentStep.ToString();
             this.labelRoundNum.Text = this.MyOSM.CurrentRound.ToString();
             this.MyAnimationForm.UpdatePictureBox();
+
+            if (this.radioButtonRoundCheck.Checked)
+            {
+                if (max_steps <= this.MyOSM.CurrentStep)
+                {
+                    this.PlayRound();
+                }
+            }
+
+        }
+
+        void PlayRound()
+        {
+            this.MyOSM.UpdateRecordRound();
+            this.MyOSM.UpdateRoundWithoutSteps();
         }
 
         private void timerAnimation_Tick(object sender, EventArgs e)
         {
-            this.PlayOne();
+            this.PlayStep();
         }
 
 
@@ -322,7 +329,15 @@ namespace OSM2019
 
         private void radioButtonPlayStep_Click(object sender, EventArgs e)
         {
-            this.PlayOne();
+            if (this.radioButtonStepCheck.Checked)
+            {
+                this.PlayStep();
+            }
+            else if (this.radioButtonRoundCheck.Checked)
+            {
+                this.PlayRound();
+            }
+
         }
     }
 }

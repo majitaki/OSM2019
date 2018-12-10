@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-    class FR_LayoutGenerator : LayoutGeneratorBase
+    class KamadaKawai_LayoutGenerator : LayoutGeneratorBase
     {
         public override LayoutEnum MyLayoutEnum { get; }
         protected override string GeneratePath { get; }
         protected override RawGraph MyGraph { get; }
 
-        public FR_LayoutGenerator(RawGraph graph)
+        public KamadaKawai_LayoutGenerator(RawGraph graph)
         {
             this.MyGraph = graph;
-            this.MyLayoutEnum = LayoutEnum.FruchtermanReingold;
-            var path = Properties.Settings.Default.LayoutGeneratorFolderPath + "fruchterman_reingold_layout.py";
+            this.MyLayoutEnum = LayoutEnum.KamadaKawai;
+            var path = Properties.Settings.Default.LayoutGeneratorFolderPath + "kamada_kawai_layout.py";
             this.GeneratePath = path;
         }
     }

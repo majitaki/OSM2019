@@ -21,7 +21,40 @@ namespace OSM2019.OSM
 
         public override void PrintAgentInfo(Agent agent)
         {
-            base.PrintAgentInfo(agent);
+            Console.WriteLine($"Agent ID: {agent.AgentID}");
+            Console.WriteLine($"Sensor: {agent.IsSensor}");
+            Console.WriteLine($"Belief");
+            int dim = 0;
+            foreach (var belief in agent.Belief.ToList())
+            {
+                Console.WriteLine($"- Dim: {dim} Value {belief}");
+                dim++;
+            }
+
+            var is_changed = agent.IsChanged();
+            Console.WriteLine($"Opinion (Changed:{is_changed})");
+            dim = 0;
+            foreach (var op in agent.Opinion.ToList())
+            {
+                Console.WriteLine($"- Dim: {dim} Value {op}");
+                dim++;
+            }
+            
+            if (this.MyRecordRounds.Count == 0) return;
+            var cur_record_round = new RecordRound(this.CurrentStep, this.MyAgentNetwork.Agents);
+            cur_record_round.RecordSteps(this.MyRecordSteps);
+            var is_recived = cur_record_round.IsReceived(agent);
+            Console.WriteLine($"Receive Opinion (Received:{is_recived})");
+            var receive_op = cur_record_round.AgentReceiveOpinionsInRound[agent];
+            dim = 0;
+            foreach (var op in receive_op.ToList())
+            {
+                Console.WriteLine($"- Dim: {dim} Value {op}");
+                dim++;
+            }
+
+            var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.Value.IsReceived(agent)).Count();
+            if (is_recived) receive_rounds++;
 
             var candidate = this.Candidates[agent];
             int can_index = 0;
@@ -35,6 +68,7 @@ namespace OSM2019.OSM
                 Console.WriteLine($"index: {can_index,3} req: {req_num,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_round: {this.CurrentRound,3} h: {h:f4} {select}");
                 can_index++;
             }
+            
         }
 
         public override void InitializeToZeroRound()
@@ -68,10 +102,6 @@ namespace OSM2019.OSM
 
         public override void UpdateRoundWithoutSteps()
         {
-            var record_round = new RecordRound(this.CurrentStep, this.MyAgentNetwork.Agents);
-            record_round.RecordSteps(this.MyRecordSteps);
-            this.MyRecordRounds.Add(this.CurrentRound, record_round);
-
             this.PrintRound();
             this.EstimateAwaRate();
             this.SelectionWeight();
@@ -115,9 +145,9 @@ namespace OSM2019.OSM
             }
         }
 
-        double GetObsU(Matrix<double> received_sum_op)
+        protected double GetObsU(Vector<double> received_sum_op)
         {
-            List<double> op_list = received_sum_op.Column(0).ToList();
+            List<double> op_list = received_sum_op.ToList();
             var max_op_len = op_list.Max();
             var max_index = op_list.IndexOf(max_op_len);
 
