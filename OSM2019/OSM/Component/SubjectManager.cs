@@ -10,10 +10,20 @@ namespace OSM2019.OSM
     class SubjectManager
     {
         List<OpinionConversion> OpinionConvList;
+        public OSM_Environment OSM_Env { get; private set; }
+        public List<OpinionSubject> Subjects { get; private set; }
 
         public SubjectManager()
         {
             this.OpinionConvList = new List<OpinionConversion>();
+            this.OSM_Env = new OSM_Environment();
+            this.Subjects = new List<OpinionSubject>();
+        }
+
+        public SubjectManager AddSubject(OpinionSubject subject)
+        {
+            this.Subjects.Add(subject);
+            return this;
         }
 
         public SubjectManager RegistConversionMatrix(OpinionSubject from_subject, OpinionSubject to_subject, Matrix<double> conv_matrix)
@@ -22,6 +32,12 @@ namespace OSM2019.OSM
             to_subject.SetSubjectManager(this);
             this.OpinionConvList.Add(new OpinionConversion(from_subject, to_subject, conv_matrix));
             this.OpinionConvList.Add(new OpinionConversion(to_subject, from_subject, conv_matrix.PseudoInverse()));
+            return this;
+        }
+
+        public SubjectManager SetEnvironment(OSM_Environment env)
+        {
+            this.OSM_Env = env;
             return this;
         }
 

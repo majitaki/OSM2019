@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-    class AAT_OSM : OSMBase<AAT_OSM>
+    class AAT_OSM : OSMBase
     {
         protected double TargetH;
         protected double Epsilon;
@@ -39,7 +39,7 @@ namespace OSM2019.OSM
                 Console.WriteLine($"- Dim: {dim} Value {op}");
                 dim++;
             }
-            
+
             if (this.MyRecordRounds.Count == 0) return;
             var cur_record_round = new RecordRound(this.CurrentStep, this.MyAgentNetwork.Agents);
             cur_record_round.RecordSteps(this.MyRecordSteps);
@@ -60,15 +60,15 @@ namespace OSM2019.OSM
             int can_index = 0;
             foreach (var record in candidate.SortedDataBase)
             {
-                var select = (candidate.GetCurrentSelectRecord() == record) ? "*" : "";
+                var select = (candidate.GetCurrentSelectRecord() == record) ? "*" : " ";
                 var can_weight = record.CanWeight;
                 var req_num = record.RequireOpinionNum;
                 var awa_count = record.AwaCount;
                 var h = record.AwaRate;
-                Console.WriteLine($"index: {can_index,3} req: {req_num,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_round: {this.CurrentRound,3} h: {h:f4} {select}");
+                Console.WriteLine($"{select} index: {can_index,3} req: {req_num,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_round: {this.CurrentRound,3} h: {h:f4} {select}");
                 can_index++;
             }
-            
+
         }
 
         public override void InitializeToZeroRound()
@@ -78,7 +78,7 @@ namespace OSM2019.OSM
         }
 
 
-        public override AAT_OSM SetAgentNetwork(AgentNetwork agent_network)
+        public override void SetAgentNetwork(AgentNetwork agent_network)
         {
             base.SetAgentNetwork(agent_network);
             this.Candidates = new Dictionary<Agent, Candidate>();
@@ -90,13 +90,13 @@ namespace OSM2019.OSM
                 agent.SetCommonWeight(can.GetSelectCanWeight());
             }
 
-            return this;
+            return;
         }
 
-        public AAT_OSM SetTargetH(double target_h)
+        public void SetTargetH(double target_h)
         {
             this.TargetH = target_h;
-            return this;
+            return;
         }
 
 

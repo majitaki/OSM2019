@@ -38,8 +38,9 @@ namespace OSM2019.OSM
 
         public Triangular_GraphGenerator SetNodeSize(int n)
         {
-            var upper = Math.Ceiling(Math.Sqrt(n));
-            var lower = Math.Floor(Math.Sqrt(n));
+            var r = (Math.Sqrt(1 + 8 * n) - 3) / 2;
+            var upper = Math.Ceiling(r);
+            var lower = Math.Floor(r);
 
             this.Height = (int)upper;
             this.Width = (int)lower;

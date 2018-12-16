@@ -55,20 +55,28 @@ namespace OSM2019.OSM
             //if (is_recived) receive_rounds++;
 
             var candidate = this.Candidates[agent];
+            var change_queue = this.OpinionChangedQueues[candidate];
+            Console.Write($"- Queue:");
+            foreach (var value in change_queue)
+            {
+                Console.Write($" {value}");
+            }
+            Console.WriteLine();
+
             int can_index = 0;
             foreach (var record in candidate.SortedDataBase)
             {
-                var select = (candidate.GetCurrentSelectRecord() == record) ? "*" : "";
+                var select = (candidate.GetCurrentSelectRecord() == record) ? "*" : " ";
                 var can_weight = record.CanWeight;
                 var req_num = record.RequireOpinionNum;
                 var awa_count = record.AwaCount;
                 var h = record.AwaRate;
-                Console.WriteLine($"index: {can_index,3} req: {req_num,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_rcv_round: {receive_rounds,3} h: {h:f4} {select}");
+                Console.WriteLine($"{select} index: {can_index,3} req: {req_num,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_rcv_round: {receive_rounds,3} h: {h:f4} {select}");
                 can_index++;
             }
         }
 
-        public override AAT_OSM SetAgentNetwork(AgentNetwork agent_network)
+        public override void SetAgentNetwork(AgentNetwork agent_network)
         {
             base.SetAgentNetwork(agent_network);
             this.OpinionChangedQueues = new Dictionary<Candidate, Queue<bool>>();
@@ -79,7 +87,7 @@ namespace OSM2019.OSM
                 this.OpinionChangedQueues.Add(candidate.Value, queue);
             }
 
-            return this;
+            return;
         }
 
         protected override void EstimateAwaRate()
@@ -99,7 +107,7 @@ namespace OSM2019.OSM
             var current_round = this.CurrentRound;
             var min_diff_u_record = candidate.SortedDataBase.OrderBy(record => Math.Abs(record.RequireOpinionNum - obs_u)).First();
             var min_diff_u = Math.Abs(min_diff_u_record.RequireOpinionNum - obs_u);
-            var obs_weight = candidate.SortedDataBase.Where(record => Math.Abs(record.RequireOpinionNum - obs_u) == min_diff_u).OrderBy(record => record.CanWeight).Last().CanWeight;
+            var obs_weight = candidate.SortedDataBase.Where(record => Math.Abs(record.RequireOpinionNum - obs_u) == min_diff_u).OrderBy(record => record.CanWeight).First().CanWeight;
             var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.Value.IsReceived(agent)).Count();
 
             foreach (var record in candidate.SortedDataBase)
@@ -174,7 +182,6 @@ namespace OSM2019.OSM
                 candidate.Key.SetCommonWeight(candidate.Value.GetSelectCanWeight());
 
             }
-            base.SelectionWeight();
         }
     }
 }

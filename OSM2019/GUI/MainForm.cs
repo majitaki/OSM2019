@@ -40,36 +40,44 @@ namespace OSM2019
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
             //Test();
-            var exp = new NetworkSize_Experiment(500, 500, 100);
+            var exp = new NetworkSize_Experiment(100, 500, 100);
             exp.Run();
             Environment.Exit(0);
-            //this.MyAnimationForm.Show();
-            //this.MyAnimationForm.Left = this.Right;
+            this.MyAnimationForm.Show();
+            this.MyAnimationForm.Left = this.Right;
         }
 
         void Test()
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(100).SetNearestNeighbors(6).SetRewireP(0.01);
-            //graph_generator = new Hexagonal_GraphGenerator().SetNodeSize(100);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(200).SetNearestNeighbors(6).SetRewireP(0.01);
+            //graph_generator = new Triangular_GraphGenerator().SetNodeSize(200);
 
             var graph = graph_generator.Generate(0);
-            //var layout = new KamadaKawai_LayoutGenerator(graph).Generate();
-            var layout = new Circular_LayoutGenerator(graph).Generate();
+            var layout = new KamadaKawai_LayoutGenerator(graph).Generate();
+            //var layout = new Circular_LayoutGenerator(graph).Generate();
 
             var init_belief_gene = new InitBeliefGenerator()
                                     .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
 
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
-            var subject_test = new OpinionSubject("test", 2);
+            var subject_test = new OpinionSubject("test", 5);
 
             double[] conv_array = { 1, 0, 0, 1, 1, 0 };
             var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
 
+            var osm_env = new OSM_Environment()
+                            //.SetSubject(subject_tv)
+                            .SetSubject(subject_test)
+                            .SetCorrectDim(0)
+                            .SetSensorRate(0.55);
+
             var subject_manager = new SubjectManager()
-                .RegistConversionMatrix(subject_tv, subject_company, conv_matrix);
+                                .AddSubject(subject_test)
+                                .RegistConversionMatrix(subject_tv, subject_company, conv_matrix)
+                                .SetEnvironment(osm_env);
 
 
             var op_form_threshold = 0.9;
@@ -90,11 +98,11 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_test)
-                                .SetInitOpinion(Vector<double>.Build.Dense(2, 0.0));
+                                .SetInitOpinion(Vector<double>.Build.Dense(5, 0.0));
 
             var sensor_gene = new SensorGenerator()
-                            .SetSensorSize((int)(0.1 * graph.Nodes.Count));
-            //.SetSensorSize((int)10);
+                            //.SetSensorSize((int)(0.1 * graph.Nodes.Count));
+                            .SetSensorSize((int)10);
 
             int agent_gene_seed = 0;
             var agent_gene_rand = new ExtendRandom(agent_gene_seed);
@@ -113,21 +121,15 @@ namespace OSM2019
             int update_step_seed = 0;
             var update_step_rand = new ExtendRandom(update_step_seed);
 
-            var env_mgr = new EnvironmentManager()
-                            //.SetSubject(subject_tv)
-                            .SetSubject(subject_test)
-                            .SetCorrectDim(0)
-                            .SetSensorRate(0.55);
 
-            OSMBase<AAT_OSM> osm = new AATG_OSM()
-                    .SetRand(update_step_rand)
-                    .SetAgentNetwork(agent_network)
-                    .SetEnvManager(env_mgr)
-                    .SetSubjectManager(subject_manager)
-                    .SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion)
-                    //.SetTargetH(0.9)
-                    .SetOpinionIntroInterval(1)
-                    .SetOpinionIntroRate(0.1);
+            var osm = new AATG_OSM();
+            osm.SetRand(update_step_rand);
+            osm.SetAgentNetwork(agent_network);
+            osm.SetSubjectManager(subject_manager);
+            osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
+            //osm.SetTargetH(0.9);
+            osm.SetOpinionIntroInterval(1);
+            osm.SetOpinionIntroRate(0.1);
 
             this.MyOSM = osm;
             this.MyAnimationForm.RegistOSM(osm);
@@ -315,9 +317,14 @@ namespace OSM2019
             }
             else if (this.radioButtonRoundCheck.Checked)
             {
+                var output_pass = Properties.Settings.Default.OutputLogPath + "/tmp";
+                Output.OutputRounds(output_pass, this.MyOSM.MyRecordRounds);
+
+
                 this.MyOSM.InitializeToZeroRound();
                 this.labelRoundNum.Text = this.MyOSM.CurrentRound.ToString();
                 this.labelStepNum.Text = this.MyOSM.CurrentStep.ToString();
+
             }
             this.MyAnimationForm.UpdatePictureBox();
         }
@@ -329,15 +336,7 @@ namespace OSM2019
 
         private void radioButtonPlayStep_Click(object sender, EventArgs e)
         {
-            if (this.radioButtonStepCheck.Checked)
-            {
-                this.PlayStep();
-            }
-            else if (this.radioButtonRoundCheck.Checked)
-            {
-                this.PlayRound();
-            }
-
+            this.PlayStep();
         }
     }
 }

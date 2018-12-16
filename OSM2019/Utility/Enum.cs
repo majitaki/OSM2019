@@ -78,4 +78,10 @@ namespace OSM2019.Utility
         RandomSetRate,
         RemainSet
     }
+
+    enum AlgoEnum
+    {
+        AAT,
+        AATG
+    }
 }

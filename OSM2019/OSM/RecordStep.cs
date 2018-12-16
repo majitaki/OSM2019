@@ -10,20 +10,29 @@ namespace OSM2019.OSM
     class RecordStep
     {
         public int Step { get; private set; }
+        //public Dictionary<OpinionSubject, List<int>> OpinionSizes { get; private set; }
         public int CorrectSize { get; private set; }
         public int IncorrectSize { get; private set; }
         public int UndeterSize { get; private set; }
         public int StepMessageSize { get; private set; }
         public int ActiveAgentSize { get; private set; }
         public int ActiveSensorSize { get; private set; }
+        public int SensorSize { get; private set; }
+        public int DeterminedSensorSize { get; private set; }
         public Dictionary<Agent, Vector<double>> AgentReceiveOpinionsInStep { get; private set; }
         public int NetworkSize { get; private set; }
 
-        public RecordStep(int cur_step, List<Agent> agents)
+        public RecordStep(int cur_step, List<Agent> agents, SubjectManager subject_mgr)
         {
             this.Step = cur_step;
             this.AgentReceiveOpinionsInStep = new Dictionary<Agent, Vector<double>>();
+            //this.OpinionSizes = new Dictionary<OpinionSubject, List<int>>();
             this.NetworkSize = agents.Count;
+
+            //foreach (var subject in subject_mgr.Subjects)
+            //{
+            //    this.OpinionSizes[subject] = new List<int>(subject.SubjectDimSize);
+            //}
 
             foreach (var agent in agents)
             {
@@ -34,20 +43,25 @@ namespace OSM2019.OSM
 
         }
 
-        public void RecordStepAgents(List<Agent> agents, EnvironmentManager env_mgr)
+        public void RecordStepAgents(List<Agent> agents, SubjectManager subject_mgr)
         {
-            var cor_dim = env_mgr.CorrectDim;
-            var cor_subject = env_mgr.EnvSubject;
-            var same_subject_agents = agents.Where(agent => agent.MySubject.SubjectName == cor_subject.SubjectName).ToList();
-            //var cor_agents = same_subject_agents.Where(agent => agent.GetOpinionDim() == cor_dim).ToList();
-            //var undeter_agents = same_subject_agents.Where(agent => agent.GetOpinionDim() == -1).ToList();
-            //var incor_agents = same_subject_agents.Except(cor_agents).Except(undeter_agents).ToList();
-            //var network_size = agents.Count;
-
+            //foreach (var agent in agents)
+            //{
+            //    this.OpinionSizes[agent.MySubject][agent.GetOpinionDim()]++;
+            //}
+            var cor_dim = subject_mgr.OSM_Env.CorrectDim;
+            var cor_subject = subject_mgr.OSM_Env.EnvSubject;
+            this.CorrectSize = agents.Where(agent => agent.MySubject.SubjectName == cor_subject.SubjectName && agent.GetOpinionDim() == cor_dim).Count();
+            this.UndeterSize = agents.Where(agent => agent.GetOpinionDim() == -1).Count();
+            this.IncorrectSize = this.NetworkSize - this.CorrectSize - this.UndeterSize;
             this.NetworkSize = agents.Count;
-            this.CorrectSize = same_subject_agents.Where(agent => agent.GetOpinionDim() == cor_dim).Count();
-            this.IncorrectSize = same_subject_agents.Where(agent => agent.GetOpinionDim() == -1).Count();
-            this.UndeterSize = this.NetworkSize - this.CorrectSize - this.IncorrectSize;
+            this.SensorSize = agents.Where(agent => agent.IsSensor).Count();
+            this.DeterminedSensorSize = agents.Where(agent => agent.IsSensor && agent.IsDetermined()).Count();
+
+            //var same_subject_agents = agents.Where(agent => agent.MySubject.SubjectName == cor_subject.SubjectName).ToList();
+            //this.CorrectSize = same_subject_agents.Where(agent => agent.GetOpinionDim() == cor_dim).Count();
+            //this.UndeterSize = same_subject_agents.Where(agent => agent.GetOpinionDim() == -1).Count();
+            //this.IncorrectSize = this.NetworkSize - this.CorrectSize - this.UndeterSize;
 
         }
 

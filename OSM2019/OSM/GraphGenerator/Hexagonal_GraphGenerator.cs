@@ -44,8 +44,8 @@ namespace OSM2019.OSM
 
         public Hexagonal_GraphGenerator SetNodeSize(int n)
         {
-            var upper = Math.Ceiling(Math.Sqrt(n));
-            var lower = Math.Floor(Math.Sqrt(n));
+            var upper = Math.Ceiling(Math.Sqrt(1 + (double)n / 2) - 1);
+            var lower = Math.Floor(Math.Sqrt(1 + (double)n / 2) - 1);
 
             this.Height = (int)upper;
             this.Width = (int)lower;

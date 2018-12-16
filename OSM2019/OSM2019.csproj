@@ -96,7 +96,8 @@
     <Compile Include="OSM\Component\AgentNetwork.cs" />
     <Compile Include="OSM\Component\AgentBase.cs" />
     <Compile Include="OSM\Component\AgentLink.cs" />
-    <Compile Include="OSM\Component\EnvironmentManager.cs" />
+    <Compile Include="OSM\Component\OSM_Environment.cs" />
+    <Compile Include="OSM\GraphGenerator\Null_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\GraphGeneratorBase.cs" />
     <Compile Include="OSM\Component\I_OSM.cs" />
     <Compile Include="OSM\LayoutGenerator\LayoutGeneratorBase.cs" />

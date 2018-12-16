@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-    abstract class OSMBase<T> : I_OSM
+    abstract class OSMBase : I_OSM
     {
         public AgentNetwork MyAgentNetwork { get; set; }
         public int CurrentStep { get; set; }
         public int CurrentRound { get; set; }
 
         ExtendRandom UpdateStepRand;
-        public EnvironmentManager MyEnvManager { get; protected set; }
+        public OSM_Environment MyEnvManager { get; protected set; }
         public SubjectManager MySubjectManager { get; protected set; }
         public double OpinionIntroRate { get; protected set; }
         public double OpinionIntroInterval { get; protected set; }
@@ -39,47 +39,42 @@ namespace OSM2019.OSM
             this.MyRecordSteps = new Dictionary<int, RecordStep>();
         }
 
-        public T SetRand(ExtendRandom update_step_rand)
+        public void SetRand(ExtendRandom update_step_rand)
         {
             this.UpdateStepRand = update_step_rand;
-            return (T)(object)this;
+            return;
         }
 
-        public virtual T SetAgentNetwork(AgentNetwork agent_network)
+        public virtual void SetAgentNetwork(AgentNetwork agent_network)
         {
             this.MyAgentNetwork = agent_network;
-            return (T)(object)this;
+            return;
         }
 
-        public T SetEnvManager(EnvironmentManager env_mgr)
-        {
-            this.MyEnvManager = env_mgr;
-            this.MyEnvManager.AddEnvironment(this.MyAgentNetwork);
-            return (T)(object)this;
-        }
-
-        public T SetSubjectManager(SubjectManager subject_mgr)
+        public void SetSubjectManager(SubjectManager subject_mgr)
         {
             this.MySubjectManager = subject_mgr;
-            return (T)(object)this;
+            this.MyEnvManager = subject_mgr.OSM_Env;
+            this.MyEnvManager.AddEnvironment(this.MyAgentNetwork);
+            return;
         }
 
-        public T SetOpinionIntroRate(double op_intro_rate)
+        public void SetOpinionIntroRate(double op_intro_rate)
         {
             this.OpinionIntroRate = op_intro_rate;
-            return (T)(object)this;
+            return;
         }
 
-        public T SetOpinionIntroInterval(int interval_step)
+        public void SetOpinionIntroInterval(int interval_step)
         {
             this.OpinionIntroInterval = interval_step;
-            return (T)(object)this;
+            return;
         }
 
-        public T SetInitWeightsMode(CalcWeightMode mode)
+        public void SetInitWeightsMode(CalcWeightMode mode)
         {
             this.MyCalcWeightMode = mode;
-            return (T)(object)this;
+            return;
         }
 
         public virtual void PrintAgentInfo(Agent agent)
@@ -120,14 +115,15 @@ namespace OSM2019.OSM
 
         protected virtual void UpdateStep()
         {
-            var record_step = new RecordStep(this.CurrentStep, this.MyAgentNetwork.Agents);
+            var record_step = new RecordStep(this.CurrentStep, this.MyAgentNetwork.Agents, this.MySubjectManager);
 
             //sensor observe
             if (this.CurrentStep % this.OpinionIntroInterval == 0)
             {
                 var all_sensors = this.MyAgentNetwork.Agents.Where(agent => agent.IsSensor).ToList();
-                var observe_num = (int)(all_sensors.Count * this.OpinionIntroRate);
+                var observe_num = (int)Math.Ceiling(all_sensors.Count * this.OpinionIntroRate);
                 var observe_sensors = all_sensors.Select(agent => agent.AgentID).OrderBy(a => this.UpdateStepRand.Next()).Take(observe_num).Select(id => this.MyAgentNetwork.Agents[id]).ToList();
+                //var observe_sensors = all_sensors.Where(sensor => !sensor.IsDetermined()).Select(agent => agent.AgentID).OrderBy(a => this.UpdateStepRand.Next()).Take(observe_num).Select(id => this.MyAgentNetwork.Agents[id]).ToList();
                 var env_messages = this.MyEnvManager.SendMessages(observe_sensors, this.UpdateStepRand);
                 Messages.AddRange(env_messages);
             }
@@ -146,7 +142,7 @@ namespace OSM2019.OSM
             }
 
             record_step.RecordStepMessages(this.Messages);
-            record_step.RecordStepAgents(this.MyAgentNetwork.Agents, this.MyEnvManager);
+            record_step.RecordStepAgents(this.MyAgentNetwork.Agents, this.MySubjectManager);
             this.MyRecordSteps.Add(this.CurrentStep, record_step);
 
             this.Messages.Clear();
