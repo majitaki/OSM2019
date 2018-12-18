@@ -24,11 +24,12 @@ namespace OSM2019.Experiment
 
         public void Run()
         {
-            string save_folder = "/sintyoku_20181217/";
-            List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
+            string save_folder = "/sintyoku_20181219_dim3/";
+            //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
+            List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal, GraphEnum.Triangular };
             List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATG };
 
-            int op_dim_size = 2;
+            int op_dim_size = 3;
             double sensor_rate = 0.55;
 
             for (int size = this.StartSize; size <= FinalSize; size += DurationSize)
@@ -100,56 +101,12 @@ namespace OSM2019.Experiment
                                             .GenerateSensor(sensor_gene)
                                             .SetLayout(layout);
 
-                    for (int seed = 0; seed < 5; seed++)
+                    for (int seed = 0; seed < 3; seed++)
                     {
 
                         int update_step_seed = seed;
-                        var update_step_rand = new ExtendRandom(update_step_seed);
                         var output_pass = Properties.Settings.Default.OutputLogPath + save_folder + select_graph.ToString() + "_" + size.ToString() + "_fix10_" + op_dim_size.ToString() + "_" + sensor_rate.ToString() + "_";
-                        /*
-                        Parallel.ForEach(algos, algo =>
-                        {
-                            switch (algo)
-                            {
-                                case AlgoEnum.AAT:
 
-                                    var osm_aat = new AAT_OSM();
-                                    osm_aat.SetRand(update_step_rand);
-                                    osm_aat.SetAgentNetwork(agent_network);
-                                    osm_aat.SetSubjectManager(subject_manager);
-                                    osm_aat.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-                                    osm_aat.SetTargetH(0.9);
-                                    osm_aat.SetOpinionIntroInterval(1);
-                                    osm_aat.SetOpinionIntroRate(0.1);
-
-                                    osm_aat.UpdateRounds(300, 1500);
-
-                                    var output_pass_aat = output_pass + algo.ToString();
-                                    Output.OutputRounds(output_pass_aat, osm_aat.MyRecordRounds, seed.ToString());
-
-                                    break;
-                                case AlgoEnum.AATG:
-
-                                    var osm_aatg = new AATG_OSM();
-                                    osm_aatg.SetRand(update_step_rand);
-                                    osm_aatg.SetAgentNetwork(agent_network);
-                                    osm_aatg.SetSubjectManager(subject_manager);
-                                    osm_aatg.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-                                    osm_aatg.SetOpinionIntroInterval(1);
-                                    osm_aatg.SetOpinionIntroRate(0.1);
-
-                                    osm_aatg.UpdateRounds(300, 1500);
-
-                                    var output_pass_aatg = output_pass + algo.ToString();
-                                    Output.OutputRounds(output_pass_aatg, osm_aatg.MyRecordRounds, seed.ToString());
-
-                                    break;
-                                default:
-                                    break;
-                            }
-                        });
-                        */
-                        
                         foreach (var algo in algos)
                         {
                             switch (algo)
@@ -157,7 +114,8 @@ namespace OSM2019.Experiment
                                 case AlgoEnum.AAT:
 
                                     var osm_aat = new AAT_OSM();
-                                    osm_aat.SetRand(update_step_rand);
+                                    var update_step_rand_aat = new ExtendRandom(update_step_seed);
+                                    osm_aat.SetRand(update_step_rand_aat);
                                     osm_aat.SetAgentNetwork(agent_network);
                                     osm_aat.SetSubjectManager(subject_manager);
                                     osm_aat.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
@@ -174,7 +132,8 @@ namespace OSM2019.Experiment
                                 case AlgoEnum.AATG:
 
                                     var osm_aatg = new AATG_OSM();
-                                    osm_aatg.SetRand(update_step_rand);
+                                    var update_step_rand_aatg = new ExtendRandom(update_step_seed);
+                                    osm_aatg.SetRand(update_step_rand_aatg);
                                     osm_aatg.SetAgentNetwork(agent_network);
                                     osm_aatg.SetSubjectManager(subject_manager);
                                     osm_aatg.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
@@ -191,7 +150,7 @@ namespace OSM2019.Experiment
                                     break;
                             }
                         }
-                        
+
 
                     }
 

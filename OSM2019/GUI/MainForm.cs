@@ -40,7 +40,7 @@ namespace OSM2019
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
             //Test();
-            var exp = new NetworkSize_Experiment(100, 500, 100);
+            var exp = new NetworkSize_Experiment(100, 500, 400);
             exp.Run();
             Environment.Exit(0);
             this.MyAnimationForm.Show();
@@ -51,7 +51,7 @@ namespace OSM2019
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(200).SetNearestNeighbors(6).SetRewireP(0.01);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(300).SetNearestNeighbors(6).SetRewireP(0.01);
             //graph_generator = new Triangular_GraphGenerator().SetNodeSize(200);
 
             var graph = graph_generator.Generate(0);
@@ -63,7 +63,7 @@ namespace OSM2019
 
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
-            var subject_test = new OpinionSubject("test", 5);
+            var subject_test = new OpinionSubject("test", 2);
 
             double[] conv_array = { 1, 0, 0, 1, 1, 0 };
             var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
@@ -98,7 +98,7 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_test)
-                                .SetInitOpinion(Vector<double>.Build.Dense(5, 0.0));
+                                .SetInitOpinion(Vector<double>.Build.Dense(2, 0.0));
 
             var sensor_gene = new SensorGenerator()
                             //.SetSensorSize((int)(0.1 * graph.Nodes.Count));
@@ -134,6 +134,9 @@ namespace OSM2019
             this.MyOSM = osm;
             this.MyAnimationForm.RegistOSM(osm);
 
+            osm.UpdateRounds(300, 1500);
+            var output_pass = Properties.Settings.Default.OutputLogPath + "/tmp";
+            Output.OutputRounds(output_pass, this.MyOSM.MyRecordRounds);
         }
 
         void UserInitialize()
@@ -317,8 +320,7 @@ namespace OSM2019
             }
             else if (this.radioButtonRoundCheck.Checked)
             {
-                var output_pass = Properties.Settings.Default.OutputLogPath + "/tmp";
-                Output.OutputRounds(output_pass, this.MyOSM.MyRecordRounds);
+
 
 
                 this.MyOSM.InitializeToZeroRound();

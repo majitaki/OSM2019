@@ -165,14 +165,31 @@ namespace OSM2019.OSM
             var select_record = candidate.GetCurrentSelectRecord();
             var current_round = this.CurrentRound;
 
+
             foreach (var record in candidate.SortedDataBase)
             {
+                var pre_counts = (current_round) * record.AwaRate;
+
                 if (this.IsEvsOpinionFormed(agent, select_record, record, obs_u))
                 {
-                    record.AwaCount += 1;
+                    record.AwaRate = (pre_counts + 1) / (current_round + 1);
+                    record.AwaCount = (int)pre_counts + 1;
                 }
-                record.AwaRate = record.AwaCount / (double)(current_round + 1);
+                else
+                {
+                    record.AwaRate = (pre_counts + 0) / (current_round + 1);
+                    record.AwaCount = (int)pre_counts + 0;
+                }
             }
+
+            //foreach (var record in candidate.SortedDataBase)
+            //{
+            //    if (this.IsEvsOpinionFormed(agent, select_record, record, obs_u))
+            //    {
+            //        record.AwaCount += 1;
+            //    }
+            //    record.AwaRate = record.AwaCount / (double)(current_round + 1);
+            //}
         }
 
         protected virtual bool IsEvsOpinionFormed(Agent agent, CandidateRecord select_record, CandidateRecord other_record, double obs_u)
