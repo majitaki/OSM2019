@@ -30,7 +30,7 @@ namespace OSM2019.Experiment
             List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATG };
 
             int op_dim_size = 3;
-            double sensor_rate = 0.55;
+            double sensor_rate = 0.40;
 
             for (int size = this.StartSize; size <= FinalSize; size += DurationSize)
             {
