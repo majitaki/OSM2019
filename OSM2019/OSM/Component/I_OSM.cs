@@ -11,8 +11,9 @@ namespace OSM2019.OSM
     {
         int CurrentStep { get; set; }
         int CurrentRound { get; set; }
-        Dictionary<int, RecordStep> MyRecordSteps { get; set; }
+        //Dictionary<int, RecordStep> MyRecordSteps { get; set; }
         Dictionary<int, RecordRound> MyRecordRounds { get; set; }
+        RecordStep MyRecordStep { get; set; }
 
         AgentNetwork MyAgentNetwork { get; set; }
 

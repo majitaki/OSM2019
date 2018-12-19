@@ -7,26 +7,26 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-    class OSM_Environment
+    class OpinionEnvironment
     {
         public double SensorRate { get; protected set; }
         public OpinionSubject EnvSubject { get; protected set; }
         public int CorrectDim { get; protected set; }
         Agent EnvironmentAgent;
 
-        public OSM_Environment SetSubject(OpinionSubject subject)
+        public OpinionEnvironment SetSubject(OpinionSubject subject)
         {
             this.EnvSubject = subject;
             return this;
         }
 
-        public OSM_Environment SetCorrectDim(int cor_dim)
+        public OpinionEnvironment SetCorrectDim(int cor_dim)
         {
             this.CorrectDim = cor_dim;
             return this;
         }
 
-        public OSM_Environment SetSensorRate(double sensor_rate)
+        public OpinionEnvironment SetSensorRate(double sensor_rate)
         {
             this.SensorRate = sensor_rate;
             return this;

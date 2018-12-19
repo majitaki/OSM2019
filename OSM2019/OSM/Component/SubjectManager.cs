@@ -10,13 +10,13 @@ namespace OSM2019.OSM
     class SubjectManager
     {
         List<OpinionConversion> OpinionConvList;
-        public OSM_Environment OSM_Env { get; private set; }
+        public OpinionEnvironment OSM_Env { get; private set; }
         public List<OpinionSubject> Subjects { get; private set; }
 
         public SubjectManager()
         {
             this.OpinionConvList = new List<OpinionConversion>();
-            this.OSM_Env = new OSM_Environment();
+            this.OSM_Env = new OpinionEnvironment();
             this.Subjects = new List<OpinionSubject>();
         }
 
@@ -35,7 +35,7 @@ namespace OSM2019.OSM
             return this;
         }
 
-        public SubjectManager SetEnvironment(OSM_Environment env)
+        public SubjectManager SetEnvironment(OpinionEnvironment env)
         {
             this.OSM_Env = env;
             return this;

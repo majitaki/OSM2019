@@ -17,7 +17,7 @@ namespace OSM2019.OSM
         public int CurrentRound { get; set; }
 
         ExtendRandom UpdateStepRand;
-        public OSM_Environment MyEnvManager { get; protected set; }
+        public OpinionEnvironment MyEnvManager { get; protected set; }
         public SubjectManager MySubjectManager { get; protected set; }
         public double OpinionIntroRate { get; protected set; }
         public double OpinionIntroInterval { get; protected set; }
@@ -25,7 +25,8 @@ namespace OSM2019.OSM
         AggregationFunctions MyAggFuncs;
         List<Message> Messages;
         List<Agent> OpinionFormedAgents;
-        public Dictionary<int, RecordStep> MyRecordSteps { get; set; }
+        //public Dictionary<int, RecordStep> MyRecordSteps { get; set; }
+        public RecordStep MyRecordStep { get; set; }
         public Dictionary<int, RecordRound> MyRecordRounds { get; set; }
 
         public OSMBase()
@@ -36,7 +37,7 @@ namespace OSM2019.OSM
             Messages = new List<Message>();
             OpinionFormedAgents = new List<Agent>();
             this.MyRecordRounds = new Dictionary<int, RecordRound>();
-            this.MyRecordSteps = new Dictionary<int, RecordStep>();
+            //this.MyRecordSteps = new Dictionary<int, RecordStep>();
         }
 
         public void SetRand(ExtendRandom update_step_rand)
@@ -48,6 +49,7 @@ namespace OSM2019.OSM
         public virtual void SetAgentNetwork(AgentNetwork agent_network)
         {
             this.MyAgentNetwork = agent_network;
+            this.MyRecordStep = new RecordStep(0, agent_network.Agents);
             return;
         }
 
@@ -100,7 +102,10 @@ namespace OSM2019.OSM
 
             if (this.MyRecordRounds.Count == 0) return;
             var cur_record_round = new RecordRound(this.CurrentStep, this.MyAgentNetwork.Agents);
-            cur_record_round.RecordSteps(this.MyRecordSteps);
+            //cur_record_round.RecordSteps(this.MyRecordSteps);
+            var record_steps = new Dictionary<int, RecordStep>();
+            record_steps.Add(0, this.MyRecordStep);
+            cur_record_round.RecordSteps(record_steps);
             var is_recived = cur_record_round.IsReceived(agent);
             Console.WriteLine($"Receive Opinion (Received:{is_recived})");
             var receive_op = cur_record_round.AgentReceiveOpinionsInRound[agent];
@@ -115,7 +120,7 @@ namespace OSM2019.OSM
 
         protected virtual void UpdateStep()
         {
-            var record_step = new RecordStep(this.CurrentStep, this.MyAgentNetwork.Agents, this.MySubjectManager);
+            //var record_step = new RecordStep(this.CurrentStep, this.MyAgentNetwork.Agents);
 
             //sensor observe
             if (this.CurrentStep % this.OpinionIntroInterval == 0)
@@ -141,9 +146,11 @@ namespace OSM2019.OSM
                 OpinionFormedAgents.Add(op_form_agent);
             }
 
-            record_step.RecordStepMessages(this.Messages);
-            record_step.RecordStepAgents(this.MyAgentNetwork.Agents, this.MySubjectManager);
-            this.MyRecordSteps.Add(this.CurrentStep, record_step);
+            //record_step.RecordStepMessages(this.Messages);
+            //record_step.RecordStepAgents(this.MyAgentNetwork.Agents, this.MySubjectManager);
+            //this.MyRecordSteps.Add(this.CurrentStep, record_step);
+            this.MyRecordStep.RecordStepMessages(this.Messages);
+            this.MyRecordStep.RecordStepAgents(this.MyAgentNetwork.Agents, this.MySubjectManager);
 
             this.Messages.Clear();
             this.CurrentStep++;
@@ -169,7 +176,11 @@ namespace OSM2019.OSM
         public virtual void UpdateRecordRound()
         {
             var record_round = new RecordRound(this.CurrentRound, this.MyAgentNetwork.Agents);
-            record_round.RecordSteps(this.MyRecordSteps);
+
+            var record_steps = new Dictionary<int, RecordStep>();
+            record_steps.Add(0, this.MyRecordStep);
+            record_round.RecordSteps(record_steps);
+            //record_round.RecordSteps(this.MyRecordSteps);
             this.MyRecordRounds.Add(this.CurrentRound, record_round);
         }
 
@@ -199,7 +210,8 @@ namespace OSM2019.OSM
                 agent.Opinion = agent.InitOpinion.Clone();
             }
             this.CurrentStep = 0;
-            this.MyRecordSteps = new Dictionary<int, RecordStep>();
+            //this.MyRecordSteps = new Dictionary<int, RecordStep>();
+            this.MyRecordStep = new RecordStep(0, this.MyAgentNetwork.Agents);
             this.Messages.Clear();
             this.OpinionFormedAgents.Clear();
         }

@@ -22,7 +22,7 @@ namespace OSM2019.OSM
         public Dictionary<Agent, Vector<double>> AgentReceiveOpinionsInStep { get; private set; }
         public int NetworkSize { get; private set; }
 
-        public RecordStep(int cur_step, List<Agent> agents, SubjectManager subject_mgr)
+        public RecordStep(int cur_step, List<Agent> agents)
         {
             this.Step = cur_step;
             this.AgentReceiveOpinionsInStep = new Dictionary<Agent, Vector<double>>();
@@ -67,7 +67,6 @@ namespace OSM2019.OSM
 
         public void RecordStepMessages(List<Message> step_messages)
         {
-
             foreach (var step_message in step_messages)
             {
                 Vector<double> receive_op = null;

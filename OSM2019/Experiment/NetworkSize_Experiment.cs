@@ -14,23 +14,39 @@ namespace OSM2019.Experiment
         int StartSize;
         int FinalSize;
         int DurationSize;
+        int DimSize;
+        double SensorRate;
 
-        public NetworkSize_Experiment(int start_size, int final_size, int duration_size)
+        public NetworkSize_Experiment SetNetworkSize(int start_size, int final_size, int duration_size)
         {
             this.StartSize = start_size;
             this.FinalSize = final_size;
             this.DurationSize = duration_size;
+            return this;
         }
 
-        public void Run()
+        public NetworkSize_Experiment SetDimSize(int dim_size)
         {
-            string save_folder = "/sintyoku_20181219_dim3/";
+            this.DimSize = dim_size;
+            return this;
+        }
+
+        public NetworkSize_Experiment SetSensorRate(double sensor_rate)
+        {
+            this.SensorRate = sensor_rate;
+            return this;
+        }
+
+        public void Run(int start_seed, int final_seed)
+        {
+            string save_folder = "/sintyoku_20181220/";
             //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
+            //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal, GraphEnum.Triangular };
             List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal, GraphEnum.Triangular };
             List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATG };
 
-            int op_dim_size = 3;
-            double sensor_rate = 0.40;
+            int op_dim_size = this.DimSize;
+            double sensor_rate = this.SensorRate;
 
             for (int size = this.StartSize; size <= FinalSize; size += DurationSize)
             {
@@ -70,7 +86,7 @@ namespace OSM2019.Experiment
                     var subject_test = new OpinionSubject("test", op_dim_size);
 
 
-                    var osm_env = new OSM_Environment()
+                    var osm_env = new OpinionEnvironment()
                                     .SetSubject(subject_test)
                                     .SetCorrectDim(0)
                                     .SetSensorRate(sensor_rate);
@@ -90,19 +106,20 @@ namespace OSM2019.Experiment
                                     //.SetSensorSize((int)(0.1 * graph.Nodes.Count));
                                     .SetSensorSize((int)10);
 
-                    int agent_gene_seed = 0;
-                    var agent_gene_rand = new ExtendRandom(agent_gene_seed);
 
 
-                    var agent_network = new AgentNetwork()
-                                            .SetRand(agent_gene_rand)
-                                            .GenerateNetworkFrame(graph)
-                                            .ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
-                                            .GenerateSensor(sensor_gene)
-                                            .SetLayout(layout);
-
-                    for (int seed = 0; seed < 3; seed++)
+                    for (int seed = start_seed; seed <= final_seed; seed++)
                     {
+                        int agent_gene_seed = seed;
+                        var agent_gene_rand = new ExtendRandom(agent_gene_seed);
+
+
+                        var agent_network = new AgentNetwork()
+                                                .SetRand(agent_gene_rand)
+                                                .GenerateNetworkFrame(graph)
+                                                .ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
+                                                .GenerateSensor(sensor_gene)
+                                                .SetLayout(layout);
 
                         int update_step_seed = seed;
                         var output_pass = Properties.Settings.Default.OutputLogPath + save_folder + select_graph.ToString() + "_" + size.ToString() + "_fix10_" + op_dim_size.ToString() + "_" + sensor_rate.ToString() + "_";

@@ -42,7 +42,10 @@ namespace OSM2019.OSM
 
             if (this.MyRecordRounds.Count == 0) return;
             var cur_record_round = new RecordRound(this.CurrentStep, this.MyAgentNetwork.Agents);
-            cur_record_round.RecordSteps(this.MyRecordSteps);
+            var record_steps = new Dictionary<int, RecordStep>();
+            record_steps.Add(0, this.MyRecordStep);
+            cur_record_round.RecordSteps(record_steps);
+            //cur_record_round.RecordSteps(this.MyRecordSteps);
             var is_recived = cur_record_round.IsReceived(agent);
             Console.WriteLine($"Receive Opinion (Received:{is_recived})");
             var receive_op = cur_record_round.AgentReceiveOpinionsInRound[agent];
