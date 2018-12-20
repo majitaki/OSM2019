@@ -16,6 +16,9 @@ namespace OSM2019.Experiment
         int DurationSize;
         int DimSize;
         double SensorRate;
+        string LogPath;
+
+        static object lock_object = new object();
 
         public NetworkSize_Experiment SetNetworkSize(int start_size, int final_size, int duration_size)
         {
@@ -37,9 +40,22 @@ namespace OSM2019.Experiment
             return this;
         }
 
+        public NetworkSize_Experiment SetLogFolder(string path)
+        {
+            this.LogPath = path;
+            return this;
+        }
+
+        public void Run(int seed)
+        {
+            this.Run(seed, seed);
+        }
+
+
         public void Run(int start_seed, int final_seed)
         {
-            string save_folder = "/sintyoku_20181220/";
+            //string save_folder = "/sintyoku_20181220/";
+            string save_folder = this.LogPath;
             //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
             //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal, GraphEnum.Triangular };
             List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal, GraphEnum.Triangular };
@@ -54,62 +70,67 @@ namespace OSM2019.Experiment
 
                 foreach (var select_graph in graphs)
                 {
-                    switch (select_graph)
-                    {
-                        case GraphEnum.WS:
-                            graph_generator = new WS_GraphGenerator().SetNodeSize(size).SetNearestNeighbors(6).SetRewireP(0.01);
-                            break;
-                        case GraphEnum.BA:
-                            graph_generator = new BA_GraphGenerator().SetNodeSize(size).SetAttachEdges(2);
-                            break;
-                        case GraphEnum.Hexagonal:
-                            graph_generator = new Hexagonal_GraphGenerator().SetNodeSize(size);
-                            break;
-                        case GraphEnum.Grid2D:
-                            graph_generator = new Grid2D_GraphGenerator().SetNodeSize(size);
-                            break;
-                        case GraphEnum.Triangular:
-                            graph_generator = new Triangular_GraphGenerator().SetNodeSize(size);
-                            break;
-                        default:
-                            new Exception();
-                            return;
-                    }
-
-
-                    var graph = graph_generator.Generate(0);
-                    var layout = new Circular_LayoutGenerator(graph).Generate();
-
-                    var init_belief_gene = new InitBeliefGenerator()
-                                            .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
-
-                    var subject_test = new OpinionSubject("test", op_dim_size);
-
-
-                    var osm_env = new OpinionEnvironment()
-                                    .SetSubject(subject_test)
-                                    .SetCorrectDim(0)
-                                    .SetSensorRate(sensor_rate);
-
-                    var subject_manager = new SubjectManager().SetEnvironment(osm_env);
-
-
-                    var op_form_threshold = 0.9;
-
-                    var sample_agent_test = new SampleAgent()
-                                        .SetInitBeliefGene(init_belief_gene)
-                                        .SetThreshold(op_form_threshold)
-                                        .SetSubject(subject_test)
-                                        .SetInitOpinion(Vector<double>.Build.Dense(op_dim_size, 0.0));
-
-                    var sensor_gene = new SensorGenerator()
-                                    //.SetSensorSize((int)(0.1 * graph.Nodes.Count));
-                                    .SetSensorSize((int)10);
-
-
-
                     for (int seed = start_seed; seed <= final_seed; seed++)
                     {
+                        switch (select_graph)
+                        {
+                            case GraphEnum.WS:
+                                graph_generator = new WS_GraphGenerator().SetNodeSize(size).SetNearestNeighbors(6).SetRewireP(0.01);
+                                break;
+                            case GraphEnum.BA:
+                                graph_generator = new BA_GraphGenerator().SetNodeSize(size).SetAttachEdges(2);
+                                break;
+                            case GraphEnum.Hexagonal:
+                                graph_generator = new Hexagonal_GraphGenerator().SetNodeSize(size);
+                                break;
+                            case GraphEnum.Grid2D:
+                                graph_generator = new Grid2D_GraphGenerator().SetNodeSize(size);
+                                break;
+                            case GraphEnum.Triangular:
+                                graph_generator = new Triangular_GraphGenerator().SetNodeSize(size);
+                                break;
+                            default:
+                                new Exception();
+                                return;
+                        }
+                        var graph = new RawGraph();
+                        var layout = new Layout();
+
+                        lock (lock_object)
+                        {
+                            graph = graph_generator.Generate(seed);
+                            layout = new Circular_LayoutGenerator(graph).Generate();
+                        }
+
+
+                        var init_belief_gene = new InitBeliefGenerator()
+                                                .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
+
+                        var subject_test = new OpinionSubject("test", op_dim_size);
+
+
+                        var osm_env = new OpinionEnvironment()
+                                        .SetSubject(subject_test)
+                                        .SetCorrectDim(0)
+                                        .SetSensorRate(sensor_rate);
+
+                        var subject_manager = new SubjectManager().SetEnvironment(osm_env);
+
+
+                        var op_form_threshold = 0.9;
+
+                        var sample_agent_test = new SampleAgent()
+                                            .SetInitBeliefGene(init_belief_gene)
+                                            .SetThreshold(op_form_threshold)
+                                            .SetSubject(subject_test)
+                                            .SetInitOpinion(Vector<double>.Build.Dense(op_dim_size, 0.0));
+
+                        var sensor_gene = new SensorGenerator()
+                                        //.SetSensorSize((int)(0.1 * graph.Nodes.Count));
+                                        .SetSensorSize((int)10);
+
+
+
                         int agent_gene_seed = seed;
                         var agent_gene_rand = new ExtendRandom(agent_gene_seed);
 
@@ -169,7 +190,10 @@ namespace OSM2019.Experiment
                         }
 
 
+
                     }
+
+
 
                 }
             }

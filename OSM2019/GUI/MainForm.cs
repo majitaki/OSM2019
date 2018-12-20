@@ -39,10 +39,22 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
-            Test();
-            //() => new NetworkSize_Experiment().SetNetworkSize(100, 100, 100).SetDimSize(2).SetSensorRate(0.55).Run(0, 1)
+            //Test();
+            Parallel.For(0, 10, seed =>
+            {
+                new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(2).SetSensorRate(0.55).SetLogFolder("/sintyoku_20181220/").Run(seed);
+                new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(3).SetSensorRate(0.36).SetLogFolder("/sintyoku_20181220/").Run(seed);
+                new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(4).SetSensorRate(0.275).SetLogFolder("/sintyoku_20181220/").Run(seed);
+                new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(5).SetSensorRate(0.22).SetLogFolder("/sintyoku_20181220/").Run(seed);
+            });
 
-            //Environment.Exit(0);
+            //new NetworkSize_Experiment().SetNetworkSize(100, 100, 100).SetDimSize(2).SetSensorRate(0.55).SetLogFolder("/sintyoku_20181220_2/").Run(0, 1);
+            //new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(2).SetSensorRate(0.55).Run(0, 4);
+            //new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(3).SetSensorRate(0.36).Run(0, 4);
+            //new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(4).SetSensorRate(0.275).Run(0, 4);
+
+
+            Environment.Exit(0);
             this.MyAnimationForm.Show();
             this.MyAnimationForm.Left = this.Right;
         }
@@ -129,9 +141,6 @@ namespace OSM2019
             //osm.SetTargetH(0.9);
             osm.SetOpinionIntroInterval(1);
             osm.SetOpinionIntroRate(0.1);
-
-
-
 
             this.MyOSM = osm;
             this.MyAnimationForm.RegistOSM(osm);

@@ -13,6 +13,11 @@ namespace OSM2019.OSM
         public LayoutEnum MyLayoutEnum { get; set; }
         public List<Vector2> PosList { get; }
 
+        public Layout()
+        {
+
+        }
+
         public Layout(List<Vector2> pos_list, LayoutEnum layout_enum)
         {
             this.MyLayoutEnum = layout_enum;
