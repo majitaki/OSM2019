@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace OSM2019.OSM
         void PrintStep();
         void UpdateRecordRound();
         void UpdateRoundWithoutSteps();
-        void UpdateRounds(int rounds, int steps);
+        void UpdateRounds(int rounds, int steps, ExtendProgressBar pb);
         void InitializeToZeroRound();
         void PrintAgentInfo(Agent agent);
     }

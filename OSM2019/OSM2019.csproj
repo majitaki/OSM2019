@@ -36,14 +36,17 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CsvHelper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsvHelper.9.1.0\lib\net45\CsvHelper.dll</HintPath>
+    <Reference Include="CsvHelper, Version=12.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.12.1.0\lib\net45\CsvHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Goblinfactory.ProgressBar, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Goblinfactory.ProgressBar.0.4.0\lib\netstandard2.0\Goblinfactory.ProgressBar.dll</HintPath>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathNet.Numerics.4.7.0\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -165,6 +168,7 @@
     <Compile Include="Utility\DrawSetting.cs" />
     <Compile Include="Utility\Enum.cs" />
     <Compile Include="Utility\CsvMapper.cs" />
+    <Compile Include="Utility\ExtendProgressBar.cs" />
     <Compile Include="Utility\MyMath.cs" />
     <Compile Include="Utility\Output.cs" />
     <Compile Include="Utility\PythonProxy.cs" />
@@ -268,7 +272,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="OSM\Algorithm\ModifiedOSM\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Image\icon_agent.png" />
     <Content Include="Resources\Image\icon_animation.png" />

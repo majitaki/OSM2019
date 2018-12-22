@@ -93,5 +93,21 @@ namespace OSM2019.OSM
                 throw new Exception("error illegal agent");
             }
         }
+
+        public bool IsConnect(Agent agent_a, Agent agent_b)
+        {
+            if (this.SourceAgent == agent_a && this.TargetAgent == agent_b)
+            {
+                return true;
+            }
+            else if (this.SourceAgent == agent_b && this.TargetAgent == agent_a)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

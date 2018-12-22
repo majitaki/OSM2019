@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Konsole;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,8 @@ namespace OSM2019.Utility
 
         public static void StartUpPython()
         {
+            var pb = new ExtendProgressBar(10);
+            pb.Refresh(0, "setting python process.");
             Process = new System.Diagnostics.Process();
             Process.StartInfo.UseShellExecute = false;
             Process.StartInfo.RedirectStandardInput = true;
@@ -36,6 +39,7 @@ namespace OSM2019.Utility
                 StreamWriter.WriteLine(Properties.Settings.Default.AnacondaPath);
                 //StreamWriter.WriteLine(@"activate " + Properties.Settings.Default.AnacondaEnv);
             }
+            pb.Refresh(10, "start python process");
         }
 
         public static void ExecutePythonScript(string args)
@@ -50,13 +54,13 @@ namespace OSM2019.Utility
         static void p_OutputDataReceived(object sender,
             System.Diagnostics.DataReceivedEventArgs e)
         {
-            Console.WriteLine(e.Data);
+            //Console.WriteLine(e.Data);
         }
 
         static void p_ErrorDataReceived(object sender,
             System.Diagnostics.DataReceivedEventArgs e)
         {
-            Console.WriteLine("ERR>{0}", e.Data);
+            //Console.WriteLine("ERR>{0}", e.Data);
             ErrorFlag = true;
         }
     }

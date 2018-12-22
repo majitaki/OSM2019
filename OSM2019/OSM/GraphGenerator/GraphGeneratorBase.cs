@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Konsole;
+using Newtonsoft.Json;
 using OSM2019.OSM;
 using OSM2019.Utility;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-    abstract class GraphGeneratorBase 
+    abstract class GraphGeneratorBase
     {
         public abstract GraphEnum MyGraphEnum { get; }
         public abstract string GeneratePath { get; protected set; }
@@ -18,17 +19,17 @@ namespace OSM2019.OSM
 
         protected abstract void SetGeneratePath();
 
-        public RawGraph Generate(int graph_seed)
+        public RawGraph Generate(int graph_seed, ExtendProgressBar pb_graph)
         {
             var working_folder_path = Properties.Settings.Default.WorkingFolderPath;
-
             var state = 0;
             switch (state)
             {
                 case 0:
-                    Console.WriteLine("-----");
-                    Console.WriteLine("ok Start Graph Generation");
-                    var delete_success = this.DeleteGraphJSON();
+
+                    //Console.WriteLine("-----");
+                    //Console.WriteLine("ok Start Graph Generation");
+                    var delete_success = this.DeleteGraphJSON(pb_graph);
                     if (!delete_success) goto default;
 
                     var python_success = this.PythonGraphGenerate(graph_seed, this.SeedEnable);
@@ -39,21 +40,21 @@ namespace OSM2019.OSM
                     raw_graph.MyGraphEnum = graph_enum;
                     if (raw_graph.Links == null || raw_graph.Nodes.Count == 0 || graph_enum == GraphEnum.Void) goto default;
 
-                    Console.WriteLine("ok Load Raw Graph");
-                    Console.WriteLine("ok Node: " + raw_graph.Nodes.Count);
-                    Console.WriteLine("ok Edge: " + raw_graph.Links.Count);
-                    Console.WriteLine("ok GraphEnum: " + graph_enum.ToString());
-                    Console.WriteLine("ok Graph Seed: " + graph_seed);
-                    Console.WriteLine("ok Success Graph Generation");
+                    pb_graph.Refresh($"{graph_enum.ToString()} size:{raw_graph.Nodes.Count} edge:{raw_graph.Links.Count} seed:{graph_seed}");
+                    //Console.Write("Node: " + raw_graph.Nodes.Count);
+                    //Console.Write(" Edge: " + raw_graph.Links.Count);
+                    //Console.Write(" GraphEnum: " + graph_enum.ToString());
+                    //Console.WriteLine(" Graph Seed: " + graph_seed);
                     return raw_graph;
 
                 default:
-                    Console.WriteLine("no Failure Graph Generation");
+                    //Console.WriteLine("no Failure Graph Generation");
+                    pb_graph.Refresh($"failure graph generate");
                     return null;
             }
         }
 
-        bool DeleteGraphJSON()
+        bool DeleteGraphJSON(ExtendProgressBar pb_graph)
         {
             var path = Properties.Settings.Default.WorkingFolderPath;
 
@@ -76,12 +77,12 @@ namespace OSM2019.OSM
                     }
 
                 }
-                Console.WriteLine("ok Delete Graph JSON");
+                pb_graph.Refresh("delete json graph.");
                 return true;
             }
             catch (Exception)
             {
-                Console.WriteLine("no Failure Delete Graph JSON");
+                pb_graph.Refresh("fail to delete json graph");
                 return false;
             }
         }

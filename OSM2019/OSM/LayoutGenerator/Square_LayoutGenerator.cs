@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Konsole;
 using OSM2019.Utility;
 
 namespace OSM2019.OSM
@@ -20,27 +21,25 @@ namespace OSM2019.OSM
             this.MyLayoutEnum = LayoutEnum.Square;
         }
 
-        public override Layout Generate()
+        public override Layout Generate(ExtendProgressBar pb_layout)
         {
             var state = 0;
             switch (state)
             {
                 case 0:
-                    Console.WriteLine("-----");
-                    Console.WriteLine("ok Start Layout Generation");
-                    var delete_success = this.DeleteLayout();
+                    var delete_success = this.DeleteLayout(pb_layout);
                     if (!delete_success) goto default;
 
-                    delete_success = this.DeleteTmpGraphJSON();
+                    delete_success = this.DeleteTmpGraphJSON(pb_layout);
                     if (!delete_success) goto default;
 
                     var layout = this.GetSquareLayout();
                     if (layout == null) goto default;
 
-                    Console.WriteLine("ok Success Layout Generation");
+                    pb_layout.Refresh( "success layout generate");
                     return layout;
                 default:
-                    Console.WriteLine("no Failure Layout Generation");
+                    pb_layout.Refresh($"failure graph generate");
                     return null;
             }
         }

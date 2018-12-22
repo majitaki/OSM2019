@@ -9,7 +9,7 @@ import json
 def main():
     argv = sys.argv
     argc = len(argv)
-    print(argv)
+    #print(argv)
     if(argc != 5):
         print('[Python] ' + 'Arg Error')
         quit()
@@ -18,7 +18,7 @@ def main():
     p = float(argv[3])
     seed = int(argv[4])
     generate_graph(n, k, p, seed)
-    print('[Python]' + 'Generate Graph')
+    #print('[Python]' + 'Generate Graph')
 
 def generate_graph(n, k, p, seed):
     G = nx.watts_strogatz_graph(n, k, p, seed)

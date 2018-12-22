@@ -40,21 +40,22 @@ namespace OSM2019
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
             //Test();
-            Parallel.For(0, 10, seed =>
+            Parallel.For(0, 5, seed =>
             {
-                new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(2).SetSensorRate(0.55).SetLogFolder("/sintyoku_20181220/").Run(seed);
-                new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(3).SetSensorRate(0.36).SetLogFolder("/sintyoku_20181220/").Run(seed);
-                new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(4).SetSensorRate(0.275).SetLogFolder("/sintyoku_20181220/").Run(seed);
-                new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(5).SetSensorRate(0.22).SetLogFolder("/sintyoku_20181220/").Run(seed);
+                new NetworkSize_Experiment()
+                .SetNetworkSize(200, 200, 200)
+                .SetDimSize(2).SetSensorRate(0.55)
+                .SetSensorCommonWeight(0.6)
+                .SetSensorFixSize(20)
+                .SetLogFolder("test")
+                .SetRounds(300)
+                .SetSteps(1500)
+                .Run(seed);
             });
-
-            //new NetworkSize_Experiment().SetNetworkSize(100, 100, 100).SetDimSize(2).SetSensorRate(0.55).SetLogFolder("/sintyoku_20181220_2/").Run(0, 1);
-            //new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(2).SetSensorRate(0.55).Run(0, 4);
-            //new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(3).SetSensorRate(0.36).Run(0, 4);
-            //new NetworkSize_Experiment().SetNetworkSize(100, 1000, 100).SetDimSize(4).SetSensorRate(0.275).Run(0, 4);
 
 
             Environment.Exit(0);
+
             this.MyAnimationForm.Show();
             this.MyAnimationForm.Left = this.Right;
         }
@@ -63,11 +64,11 @@ namespace OSM2019
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(1000).SetNearestNeighbors(6).SetRewireP(0.01);
-            //graph_generator = new Triangular_GraphGenerator().SetNodeSize(200);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(500).SetNearestNeighbors(6).SetRewireP(0.01);
 
-            var graph = graph_generator.Generate(0);
-            var layout = new KamadaKawai_LayoutGenerator(graph).Generate();
+            var pb = new ExtendProgressBar(100);
+            var graph = graph_generator.Generate(0, pb);
+            var layout = new KamadaKawai_LayoutGenerator(graph).Generate(pb);
             //var layout = new Circular_LayoutGenerator(graph).Generate();
 
             var init_belief_gene = new InitBeliefGenerator()
@@ -75,7 +76,7 @@ namespace OSM2019
 
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
-            var subject_test = new OpinionSubject("test", 3);
+            var subject_test = new OpinionSubject("test", 2);
 
             double[] conv_array = { 1, 0, 0, 1, 1, 0 };
             var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
@@ -84,7 +85,7 @@ namespace OSM2019
                             //.SetSubject(subject_tv)
                             .SetSubject(subject_test)
                             .SetCorrectDim(0)
-                            .SetSensorRate(0.55);
+                            .SetSensorRate(0.53);
 
             var subject_manager = new SubjectManager()
                                 .AddSubject(subject_test)
@@ -108,10 +109,10 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_test)
-                                .SetInitOpinion(Vector<double>.Build.Dense(3, 0.0));
+                                .SetInitOpinion(Vector<double>.Build.Dense(2, 0.0));
 
             var sensor_gene = new SensorGenerator()
-                            //.SetSensorSize((int)(0.1 * graph.Nodes.Count));
+                            //.SetSensorSize((int)(0.5 * graph.Nodes.Count));
                             .SetSensorSize((int)10);
 
             int agent_gene_seed = 0;
@@ -132,15 +133,16 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
 
-            var osm = new AATG_OSM();
+            var osm = new AAT_OSM();
             //var osm = new OSM_Only();
             osm.SetRand(update_step_rand);
             osm.SetAgentNetwork(agent_network);
             osm.SetSubjectManager(subject_manager);
             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-            //osm.SetTargetH(0.9);
-            osm.SetOpinionIntroInterval(1);
+            osm.SetTargetH(0.9);
+            osm.SetOpinionIntroInterval(10);
             osm.SetOpinionIntroRate(0.1);
+            //osm.SetCommonWeight(0.90);
 
             this.MyOSM = osm;
             this.MyAnimationForm.RegistOSM(osm);

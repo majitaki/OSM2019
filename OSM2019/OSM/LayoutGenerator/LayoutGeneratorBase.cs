@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using Konsole;
 using OSM2019.OSM;
 using OSM2019.Utility;
 using System;
@@ -17,18 +18,16 @@ namespace OSM2019.OSM
         protected abstract string GeneratePath { get; }
         protected abstract RawGraph MyGraph { get; }
 
-        public virtual Layout Generate()
+        public virtual Layout Generate(ExtendProgressBar pb_layout)
         {
             var state = 0;
             switch (state)
             {
                 case 0:
-                    Console.WriteLine("-----");
-                    Console.WriteLine("ok Start Layout Generation");
-                    var delete_success = this.DeleteLayout();
+                    var delete_success = this.DeleteLayout(pb_layout);
                     if (!delete_success) goto default;
 
-                    delete_success = this.DeleteTmpGraphJSON();
+                    delete_success = this.DeleteTmpGraphJSON(pb_layout);
                     if (!delete_success) goto default;
 
                     var python_success = this.PythonLayoutGenerate(this.MyGraph);
@@ -37,15 +36,15 @@ namespace OSM2019.OSM
                     var layout = this.ReadLayout();
                     if (layout == null) goto default;
 
-                    Console.WriteLine("ok Success Layout Generation");
+                    pb_layout.Refresh("success layout generate");
                     return layout;
                 default:
-                    Console.WriteLine("no Failure Layout Generation");
+                    pb_layout.Refresh($"failure graph generate");
                     return null;
             }
         }
 
-        protected bool DeleteLayout()
+        protected bool DeleteLayout(ExtendProgressBar pb_layout)
         {
             var path = Properties.Settings.Default.WorkingFolderPath;
 
@@ -68,17 +67,17 @@ namespace OSM2019.OSM
                     }
 
                 }
-                Console.WriteLine("ok Delete Layout");
+                pb_layout.Refresh("delete json graph.");
                 return true;
             }
             catch (Exception)
             {
-                Console.WriteLine("no Failure Delete Layout");
+                pb_layout.Refresh("fail to delete json graph");
                 return false;
             }
         }
 
-        protected bool DeleteTmpGraphJSON()
+        protected bool DeleteTmpGraphJSON(ExtendProgressBar pb_layout)
         {
             var path = Properties.Settings.Default.WorkingFolderPath;
 
@@ -100,12 +99,12 @@ namespace OSM2019.OSM
                     }
 
                 }
-                Console.WriteLine("ok Delete Tmp Graph JSON");
+                pb_layout.Refresh("delete tmp json");
                 return true;
             }
             catch (Exception)
             {
-                Console.WriteLine("no Failure Delete Tmp Graph JSON");
+                pb_layout.Refresh("fail to delete tmp json");
                 return false;
             }
         }

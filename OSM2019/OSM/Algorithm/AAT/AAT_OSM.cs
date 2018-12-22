@@ -105,7 +105,7 @@ namespace OSM2019.OSM
 
         public override void UpdateRoundWithoutSteps()
         {
-            this.PrintRound();
+            //this.PrintRound();
             this.EstimateAwaRate();
             this.SelectionWeight();
             this.InitializeToZeroStep();

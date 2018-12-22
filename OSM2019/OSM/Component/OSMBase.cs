@@ -1,4 +1,5 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using Konsole;
+using MathNet.Numerics.LinearAlgebra;
 using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
@@ -22,17 +23,20 @@ namespace OSM2019.OSM
         public double OpinionIntroRate { get; protected set; }
         public double OpinionIntroInterval { get; protected set; }
         public CalcWeightMode MyCalcWeightMode { get; protected set; }
-        AggregationFunctions MyAggFuncs;
+        protected AggregationFunctions MyAggFuncs;
         List<Message> Messages;
         List<Agent> OpinionFormedAgents;
         //public Dictionary<int, RecordStep> MyRecordSteps { get; set; }
         public RecordStep MyRecordStep { get; set; }
         public Dictionary<int, RecordRound> MyRecordRounds { get; set; }
+        bool SensorCommonWeightMode;
+        public double SensorCommonWeight { get; private set; }
 
         public OSMBase()
         {
             this.CurrentStep = 0;
             this.CurrentRound = 0;
+            this.SensorCommonWeightMode = false;
             this.MyAggFuncs = new AggregationFunctions();
             Messages = new List<Message>();
             OpinionFormedAgents = new List<Agent>();
@@ -77,6 +81,12 @@ namespace OSM2019.OSM
         {
             this.MyCalcWeightMode = mode;
             return;
+        }
+
+        public void SetSensorCommonWeight(double sensor_common_weight)
+        {
+            this.SensorCommonWeightMode = true;
+            this.SensorCommonWeight = sensor_common_weight;
         }
 
         public virtual void PrintAgentInfo(Agent agent)
@@ -186,18 +196,20 @@ namespace OSM2019.OSM
 
         public virtual void UpdateRoundWithoutSteps()
         {
-            this.PrintRound();
+            //this.PrintRound();
             this.InitializeToZeroStep();
             this.CurrentRound++;
         }
 
-        public virtual void UpdateRounds(int rounds, int steps)
+        public virtual void UpdateRounds(int rounds, int steps, ExtendProgressBar pb)
         {
             int cur_round = this.CurrentRound;
             int end_round = this.CurrentRound + rounds;
+            var ori_tag = pb.Tag;
             for (; cur_round < end_round; cur_round++)
             {
                 this.UpdateRound(steps);
+                pb.Refresh($"{ori_tag} {cur_round}");
             }
         }
 
@@ -273,8 +285,16 @@ namespace OSM2019.OSM
             var updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, weight, receive_op);
             if (message.FromAgent.AgentID < 0)
             {
-                var sensor_rate = this.MyEnvManager.SensorRate;
-                updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, sensor_rate, receive_op);
+                double sensor_weight;
+                if (this.SensorCommonWeightMode)
+                {
+                    sensor_weight = this.SensorCommonWeight;
+                }
+                else
+                {
+                    sensor_weight = this.MyEnvManager.SensorRate;
+                }
+                updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, sensor_weight, receive_op);
             }
 
             message.ToAgent.SetBelief(updated_belief);
