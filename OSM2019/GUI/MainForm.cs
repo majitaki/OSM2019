@@ -40,31 +40,46 @@ namespace OSM2019
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
             //Test();
+            TestExp();
+            this.MyAnimationForm.Show();
+            this.MyAnimationForm.Left = this.Right;
+        }
+
+        void TestExp()
+        {
             Parallel.For(0, 5, seed =>
             {
                 new NetworkSize_Experiment()
-                .SetNetworkSize(200, 200, 200)
+                .SetNetworkSize(100, 500, 400)
                 .SetDimSize(2).SetSensorRate(0.55)
-                .SetSensorCommonWeight(0.6)
-                .SetSensorFixSize(20)
-                .SetLogFolder("test")
+                .SetSensorFixSize(10)
+                .SetLogFolder("aatgfix_ori")
                 .SetRounds(300)
                 .SetSteps(1500)
                 .Run(seed);
             });
 
+            Parallel.For(0, 5, seed =>
+                      {
+                          new NetworkSize_Experiment()
+                          .SetNetworkSize(100, 500, 400)
+                          .SetDimSize(2).SetSensorRate(0.55)
+                          .SetSensorCommonWeight(0.6)
+                          .SetSensorFixSize(10)
+                          .SetLogFolder("aatgfix_sensorweight")
+                          .SetRounds(300)
+                          .SetSteps(1500)
+                          .Run(seed);
+                      });
 
             Environment.Exit(0);
-
-            this.MyAnimationForm.Show();
-            this.MyAnimationForm.Left = this.Right;
         }
 
         void Test()
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(500).SetNearestNeighbors(6).SetRewireP(0.01);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(100).SetNearestNeighbors(6).SetRewireP(0.01);
 
             var pb = new ExtendProgressBar(100);
             var graph = graph_generator.Generate(0, pb);
@@ -85,7 +100,7 @@ namespace OSM2019
                             //.SetSubject(subject_tv)
                             .SetSubject(subject_test)
                             .SetCorrectDim(0)
-                            .SetSensorRate(0.53);
+                            .SetSensorRate(0.55);
 
             var subject_manager = new SubjectManager()
                                 .AddSubject(subject_test)
@@ -133,14 +148,14 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
 
-            var osm = new AAT_OSM();
+            var osm = new AATGfix_OSM();
             //var osm = new OSM_Only();
             osm.SetRand(update_step_rand);
             osm.SetAgentNetwork(agent_network);
             osm.SetSubjectManager(subject_manager);
             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-            osm.SetTargetH(0.9);
-            osm.SetOpinionIntroInterval(10);
+            //osm.SetTargetH(0.9);
+            osm.SetOpinionIntroInterval(1);
             osm.SetOpinionIntroRate(0.1);
             //osm.SetCommonWeight(0.90);
 

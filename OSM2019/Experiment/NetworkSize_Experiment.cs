@@ -106,7 +106,8 @@ namespace OSM2019.Experiment
             string save_folder = this.LogFolder;
             //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
             List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal, GraphEnum.Triangular };
-            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATG };
+            //List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATG, AlgoEnum.AATGfix };
+            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AATGfix };
 
             int op_dim_size = this.DimSize;
             double sensor_rate = this.SensorRate;
@@ -247,6 +248,20 @@ namespace OSM2019.Experiment
                                     if (this.SensorCommonWeightMode) osm_aatg.SetSensorCommonWeight(this.SensorCommonWeight);
 
                                     osm = osm_aatg;
+                                    break;
+                                case AlgoEnum.AATGfix:
+
+                                    var osm_aatgfix = new AATGfix_OSM();
+                                    var update_step_rand_aatgfix = new ExtendRandom(update_step_seed);
+                                    osm_aatgfix.SetRand(update_step_rand_aatgfix);
+                                    osm_aatgfix.SetAgentNetwork(agent_network);
+                                    osm_aatgfix.SetSubjectManager(subject_manager);
+                                    osm_aatgfix.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
+                                    osm_aatgfix.SetOpinionIntroInterval(1);
+                                    osm_aatgfix.SetOpinionIntroRate(0.1);
+                                    if (this.SensorCommonWeightMode) osm_aatgfix.SetSensorCommonWeight(this.SensorCommonWeight);
+
+                                    osm = osm_aatgfix;
                                     break;
                                 default:
                                     break;

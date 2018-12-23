@@ -17,7 +17,7 @@ namespace OSM2019.OSM
         public int CurrentStep { get; set; }
         public int CurrentRound { get; set; }
 
-        ExtendRandom UpdateStepRand;
+        protected ExtendRandom UpdateStepRand;
         public OpinionEnvironment MyEnvManager { get; protected set; }
         public SubjectManager MySubjectManager { get; protected set; }
         public double OpinionIntroRate { get; protected set; }

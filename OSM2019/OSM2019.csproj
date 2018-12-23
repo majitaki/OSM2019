@@ -91,6 +91,7 @@
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="OSM\Algorithm\AAT\AATG_OSM.cs" />
+    <Compile Include="OSM\Algorithm\AAT\AATGfix_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AAT_OSM.cs" />
     <Compile Include="OSM\Component\AggregationFunctions.cs" />
     <Compile Include="OSM\Algorithm\AAT\Candidate.cs" />

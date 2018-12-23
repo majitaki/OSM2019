@@ -69,7 +69,7 @@ namespace OSM2019.OSM
                 foreach (string filePath in filePaths)
                 {
                     var graph = Properties.Settings.Default.RawGraphFile;
-                    var graph_flag = Properties.Settings.Default.RawGraphFile;
+                    var graph_flag = Properties.Settings.Default.RawGraphFlag;
                     if (filePath.Contains(graph) || filePath.Contains(graph_flag))
                     {
                         File.SetAttributes(filePath, FileAttributes.Normal);
