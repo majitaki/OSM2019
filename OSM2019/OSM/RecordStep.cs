@@ -88,5 +88,11 @@ namespace OSM2019.OSM
             this.StepMessageSize = step_messages.Count;
         }
 
+        public bool IsReceived(Agent agent)
+        {
+            if (this.AgentReceiveOpinionsInStep[agent].L2Norm() == 0) return false;
+            return true;
+        }
+
     }
 }

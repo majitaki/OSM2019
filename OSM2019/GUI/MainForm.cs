@@ -47,30 +47,32 @@ namespace OSM2019
 
         void TestExp()
         {
-            Parallel.For(0, 5, seed =>
-            {
-                new NetworkSize_Experiment()
-                .SetNetworkSize(100, 500, 400)
-                .SetDimSize(2).SetSensorRate(0.55)
-                .SetSensorFixSize(10)
-                .SetLogFolder("aatgfix_ori")
-                .SetRounds(300)
-                .SetSteps(1500)
-                .Run(seed);
-            });
+            //Parallel.For(0, 5, seed =>
+            //{
+            //    new NetworkSize_Experiment()
+            //    .SetNetworkSize(100, 500, 400)
+            //    .SetDimSize(2).SetSensorRate(0.55)
+            //    .SetSensorFixSize(10)
+            //    .SetLogFolder("aatgfix_ori")
+            //    .SetRounds(300)
+            //    .SetSteps(1500)
+            //    .Run(seed);
+            //});
 
-            Parallel.For(0, 5, seed =>
+            Parallel.For(0, 10, seed =>
                       {
                           new NetworkSize_Experiment()
-                          .SetNetworkSize(100, 500, 400)
+                          .SetNetworkSize(100, 1000, 100)
                           .SetDimSize(2).SetSensorRate(0.55)
                           .SetSensorCommonWeight(0.6)
-                          .SetSensorFixSize(10)
-                          .SetLogFolder("aatgfix_sensorweight")
-                          .SetRounds(300)
+                          //.SetSensorFixSize(10)
+                          .SetSensorSizeRate(0.1)
+                          .SetLogFolder("aatgfix_range2_th0.6_lifedynamic_wait")
+                          .SetRounds(600)
                           .SetSteps(1500)
                           .Run(seed);
                       });
+
 
             Environment.Exit(0);
         }
@@ -79,7 +81,8 @@ namespace OSM2019
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(100).SetNearestNeighbors(6).SetRewireP(0.01);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(200).SetNearestNeighbors(6).SetRewireP(0.01);
+            //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(300);
 
             var pb = new ExtendProgressBar(100);
             var graph = graph_generator.Generate(0, pb);
@@ -157,6 +160,7 @@ namespace OSM2019
             //osm.SetTargetH(0.9);
             osm.SetOpinionIntroInterval(1);
             osm.SetOpinionIntroRate(0.1);
+            osm.SetSensorCommonWeight(0.60);
             //osm.SetCommonWeight(0.90);
 
             this.MyOSM = osm;

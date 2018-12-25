@@ -83,6 +83,7 @@ namespace OSM2019.Utility
     {
         AAT,
         AATG,
-        AATGfix
+        AATGfix,
+        OSMonly
     }
 }

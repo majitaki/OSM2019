@@ -125,7 +125,6 @@ namespace OSM2019.OSM
                 Console.WriteLine($"- Dim: {dim} Value {op}");
                 dim++;
             }
-
         }
 
         protected virtual void UpdateStep()

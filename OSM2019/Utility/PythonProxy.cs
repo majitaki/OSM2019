@@ -60,7 +60,7 @@ namespace OSM2019.Utility
         static void p_ErrorDataReceived(object sender,
             System.Diagnostics.DataReceivedEventArgs e)
         {
-            //Console.WriteLine("ERR>{0}", e.Data);
+            Console.WriteLine("ERR>{0}", e.Data);
             ErrorFlag = true;
         }
     }

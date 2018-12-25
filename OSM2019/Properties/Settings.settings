@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="AnacondaPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">G:\ProgramData\Anaconda3\Scripts\activate.bat</Value>
+      <Value Profile="(Default)">D:\Anaconda3\Scripts\activate.bat</Value>
     </Setting>
     <Setting Name="AnacondaEnv" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -15,7 +15,7 @@
       <Value Profile="(Default)">./Resources/PythonScript/LayoutGenerator/</Value>
     </Setting>
     <Setting Name="lab_path" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\majitaki\Anaconda3\Scripts\activate.bat</Value>
+      <Value Profile="(Default)">D:\Anaconda3\Scripts\activate.bat</Value>
     </Setting>
     <Setting Name="home_path" Type="System.String" Scope="User">
       <Value Profile="(Default)">G:\ProgramData\Anaconda3\Scripts\activate.bat</Value>
