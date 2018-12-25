@@ -59,7 +59,7 @@ namespace OSM2019
             //    .Run(seed);
             //});
 
-            Parallel.For(0, 10, seed =>
+            Parallel.For(0, 4, seed =>
                       {
                           new NetworkSize_Experiment()
                           .SetNetworkSize(100, 1000, 100)
@@ -67,7 +67,7 @@ namespace OSM2019
                           .SetSensorCommonWeight(0.6)
                           //.SetSensorFixSize(10)
                           .SetSensorSizeRate(0.1)
-                          .SetLogFolder("aatgfix_range2_th0.6_lifedynamic_wait")
+                          .SetLogFolder("aatgfix_range2_th0.6_lifedynamic_rate0.1_100-1000")
                           .SetRounds(600)
                           .SetSteps(1500)
                           .Run(seed);

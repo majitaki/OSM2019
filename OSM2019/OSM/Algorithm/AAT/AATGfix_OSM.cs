@@ -9,7 +9,6 @@ namespace OSM2019.OSM
     class AATGfix_OSM : AATG_OSM
     {
         double TargetQueueH;
-        int AgentLifeCount;
         Dictionary<Agent, int> AgentLifes;
 
         public AATGfix_OSM()
@@ -86,7 +85,7 @@ namespace OSM2019.OSM
             Console.WriteLine();
 
             Console.Write($"- LifeTime:");
-            Console.Write($" {this.AgentLifes[agent]}/{this.AgentLifeCount}");
+            Console.Write($" {this.AgentLifes[agent]}/{candidate.SortedDataBase.Count}");
             Console.WriteLine();
 
             int can_index = 0;
