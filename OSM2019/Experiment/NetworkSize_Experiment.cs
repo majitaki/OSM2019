@@ -107,7 +107,7 @@ namespace OSM2019.Experiment
             //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
             List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal, GraphEnum.Triangular };
             //List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATG, AlgoEnum.AATGfix };
-            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AATGfix };
+            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATG };
 
             int op_dim_size = this.DimSize;
             double sensor_rate = this.SensorRate;

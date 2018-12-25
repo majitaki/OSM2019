@@ -36,7 +36,7 @@ namespace OSM2019.OSM
                 var current_l = candidate.Value.SelectSortedIndex;
                 var can_size = candidate.Value.SortedDataBase.Count;
 
-                if (this.UpdateStepRand.NextDouble() < 0.5)
+                if (this.UpdateStepRand.NextDouble() < 0.1)
                 {
                     if (unchanged_count > changed_count && current_l < can_size - 1)
                     {
