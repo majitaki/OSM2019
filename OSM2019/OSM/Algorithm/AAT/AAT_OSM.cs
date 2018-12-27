@@ -127,6 +127,11 @@ namespace OSM2019.OSM
         {
             foreach (var candidate in this.Candidates)
             {
+                var received_sum_op = this.MyRecordRounds.Last().Value.AgentReceiveOpinionsInRound[candidate.Key];
+                double obs_u = this.GetObsU(received_sum_op);
+                if (obs_u == 0) continue;
+
+
                 var current_h = candidate.Value.GetCurrentSelectRecord().AwaRate;
                 var current_l = candidate.Value.SelectSortedIndex;
                 var can_size = candidate.Value.SortedDataBase.Count;

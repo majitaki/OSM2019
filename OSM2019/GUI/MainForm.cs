@@ -59,16 +59,16 @@ namespace OSM2019
             //    .Run(seed);
             //});
 
-            Parallel.For(0, 4, seed =>
+            Parallel.For(0, 5, seed =>
                       {
                           new NetworkSize_Experiment()
                           .SetNetworkSize(100, 1000, 100)
-                          .SetDimSize(2).SetSensorRate(0.55)
-                          .SetSensorCommonWeight(0.6)
+                          .SetDimSize(4).SetSensorRate(0.4)
+                          .SetSensorCommonWeight(0.65)
                           //.SetSensorFixSize(10)
                           .SetSensorSizeRate(0.1)
-                          .SetLogFolder("aatgfix_range2_th0.6_lifedynamic_rate0.1_100-1000")
-                          .SetRounds(600)
+                          .SetLogFolder("aat_0.4_0.65_100-1000")
+                          .SetRounds(300)
                           .SetSteps(1500)
                           .Run(seed);
                       });
@@ -81,7 +81,7 @@ namespace OSM2019
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(200).SetNearestNeighbors(6).SetRewireP(0.01);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(300).SetNearestNeighbors(6).SetRewireP(0.01);
             //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(300);
 
             var pb = new ExtendProgressBar(100);
@@ -130,8 +130,8 @@ namespace OSM2019
                                 .SetInitOpinion(Vector<double>.Build.Dense(2, 0.0));
 
             var sensor_gene = new SensorGenerator()
-                            //.SetSensorSize((int)(0.5 * graph.Nodes.Count));
-                            .SetSensorSize((int)10);
+                            .SetSensorSize((int)(0.1 * graph.Nodes.Count));
+            //.SetSensorSize((int)10);
 
             int agent_gene_seed = 0;
             var agent_gene_rand = new ExtendRandom(agent_gene_seed);
@@ -160,7 +160,7 @@ namespace OSM2019
             //osm.SetTargetH(0.9);
             osm.SetOpinionIntroInterval(1);
             osm.SetOpinionIntroRate(0.1);
-            osm.SetSensorCommonWeight(0.60);
+            osm.SetSensorCommonWeight(0.65);
             //osm.SetCommonWeight(0.90);
 
             this.MyOSM = osm;

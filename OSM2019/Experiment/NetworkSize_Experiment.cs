@@ -111,10 +111,9 @@ namespace OSM2019.Experiment
         public void Run(int start_seed, int final_seed)
         {
             string save_folder = this.LogFolder;
-            //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
-            List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Grid2D, GraphEnum.Hexagonal };
+            List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
             //List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATGfix };
-            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AATGfix };
+            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT };
 
             int op_dim_size = this.DimSize;
             double sensor_rate = this.SensorRate;

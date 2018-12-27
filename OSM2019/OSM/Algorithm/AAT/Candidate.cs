@@ -46,5 +46,6 @@ namespace OSM2019.OSM
         {
             return this.GetCurrentSelectRecord().CanWeight;
         }
+
     }
 }

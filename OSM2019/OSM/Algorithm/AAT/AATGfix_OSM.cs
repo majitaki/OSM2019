@@ -8,15 +8,17 @@ namespace OSM2019.OSM
 {
     class AATGfix_OSM : AATG_OSM
     {
-        double TargetQueueH;
+        int QueueThreshold;
         Dictionary<Agent, int> AgentLifes;
+        Dictionary<Agent, int> MaxAgentLifes;
 
         public AATGfix_OSM()
         {
-            this.QueueRange = 2;
-            this.TargetQueueH = 0.6;
+            this.QueueRange = 5;
+            this.QueueThreshold = 3;
             //this.AgentLifeCount = 30;
             this.AgentLifes = new Dictionary<Agent, int>();
+            this.MaxAgentLifes = new Dictionary<Agent, int>();
         }
 
         public override void SetAgentNetwork(AgentNetwork agent_network)
@@ -24,11 +26,19 @@ namespace OSM2019.OSM
             base.SetAgentNetwork(agent_network);
 
             this.AgentLifes.Clear();
+            this.MaxAgentLifes.Clear();
             foreach (var agent in agent_network.Agents)
             {
                 //this.AgentLifes.Add(agent, this.AgentLifeCount);
-                this.AgentLifes.Add(agent, agent.GetNeighbors().Count * agent.MySubject.SubjectDimSize);
+                this.AgentLifes.Add(agent, 50);
+                this.MaxAgentLifes = new Dictionary<Agent, int>(this.AgentLifes);
             }
+
+            //foreach (var candidate in this.Candidates)
+            //{
+            //    int can_size = candidate.Value.SortedDataBase.Count;
+            //    candidate.Value.SelectSortedIndex = can_size - 1;
+            //}
 
             return;
         }
@@ -99,6 +109,7 @@ namespace OSM2019.OSM
                 Console.WriteLine($"{select} index: {can_index,3} req: {req_num,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_rcv_round: {receive_rounds,3} h: {h:f4} {select}");
                 can_index++;
             }
+
         }
 
         protected override void EstimateAwaRate()
@@ -109,68 +120,42 @@ namespace OSM2019.OSM
         {
             foreach (var candidate in this.Candidates)
             {
-                if (!this.MyRecordStep.IsReceived(candidate.Key)) continue;
-                if (this.AgentLifes[candidate.Key] <= 0) continue;
+                var is_received = this.MyRecordStep.IsReceived(candidate.Key);
 
                 //queue
                 var agent_queue = this.OpinionChangedQueues[candidate.Value];
                 int changed_count = 0;
                 int unchanged_count = 0;
-                double queue_h = 0;
-
-
-                //if (agent_queue.Count >= this.QueueRange)
-                //{
-                //    agent_queue.Dequeue();
-                //}
-                //agent_queue.Enqueue(candidate.Key.IsChanged());
-
-                //changed_count = agent_queue.Count(q => q == true);
-                //unchanged_count = agent_queue.Count(q => q == false);
-                //queue_h = changed_count / (double)agent_queue.Count;
 
                 if (agent_queue.Count >= this.QueueRange)
                 {
-                    changed_count = agent_queue.Count(q => q == true);
-                    unchanged_count = agent_queue.Count(q => q == false);
-                    queue_h = changed_count / (double)agent_queue.Count;
-                    agent_queue.Clear();
+                    agent_queue.Dequeue();
                 }
-                else if (agent_queue.Count < this.QueueRange)
-                {
-                    agent_queue.Enqueue(candidate.Key.IsChanged());
-                    continue;
-                }
+                agent_queue.Enqueue(candidate.Key.IsChanged());
+
+                if (agent_queue.Count < this.QueueRange || !is_received) continue;
+
+                changed_count = agent_queue.Count(q => q == true);
+                unchanged_count = agent_queue.Count(q => q == false);
+
+
+                if (this.AgentLifes[candidate.Key] <= 0) continue;
 
                 //var current_h = candidate.Value.GetCurrentSelectRecord().AwaRate;
                 var current_l = candidate.Value.SelectSortedIndex;
                 var can_size = candidate.Value.SortedDataBase.Count;
 
-                if (queue_h <= this.TargetQueueH && current_l < can_size - 1)
+
+                if (changed_count < this.QueueThreshold && current_l < can_size - 1)
                 {
                     candidate.Value.SelectSortedIndex++;
                     this.AgentLifes[candidate.Key]--;
                 }
-                else if (queue_h > this.TargetQueueH && current_l > 0)
+                else if (changed_count > this.QueueThreshold && current_l > 0)
                 {
                     candidate.Value.SelectSortedIndex--;
                     this.AgentLifes[candidate.Key]--;
                 }
-
-
-
-                //if (unchanged_count > changed_count && current_l < can_size - 1)
-                //{
-                //    candidate.Value.SelectSortedIndex++;
-                //}
-                //else if (unchanged_count < changed_count && current_l > 0)
-                //{
-                //    candidate.Value.SelectSortedIndex--;
-                //}
-                //else if (unchanged_count == changed_count)
-                //{
-
-                //}
 
                 candidate.Key.SetCommonWeight(candidate.Value.GetSelectCanWeight());
 

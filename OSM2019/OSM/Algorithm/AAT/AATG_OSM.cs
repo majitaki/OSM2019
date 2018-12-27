@@ -156,6 +156,11 @@ namespace OSM2019.OSM
                 }
                 agent_queue.Enqueue(candidate.Key.IsChanged());
 
+                var received_sum_op = this.MyRecordRounds.Last().Value.AgentReceiveOpinionsInRound[candidate.Key];
+                double obs_u = this.GetObsU(received_sum_op);
+                if (obs_u == 0) continue;
+
+
                 var changed_count = agent_queue.Count(q => q == true);
                 var unchanged_count = agent_queue.Count(q => q == false);
 
