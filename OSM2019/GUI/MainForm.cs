@@ -62,13 +62,13 @@ namespace OSM2019
             Parallel.For(0, 5, seed =>
                       {
                           new NetworkSize_Experiment()
-                          .SetNetworkSize(100, 1000, 100)
-                          .SetDimSize(4).SetSensorRate(0.4)
+                          .SetNetworkSize(300, 300, 100)
+                          .SetDimSize(4).SetSensorRate(0.35)
                           .SetSensorCommonWeight(0.65)
                           //.SetSensorFixSize(10)
                           .SetSensorSizeRate(0.1)
-                          .SetLogFolder("aat_0.4_0.65_100-1000")
-                          .SetRounds(300)
+                          .SetLogFolder("aat_0.35_0.65_300")
+                          .SetRounds(600)
                           .SetSteps(1500)
                           .Run(seed);
                       });
