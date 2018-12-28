@@ -113,7 +113,7 @@ namespace OSM2019.Experiment
             string save_folder = this.LogFolder;
             List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
             //List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATGfix };
-            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT };
+            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AATfix };
 
             int op_dim_size = this.DimSize;
             double sensor_rate = this.SensorRate;
@@ -254,19 +254,20 @@ namespace OSM2019.Experiment
 
                                     osm = osm_aatg;
                                     break;
-                                case AlgoEnum.AATGfix:
+                                case AlgoEnum.AATfix:
 
-                                    var osm_aatgfix = new AATGfix_OSM();
+                                    var osm_aatfix = new AATfix_OSM();
                                     var update_step_rand_aatgfix = new ExtendRandom(update_step_seed);
-                                    osm_aatgfix.SetRand(update_step_rand_aatgfix);
-                                    osm_aatgfix.SetAgentNetwork(agent_network);
-                                    osm_aatgfix.SetSubjectManager(subject_manager);
-                                    osm_aatgfix.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-                                    osm_aatgfix.SetOpinionIntroInterval(1);
-                                    osm_aatgfix.SetOpinionIntroRate(0.1);
-                                    if (this.SensorCommonWeightMode) osm_aatgfix.SetSensorCommonWeight(this.SensorCommonWeight);
+                                    osm_aatfix.SetRand(update_step_rand_aatgfix);
+                                    osm_aatfix.SetAgentNetwork(agent_network);
+                                    osm_aatfix.SetSubjectManager(subject_manager);
+                                    osm_aatfix.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
+                                    osm_aatfix.SetTargetH(0.9);
+                                    osm_aatfix.SetOpinionIntroInterval(1);
+                                    osm_aatfix.SetOpinionIntroRate(0.1);
+                                    if (this.SensorCommonWeightMode) osm_aatfix.SetSensorCommonWeight(this.SensorCommonWeight);
 
-                                    osm = osm_aatgfix;
+                                    osm = osm_aatfix;
                                     break;
                                 case AlgoEnum.OSMonly:
                                     var osm_only = new OSM_Only();

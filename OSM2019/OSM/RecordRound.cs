@@ -60,6 +60,15 @@ namespace OSM2019.OSM
             }
         }
 
+        public void PrintRecord()
+        {
+            Console.WriteLine(
+                $"|round:{this.Round:D4}|" +
+                $"|cor:{Math.Round(this.CorrectSize / (double)this.NetworkSize, 3):F3}|" +
+                $"|incor:{Math.Round(this.IncorrectSize / (double)this.NetworkSize, 3):F3}|" +
+                $"|undeter:{Math.Round(this.UndeterSize / (double)this.NetworkSize, 3):F3}|");
+        }
+
         public bool IsReceived(Agent agent)
         {
             if (this.AgentReceiveOpinionsInRound[agent].L2Norm() == 0) return false;

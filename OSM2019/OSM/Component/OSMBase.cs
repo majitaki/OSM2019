@@ -204,11 +204,10 @@ namespace OSM2019.OSM
         {
             int cur_round = this.CurrentRound;
             int end_round = this.CurrentRound + rounds;
-            var ori_tag = pb.Tag;
             for (; cur_round < end_round; cur_round++)
             {
                 this.UpdateRound(steps);
-                pb.Refresh($"{ori_tag} {cur_round}");
+                pb.Refresh($"{pb.Tag} {this.CurrentRound} ");
             }
         }
 
@@ -251,17 +250,7 @@ namespace OSM2019.OSM
 
         public virtual void PrintRound()
         {
-            var cor_dim = this.MyEnvManager.CorrectDim;
-            var cor_agents = this.MyAgentNetwork.Agents.Where(agent => agent.GetOpinionDim() == cor_dim).ToList();
-            var undeter_agents = this.MyAgentNetwork.Agents.Where(agent => agent.GetOpinionDim() == -1).ToList();
-            var incor_agents = this.MyAgentNetwork.Agents.Except(cor_agents).Except(undeter_agents).ToList();
-            var network_size = this.MyAgentNetwork.Agents.Count;
-
-            Console.WriteLine(
-                $"|round:{this.CurrentRound:D4}|" +
-                $"|cor:{Math.Round(cor_agents.Count / (double)network_size, 3):F3}|" +
-                $"|incor:{Math.Round(incor_agents.Count / (double)network_size, 3):F3}|" +
-                $"|undeter:{Math.Round(undeter_agents.Count / (double)network_size, 3):F3}|");
+            this.MyRecordRounds.Last().Value.PrintRecord();
         }
 
 

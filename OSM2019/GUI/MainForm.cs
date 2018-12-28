@@ -39,8 +39,8 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
-            //Test();
-            TestExp();
+            Test();
+            //TestExp();
             this.MyAnimationForm.Show();
             this.MyAnimationForm.Left = this.Right;
         }
@@ -94,7 +94,7 @@ namespace OSM2019
 
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
-            var subject_test = new OpinionSubject("test", 2);
+            var subject_test = new OpinionSubject("test", 4);
 
             double[] conv_array = { 1, 0, 0, 1, 1, 0 };
             var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
@@ -103,7 +103,7 @@ namespace OSM2019
                             //.SetSubject(subject_tv)
                             .SetSubject(subject_test)
                             .SetCorrectDim(0)
-                            .SetSensorRate(0.55);
+                            .SetSensorRate(0.4);
 
             var subject_manager = new SubjectManager()
                                 .AddSubject(subject_test)
@@ -127,7 +127,7 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_test)
-                                .SetInitOpinion(Vector<double>.Build.Dense(2, 0.0));
+                                .SetInitOpinion(Vector<double>.Build.Dense(4, 0.0));
 
             var sensor_gene = new SensorGenerator()
                             .SetSensorSize((int)(0.1 * graph.Nodes.Count));
@@ -151,13 +151,13 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
 
-            var osm = new AATGfix_OSM();
+            var osm = new AATfix_OSM();
             //var osm = new OSM_Only();
             osm.SetRand(update_step_rand);
             osm.SetAgentNetwork(agent_network);
             osm.SetSubjectManager(subject_manager);
             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-            //osm.SetTargetH(0.9);
+            osm.SetTargetH(0.9);
             osm.SetOpinionIntroInterval(1);
             osm.SetOpinionIntroRate(0.1);
             osm.SetSensorCommonWeight(0.65);
@@ -296,6 +296,7 @@ namespace OSM2019
                 if (max_steps <= this.MyOSM.CurrentStep)
                 {
                     this.PlayRound();
+                    this.MyOSM.PrintRound();
                 }
             }
 

@@ -91,7 +91,7 @@
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="OSM\Algorithm\AAT\AATG_OSM.cs" />
-    <Compile Include="OSM\Algorithm\AAT\AATGfix_OSM.cs" />
+    <Compile Include="OSM\Algorithm\AAT\AATfix_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AAT_OSM.cs" />
     <Compile Include="OSM\Component\AggregationFunctions.cs" />
     <Compile Include="OSM\Algorithm\AAT\Candidate.cs" />
@@ -273,9 +273,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="OSM\Algorithm\ModifiedOSM\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Resources\Image\icon_agent.png" />
     <Content Include="Resources\Image\icon_animation.png" />
