@@ -47,6 +47,11 @@ namespace OSM2019.Utility
             this.MyProgressBar.Refresh(this.CurrentCount, tag);
         }
 
+        public void RefreshWithoutChange(string tag)
+        {
+            this.MyProgressBar.Refresh(this.CurrentCount, tag);
+        }
+
         public void Refresh(int current)
         {
             this.Refresh(current, this.Tag);

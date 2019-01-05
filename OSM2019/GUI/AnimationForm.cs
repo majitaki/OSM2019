@@ -146,6 +146,7 @@ namespace OSM2019.GUI
         internal void RegistOSM(I_OSM osm)
         {
             this.MyOSM = osm;
+            osm.InitializeRound();
         }
 
         void SetAgentViews()

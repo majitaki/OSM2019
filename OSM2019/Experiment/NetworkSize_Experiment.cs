@@ -113,7 +113,7 @@ namespace OSM2019.Experiment
             string save_folder = this.LogFolder;
             List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
             //List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATGfix };
-            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AATfix };
+            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT };
 
             int op_dim_size = this.DimSize;
             double sensor_rate = this.SensorRate;
@@ -186,7 +186,9 @@ namespace OSM2019.Experiment
                                         .SetCorrectDim(0)
                                         .SetSensorRate(sensor_rate);
 
-                        var subject_manager = new SubjectManager().SetEnvironment(osm_env);
+                        var subject_manager = new SubjectManager()
+                            .AddSubject(subject_test)
+                            .SetEnvironment(osm_env);
 
 
                         var op_form_threshold = 0.9;

@@ -13,19 +13,31 @@ namespace OSM2019.OSM
         int CurrentStep { get; set; }
         int CurrentRound { get; set; }
         //Dictionary<int, RecordStep> MyRecordSteps { get; set; }
-        Dictionary<int, RecordRound> MyRecordRounds { get; set; }
-        RecordStep MyRecordStep { get; set; }
-
+        //Dictionary<int, RecordRound> MyRecordRounds { get; set; }
+        //RecordStep MyRecordStep { get; set; }
+        RecordRound MyRecordRound { get; set; }
+        List<RecordRound> MyRecordRounds { get; set; }
         AgentNetwork MyAgentNetwork { get; set; }
 
-        void UpdateSteps(int steps);
-        void InitializeToZeroStep();
-        void PrintRound();
-        void PrintStep();
-        void UpdateRecordRound();
-        void UpdateRoundWithoutSteps();
-        void UpdateRounds(int rounds, int steps, ExtendProgressBar pb);
-        void InitializeToZeroRound();
+        //step
+        void InitializeToFirstStep();
+        void InitializeStep();
+        void NextStep();
+        void RecordStep();
+        void FinalizeStep();
+        void UpdateSteps(int step_count);
+        void PrintStepInfo();
+
+        //round
+        void InitializeToFirstRound();
+        void InitializeRound();
+        void NextRound(int step_count);
+        void RecordRound();
+        void FinalizeRound();
+        void UpdateRounds(int round_count, int step_count, ExtendProgressBar pb = null);
+        void PrintRoundInfo();
+
+        //agent
         void PrintAgentInfo(Agent agent);
     }
 }

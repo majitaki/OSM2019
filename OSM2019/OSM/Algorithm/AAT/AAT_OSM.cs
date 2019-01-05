@@ -21,45 +21,14 @@ namespace OSM2019.OSM
 
         public override void PrintAgentInfo(Agent agent)
         {
-            Console.WriteLine($"Agent ID: {agent.AgentID}");
-            Console.WriteLine($"Sensor: {agent.IsSensor}");
-            Console.WriteLine($"Belief");
-            int dim = 0;
-            foreach (var belief in agent.Belief.ToList())
-            {
-                Console.WriteLine($"- Dim: {dim} Value {belief}");
-                dim++;
-            }
+            base.PrintAgentInfo(agent);
 
-            var is_changed = agent.IsChanged();
-            Console.WriteLine($"Opinion (Changed:{is_changed})");
-            dim = 0;
-            foreach (var op in agent.Opinion.ToList())
-            {
-                Console.WriteLine($"- Dim: {dim} Value {op}");
-                dim++;
-            }
-
-            if (this.MyRecordRounds.Count == 0) return;
-            var cur_record_round = new RecordRound(this.CurrentStep, this.MyAgentNetwork.Agents);
-            var record_steps = new Dictionary<int, RecordStep>();
-            record_steps.Add(0, this.MyRecordStep);
-            cur_record_round.RecordSteps(record_steps);
-            //cur_record_round.RecordSteps(this.MyRecordSteps);
-            var is_recived = cur_record_round.IsReceived(agent);
-            Console.WriteLine($"Receive Opinion (Received:{is_recived})");
-            var receive_op = cur_record_round.AgentReceiveOpinionsInRound[agent];
-            dim = 0;
-            foreach (var op in receive_op.ToList())
-            {
-                Console.WriteLine($"- Dim: {dim} Value {op}");
-                dim++;
-            }
-
-            var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.Value.IsReceived(agent)).Count();
+            var is_recived = this.MyRecordRound.IsReceived(agent);
+            var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.IsReceived(agent)).Count();
             if (is_recived) receive_rounds++;
 
             var candidate = this.Candidates[agent];
+
             int can_index = 0;
             foreach (var record in candidate.SortedDataBase)
             {
@@ -68,30 +37,27 @@ namespace OSM2019.OSM
                 var req_num = record.RequireOpinionNum;
                 var awa_count = record.AwaCount;
                 var h = record.AwaRate;
-                Console.WriteLine($"{select} index: {can_index,3} req: {req_num,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_round: {this.CurrentRound,3} h: {h:f4} {select}");
+                Console.WriteLine($"{select} index: {can_index,3} req: {req_num,3} can_weight: {can_weight:f3} awa_count: {awa_count,3} h_rcv_round: {receive_rounds,3} h: {h:f4} {select}");
                 can_index++;
             }
-
-        }
-
-        public override void InitializeToZeroRound()
-        {
-            base.InitializeToZeroRound();
-            this.SetAgentNetwork(this.MyAgentNetwork);
         }
 
 
-        public override void SetAgentNetwork(AgentNetwork agent_network)
+        protected virtual void SetCandidate()
         {
-            base.SetAgentNetwork(agent_network);
             this.Candidates = new Dictionary<Agent, Candidate>();
-
             foreach (var agent in this.MyAgentNetwork.Agents)
             {
                 var can = new Candidate(agent);
                 this.Candidates.Add(agent, can);
                 agent.SetCommonWeight(can.GetSelectCanWeight());
             }
+        }
+
+        public override void SetAgentNetwork(AgentNetwork agent_network)
+        {
+            base.SetAgentNetwork(agent_network);
+            this.SetCandidate();
 
             return;
         }
@@ -102,21 +68,27 @@ namespace OSM2019.OSM
             return;
         }
 
+        //step
 
-        public override void UpdateRoundWithoutSteps()
+        //round
+        public override void InitializeToFirstRound()
         {
-            //this.PrintRound();
+            base.InitializeToFirstRound();
+            this.SetCandidate();
+        }
+
+        public override void FinalizeRound()
+        {
             this.EstimateAwaRate();
             this.SelectionWeight();
-            this.InitializeToZeroStep();
-            this.CurrentRound++;
+            base.FinalizeRound();
         }
 
         protected virtual void EstimateAwaRate()
         {
             foreach (var candidate in this.Candidates)
             {
-                var received_sum_op = this.MyRecordRounds.Last().Value.AgentReceiveOpinionsInRound[candidate.Key];
+                var received_sum_op = this.MyRecordRounds.Last().AgentReceiveOpinionsInRound[candidate.Key];
                 double obs_u = this.GetObsU(received_sum_op);
                 if (obs_u == 0) continue;
                 this.UpdateAveAwaRates(candidate.Key, candidate.Value, obs_u);
@@ -127,7 +99,7 @@ namespace OSM2019.OSM
         {
             foreach (var candidate in this.Candidates)
             {
-                var received_sum_op = this.MyRecordRounds.Last().Value.AgentReceiveOpinionsInRound[candidate.Key];
+                var received_sum_op = this.MyRecordRounds.Last().AgentReceiveOpinionsInRound[candidate.Key];
                 double obs_u = this.GetObsU(received_sum_op);
                 if (obs_u == 0) continue;
 

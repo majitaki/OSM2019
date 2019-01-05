@@ -39,8 +39,8 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
-            Test();
-            //TestExp();
+            //Test();
+            TestExp();
             this.MyAnimationForm.Show();
             this.MyAnimationForm.Left = this.Right;
         }
@@ -59,16 +59,16 @@ namespace OSM2019
             //    .Run(seed);
             //});
 
-            Parallel.For(0, 5, seed =>
+            Parallel.For(0, 3, seed =>
                       {
                           new NetworkSize_Experiment()
-                          .SetNetworkSize(300, 300, 100)
-                          .SetDimSize(4).SetSensorRate(0.35)
+                          .SetNetworkSize(100, 500, 400)
+                          .SetDimSize(4).SetSensorRate(0.55)
                           .SetSensorCommonWeight(0.65)
                           //.SetSensorFixSize(10)
                           .SetSensorSizeRate(0.1)
-                          .SetLogFolder("aat_0.35_0.65_300")
-                          .SetRounds(600)
+                          .SetLogFolder("aat")
+                          .SetRounds(300)
                           .SetSteps(1500)
                           .Run(seed);
                       });
@@ -81,7 +81,7 @@ namespace OSM2019
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(300).SetNearestNeighbors(6).SetRewireP(0.01);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(100).SetNearestNeighbors(6).SetRewireP(0.01);
             //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(300);
 
             var pb = new ExtendProgressBar(100);
@@ -151,7 +151,7 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
 
-            var osm = new AATfix_OSM();
+            var osm = new AAT_OSM();
             //var osm = new OSM_Only();
             osm.SetRand(update_step_rand);
             osm.SetAgentNetwork(agent_network);
@@ -296,7 +296,8 @@ namespace OSM2019
                 if (max_steps <= this.MyOSM.CurrentStep)
                 {
                     this.PlayRound();
-                    this.MyOSM.PrintRound();
+                    this.MyOSM.PrintRoundInfo();
+                    this.MyOSM.InitializeRound();
                 }
             }
 
@@ -304,8 +305,8 @@ namespace OSM2019
 
         void PlayRound()
         {
-            this.MyOSM.UpdateRecordRound();
-            this.MyOSM.UpdateRoundWithoutSteps();
+            this.MyOSM.RecordRound();
+            this.MyOSM.FinalizeRound();
         }
 
         private void timerAnimation_Tick(object sender, EventArgs e)
@@ -348,15 +349,12 @@ namespace OSM2019
 
             if (this.radioButtonStepCheck.Checked)
             {
-                this.MyOSM.InitializeToZeroStep();
+                this.MyOSM.InitializeToFirstStep();
                 this.labelStepNum.Text = this.MyOSM.CurrentStep.ToString();
             }
             else if (this.radioButtonRoundCheck.Checked)
             {
-
-
-
-                this.MyOSM.InitializeToZeroRound();
+                this.MyOSM.InitializeToFirstRound();
                 this.labelRoundNum.Text = this.MyOSM.CurrentRound.ToString();
                 this.labelStepNum.Text = this.MyOSM.CurrentStep.ToString();
 
