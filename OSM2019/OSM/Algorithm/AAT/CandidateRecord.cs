@@ -24,10 +24,37 @@ namespace OSM2019.OSM
             this.MyAggFuncs = new AggregationFunctions();
             this.BeliefDim = belief_dim;
             this.RequireOpinionNum = requre_num;
-            this.CanWeight = this.GetCanWeight(belief_dim, requre_num, agent);
+            this.CanWeight = Math.Round(this.CalcCanWeight(belief_dim, requre_num, agent), 4);
         }
 
-        double GetCanWeight(int belief_dim, int requre_num, Agent agent)
+        public CandidateRecord(double can_weight, Agent agent)
+        {
+            this.MyAggFuncs = new AggregationFunctions();
+            this.BeliefDim = -1;
+            this.RequireOpinionNum = this.CalcRequireNum(can_weight, agent);
+            this.CanWeight = Math.Round(can_weight, 4);
+        }
+
+        int CalcRequireNum(double can_weight, Agent agent)
+        {
+            var max_count = agent.GetNeighbors().Count;
+            var init_belief = agent.InitBelief;
+            Vector<double> receive_op = agent.InitOpinion.Clone();
+            Vector<double> belief = agent.InitBelief.Clone();
+            receive_op.Clear();
+            belief.Clear();
+
+            int require_num = 1;
+            for (; belief[0] < agent.OpinionThreshold && require_num < max_count; require_num++)
+            {
+                receive_op[0] = require_num;
+                belief = this.MyAggFuncs.UpdateBelief(init_belief, can_weight, receive_op);
+            }
+
+            return require_num;
+        }
+
+        double CalcCanWeight(int belief_dim, int requre_num, Agent agent)
         {
             var diff = 0.01;
             var init_can_weight = (1.0 / agent.InitBelief.Count) + diff;

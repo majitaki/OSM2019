@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.Experiment
 {
-    class NetworkSize_Experiment
+    class Normal_Experiment
     {
         int StartSize;
         int FinalSize;
@@ -22,20 +22,38 @@ namespace OSM2019.Experiment
         double SensorSizeRate;
         double SensorCommonWeight;
         bool SensorCommonWeightMode;
+        bool CommonWeightMode;
         double CommonWeight;
         string LogFolder;
         int Rounds;
         int Steps;
+        List<GraphEnum> MyGraphs;
+        List<AlgoEnum> MyAlgos;
 
         static object lock_object = new object();
 
-        public NetworkSize_Experiment()
+        public Normal_Experiment()
         {
             this.SensorCommonWeightMode = false;
             this.SensorSizeFixMode = false;
+            this.CommonWeightMode = false;
+            this.MyGraphs = new List<GraphEnum>();
+            this.MyAlgos = new List<AlgoEnum>();
         }
 
-        public NetworkSize_Experiment SetNetworkSize(int start_size, int final_size, int duration_size)
+        public Normal_Experiment SetAlgos(List<AlgoEnum> algos)
+        {
+            this.MyAlgos = algos;
+            return this;
+        }
+
+        public Normal_Experiment SetGraphs(List<GraphEnum> graphs)
+        {
+            this.MyGraphs = graphs;
+            return this;
+        }
+
+        public Normal_Experiment SetNetworkSize(int start_size, int final_size, int duration_size)
         {
             this.StartSize = start_size;
             this.FinalSize = final_size;
@@ -43,19 +61,19 @@ namespace OSM2019.Experiment
             return this;
         }
 
-        public NetworkSize_Experiment SetDimSize(int dim_size)
+        public Normal_Experiment SetDimSize(int dim_size)
         {
             this.DimSize = dim_size;
             return this;
         }
 
-        public NetworkSize_Experiment SetSensorRate(double sensor_rate)
+        public Normal_Experiment SetSensorRate(double sensor_rate)
         {
             this.SensorRate = sensor_rate;
             return this;
         }
 
-        public NetworkSize_Experiment SetLogFolder(string folder_name)
+        public Normal_Experiment SetLogFolder(string folder_name)
         {
             var dt = DateTime.Now;
             var dt_name = dt.ToString("yyyy-MMdd-HHmm");
@@ -63,40 +81,41 @@ namespace OSM2019.Experiment
             return this;
         }
 
-        public NetworkSize_Experiment SetSensorCommonWeight(double sensor_common_weight)
+        public Normal_Experiment SetSensorCommonWeight(double sensor_common_weight)
         {
             this.SensorCommonWeightMode = true;
             this.SensorCommonWeight = sensor_common_weight;
             return this;
         }
 
-        public NetworkSize_Experiment SetSensorFixSize(int sensor_size)
+        public Normal_Experiment SetSensorFixSize(int sensor_size)
         {
             this.SensorSizeFixMode = true;
             this.SensorSize = sensor_size;
             return this;
         }
 
-        public NetworkSize_Experiment SetSensorSizeRate(double sensor_size_rate)
+        public Normal_Experiment SetSensorSizeRate(double sensor_size_rate)
         {
             this.SensorSizeFixMode = false;
             this.SensorSizeRate = sensor_size_rate;
             return this;
         }
 
-        public NetworkSize_Experiment SetCommonWeight(double common_weight)
+        public Normal_Experiment SetCommonWeight(double common_weight)
         {
+            this.CommonWeightMode = true;
             this.CommonWeight = common_weight;
             return this;
         }
 
-        public NetworkSize_Experiment SetRounds(int rounds)
+        public Normal_Experiment SetRounds(int rounds)
         {
             this.Rounds = rounds;
             return this;
         }
 
-        public NetworkSize_Experiment SetSteps(int steps)
+        public Normal_Experiment SetSteps(int steps)
         {
             this.Steps = steps;
             return this;
@@ -111,9 +130,11 @@ namespace OSM2019.Experiment
         public void Run(int start_seed, int final_seed)
         {
             string save_folder = this.LogFolder;
-            List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
+            //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
             //List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATGfix };
-            List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT };
+            var graphs = this.MyGraphs;
+            var algos = this.MyAlgos;
+            //List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT };
 
             int op_dim_size = this.DimSize;
             double sensor_rate = this.SensorRate;
@@ -224,70 +245,47 @@ namespace OSM2019.Experiment
 
                         foreach (var algo in algos)
                         {
-                            I_OSM osm = new OSM_Only();
+                            OSMBase osm = new OSM_Only();
+
+
                             switch (algo)
                             {
                                 case AlgoEnum.AAT:
 
                                     var osm_aat = new AAT_OSM();
-                                    var update_step_rand_aat = new ExtendRandom(update_step_seed);
-                                    osm_aat.SetRand(update_step_rand_aat);
-                                    osm_aat.SetAgentNetwork(agent_network);
-                                    osm_aat.SetSubjectManager(subject_manager);
-                                    osm_aat.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-                                    osm_aat.SetTargetH(0.9);
-                                    osm_aat.SetOpinionIntroInterval(1);
-                                    osm_aat.SetOpinionIntroRate(0.1);
-                                    if (this.SensorCommonWeightMode) osm_aat.SetSensorCommonWeight(this.SensorCommonWeight);
-
+                                    osm_aat.SetTargetH(0.95);
                                     osm = osm_aat;
                                     break;
                                 case AlgoEnum.AATG:
 
                                     var osm_aatg = new AATG_OSM();
-                                    var update_step_rand_aatg = new ExtendRandom(update_step_seed);
-                                    osm_aatg.SetRand(update_step_rand_aatg);
-                                    osm_aatg.SetAgentNetwork(agent_network);
-                                    osm_aatg.SetSubjectManager(subject_manager);
-                                    osm_aatg.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-                                    osm_aatg.SetOpinionIntroInterval(1);
-                                    osm_aatg.SetOpinionIntroRate(0.1);
-                                    if (this.SensorCommonWeightMode) osm_aatg.SetSensorCommonWeight(this.SensorCommonWeight);
-
+                                    osm_aatg.SetTargetH(0.95);
                                     osm = osm_aatg;
                                     break;
                                 case AlgoEnum.AATfix:
 
                                     var osm_aatfix = new AATfix_OSM();
-                                    var update_step_rand_aatgfix = new ExtendRandom(update_step_seed);
-                                    osm_aatfix.SetRand(update_step_rand_aatgfix);
-                                    osm_aatfix.SetAgentNetwork(agent_network);
-                                    osm_aatfix.SetSubjectManager(subject_manager);
-                                    osm_aatfix.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-                                    osm_aatfix.SetTargetH(0.9);
-                                    osm_aatfix.SetOpinionIntroInterval(1);
-                                    osm_aatfix.SetOpinionIntroRate(0.1);
-                                    if (this.SensorCommonWeightMode) osm_aatfix.SetSensorCommonWeight(this.SensorCommonWeight);
-
+                                    osm_aatfix.SetTargetH(0.95);
                                     osm = osm_aatfix;
                                     break;
                                 case AlgoEnum.OSMonly:
                                     var osm_only = new OSM_Only();
-                                    var update_step_rand_osmonly = new ExtendRandom(update_step_seed);
-                                    osm_only.SetRand(update_step_rand_osmonly);
-                                    osm_only.SetAgentNetwork(agent_network);
-                                    osm_only.SetSubjectManager(subject_manager);
-                                    osm_only.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-                                    osm_only.SetOpinionIntroInterval(1);
-                                    osm_only.SetOpinionIntroRate(0.1);
-                                    osm_only.SetCommonWeight(this.CommonWeight);
-                                    if (this.SensorCommonWeightMode) osm_only.SetSensorCommonWeight(this.SensorCommonWeight);
-
+                                    if (this.CommonWeightMode) osm_only.SetCommonWeight(this.CommonWeight);
                                     osm = osm_only;
                                     break;
                                 default:
                                     break;
                             }
+
+                            var update_step_rand_tmp = new ExtendRandom(update_step_seed);
+                            osm.SetRand(update_step_rand_tmp);
+                            osm.SetAgentNetwork(agent_network);
+                            osm.SetSubjectManager(subject_manager);
+                            osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
+                            osm.SetOpinionIntroInterval(10);
+                            osm.SetOpinionIntroRate(0.1);
+                            osm.SimpleRecordFlag = true;
+                            if (this.SensorCommonWeightMode) osm.SetSensorCommonWeight(this.SensorCommonWeight);
 
 
                             pb.Tag = $"{select_graph.ToString()} {size.ToString()} {algo.ToString()} {seed}";

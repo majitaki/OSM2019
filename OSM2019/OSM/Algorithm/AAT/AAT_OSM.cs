@@ -183,10 +183,6 @@ namespace OSM2019.OSM
         protected virtual bool IsDetermined(Agent agent)
         {
             return agent.IsDetermined();
-            //var undeter_op = agent.Opinion.Clone();
-            //undeter_op.Clear();
-
-            //return (!agent.Opinion.Equals(undeter_op)) ? true : false;
         }
 
         protected virtual bool IsBiggerWeight(CandidateRecord select_record, CandidateRecord other_record)

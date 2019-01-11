@@ -11,25 +11,6 @@ namespace OSM2019.Utility
 {
     static class Output
     {
-        //static public void OutputSteps(string pass, Dictionary<int, RecordStep> record_steps)
-        //{
-        //    var dt = DateTime.Now;
-        //    var dt_name = dt.ToString("yyyy-MM-dd-HH-mm-ss");
-
-        //    var record_step_csvs = new List<RecordStepForCsv>();
-        //    foreach (var myrecord in record_steps)
-        //    {
-        //        record_step_csvs.Add(new RecordStepForCsv(myrecord.Value));
-        //    }
-
-        //    using (var streamWriter = new StreamWriter(pass + "/" + dt_name + @"_steps.csv"))
-        //    using (var csv_writer = new CsvWriter(streamWriter))
-        //    {
-        //        csv_writer.Configuration.HasHeaderRecord = true;
-        //        csv_writer.Configuration.RegisterClassMap<RecordStepMapper>();
-        //        csv_writer.WriteRecords(record_step_csvs);
-        //    }
-        //}
 
         static public void OutputRounds(string pass, List<RecordRound> record_rounds, string tag = "")
         {
@@ -38,11 +19,6 @@ namespace OSM2019.Utility
             var dt = DateTime.Now;
             var dt_name = dt.ToString("yyyy-MM-dd-HH-mm-ss");
 
-            //var record_round_csvs = new List<RecordRoundForCsv>();
-            //foreach (var myrecord in record_rounds)
-            //{
-            //    record_round_csvs.Add(new RecordRoundForCsv(myrecord.Value));
-            //}
 
             var keys = record_rounds.First().AllOpinionSizes.Values.SelectMany(value => value.Keys).Select(key => key.ToString());
             var headers = new[] {
@@ -56,6 +32,9 @@ namespace OSM2019.Utility
                     "StepMessageSize",
                     "SensorSize",
                     "NetworkSize",
+                    "FinalSteps",
+                    "AverageWeight",
+                    "VarWeight"
                      }.Concat(keys).ToList();
 
             using (var streamWriter = new StreamWriter(pass + "/" + dt_name + "_" + tag + @"_rounds.csv"))
@@ -79,6 +58,9 @@ namespace OSM2019.Utility
                 string step_message_size = "";
                 string sensor_size = "";
                 string network_size = "";
+                string final_step = "";
+                string ave_weight = "";
+                string var_weight = "";
 
                 foreach (var record_round in record_rounds)
                 {
@@ -92,6 +74,9 @@ namespace OSM2019.Utility
                     step_message_size = record_round.StepMessageSizes.Sum().ToString();
                     sensor_size = record_round.SensorSizes.Last().ToString();
                     network_size = record_round.NetworkSizes.Last().ToString();
+                    final_step = record_round.FinalSteps.Last().ToString();
+                    ave_weight = record_round.AverageWeight.Last().ToString();
+                    var_weight = record_round.VarWeight.Last().ToString();
 
                     csv_writer.WriteField(round);
                     csv_writer.WriteField(correct_rate);
@@ -103,6 +88,9 @@ namespace OSM2019.Utility
                     csv_writer.WriteField(step_message_size);
                     csv_writer.WriteField(sensor_size);
                     csv_writer.WriteField(network_size);
+                    csv_writer.WriteField(final_step);
+                    csv_writer.WriteField(ave_weight);
+                    csv_writer.WriteField(var_weight);
 
                     foreach (var subject in record_round.MySubjectManager.Subjects)
                     {

@@ -32,13 +32,14 @@ namespace OSM2019.OSM
         public double SensorCommonWeight { get; private set; }
         public RecordRound MyRecordRound { get; set; }
         public List<RecordRound> MyRecordRounds { get; set; }
-
+        public bool SimpleRecordFlag { get; set; }
 
         public OSMBase()
         {
             this.CurrentStep = 0;
             this.CurrentRound = 0;
             this.SensorCommonWeightMode = false;
+            this.SimpleRecordFlag = false;
             this.MyAggFuncs = new AggregationFunctions();
             Messages = new List<Message>();
             OpinionFormedAgents = new List<Agent>();
@@ -92,6 +93,15 @@ namespace OSM2019.OSM
             this.SensorCommonWeight = sensor_common_weight;
         }
 
+        public void SetCommonWeight(double common_weight)
+        {
+            foreach (var link in this.MyAgentNetwork.AgentLinks)
+            {
+                link.SetInitSourceWeight(common_weight);
+                link.SetInitTargetWeight(common_weight);
+            }
+        }
+
         //step
         public virtual void InitializeToFirstStep()
         {
@@ -140,10 +150,20 @@ namespace OSM2019.OSM
             this.CurrentStep++;
         }
 
-        public virtual void RecordStep()
+        public virtual void RecordStep(bool final)
         {
-            this.MyRecordRound.RecordStepMessages(this.Messages);
-            this.MyRecordRound.RecordStepAgents(this.MyAgentNetwork.Agents);
+            if (this.SimpleRecordFlag)
+            {
+                if (final) this.MyRecordRound.RecordFinalStep(this.CurrentStep);
+                this.MyRecordRound.RecordStepMessages(this.Messages);
+                if (final) this.MyRecordRound.RecordStepAgentNetwork(this.MyAgentNetwork.Agents);
+            }
+            else
+            {
+                this.MyRecordRound.RecordFinalStep(this.CurrentStep);
+                this.MyRecordRound.RecordStepMessages(this.Messages);
+                this.MyRecordRound.RecordStepAgentNetwork(this.MyAgentNetwork.Agents);
+            }
         }
 
         public virtual void FinalizeStep()
@@ -154,9 +174,10 @@ namespace OSM2019.OSM
         {
             foreach (var step in Enumerable.Range(0, step_count))
             {
+                var final = (step == (step_count - 1));
                 this.InitializeStep();
                 this.NextStep();
-                this.RecordStep();
+                this.RecordStep(final);
                 this.FinalizeStep();
             }
         }

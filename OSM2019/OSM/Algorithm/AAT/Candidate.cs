@@ -12,6 +12,11 @@ namespace OSM2019.OSM
         public List<CandidateRecord> SortedDataBase { get; protected set; }
         public int SelectSortedIndex;
 
+        public Candidate()
+        {
+
+        }
+
         public Candidate(Agent agent)
         {
             this.DataBase = new List<CandidateRecord>();

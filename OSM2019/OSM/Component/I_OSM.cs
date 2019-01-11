@@ -23,7 +23,7 @@ namespace OSM2019.OSM
         void InitializeToFirstStep();
         void InitializeStep();
         void NextStep();
-        void RecordStep();
+        void RecordStep(bool final);
         void FinalizeStep();
         void UpdateSteps(int step_count);
         void PrintStepInfo();
@@ -39,5 +39,8 @@ namespace OSM2019.OSM
 
         //agent
         void PrintAgentInfo(Agent agent);
+
+        //common
+
     }
 }
