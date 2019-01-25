@@ -39,8 +39,8 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
-            //Test();
-            TestExp();
+            Test();
+            //TestExp();
             this.MyAnimationForm.Show();
             this.MyAnimationForm.Left = this.Right;
         }
@@ -128,7 +128,7 @@ namespace OSM2019
 
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
-            var subject_test = new OpinionSubject("test", 20);
+            var subject_test = new OpinionSubject("test", 10);
 
             double[] conv_array = { 1, 0, 0, 1, 1, 0 };
             var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
@@ -161,7 +161,7 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_test)
-                                .SetInitOpinion(Vector<double>.Build.Dense(20, 0.0));
+                                .SetInitOpinion(Vector<double>.Build.Dense(10, 0.0));
 
             var sensor_gene = new SensorGenerator()
                             .SetSensorSize((int)(0.1 * graph.Nodes.Count));

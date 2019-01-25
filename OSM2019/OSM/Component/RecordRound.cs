@@ -29,6 +29,7 @@ namespace OSM2019.OSM
         public Dictionary<Agent, Vector<double>> AgentReceiveOpinionsInRound { get; private set; }
         public SubjectManager MySubjectManager { get; private set; }
         public Dictionary<OpinionSubject, Dictionary<int, List<int>>> AllOpinionSizes;
+        public List<double> SimpsonsDs { get; private set; }
 
 
         public RecordRound()
@@ -54,6 +55,7 @@ namespace OSM2019.OSM
             this.AverageWeight = new List<double>();
             this.VarWeight = new List<double>();
             this.AllOpinionSizes = new Dictionary<OpinionSubject, Dictionary<int, List<int>>>();
+            this.SimpsonsDs = new List<double>();
 
             foreach (var agent in agents)
             {
@@ -91,6 +93,14 @@ namespace OSM2019.OSM
             var ave_weights = agents.Select(agent => agent.AgentLinks.Average(link => link.GetWeight(agent))).Mean();
             var var_weights = agents.Select(agent => agent.AgentLinks.Average(link => link.GetWeight(agent))).PopulationVariance();
 
+            var simpsond = 0.0;
+            foreach (var dim in Enumerable.Range(0, cor_subject.SubjectDimSize))
+            {
+                var relative_dominance = agents.Where(agent => agent.MySubject.SubjectName == cor_subject.SubjectName && agent.GetOpinionDim() == dim).Count() / (double)agents.Count;
+                simpsond += Math.Pow(relative_dominance, 2);
+            }
+            simpsond = 1 - simpsond;
+
             this.CorrectSizes.Add(correct_size);
             this.UndeterSizes.Add(undeter_size);
             this.NetworkSizes.Add(network_size);
@@ -100,6 +110,7 @@ namespace OSM2019.OSM
             this.AverageWeight.Add(ave_weights);
             this.VarWeight.Add(var_weights);
             this.RecordAllOpinion(agents);
+            this.SimpsonsDs.Add(simpsond);
         }
 
         void RecordAllOpinion(List<Agent> agents)
@@ -113,7 +124,6 @@ namespace OSM2019.OSM
                 }
             }
         }
-
 
         public void RecordStepMessages(List<Message> step_messages)
         {
@@ -156,7 +166,8 @@ namespace OSM2019.OSM
                $"round:{this.Round:D4}|" +
                $"cor:{Math.Round(this.CorrectSizes.Last() / network_size, 3):F3}|" +
                $"incor:{Math.Round(this.IncorrectSizes.Last() / network_size, 3):F3}|" +
-               $"undeter:{Math.Round(this.UndeterSizes.Last() / network_size, 3):F3}|"
+               $"undeter:{Math.Round(this.UndeterSizes.Last() / network_size, 3):F3}|" +
+               $"simpsond:{Math.Round(this.SimpsonsDs.Last(), 3):F3}|"
                );
 
             foreach (var subject in this.MySubjectManager.Subjects)

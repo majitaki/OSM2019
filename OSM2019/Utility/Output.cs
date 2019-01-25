@@ -34,7 +34,8 @@ namespace OSM2019.Utility
                     "NetworkSize",
                     "FinalSteps",
                     "AverageWeight",
-                    "VarWeight"
+                    "VarWeight",
+                    "SimpsonsD"
                      }.Concat(keys).ToList();
 
             using (var streamWriter = new StreamWriter(pass + "/" + dt_name + "_" + tag + @"_rounds.csv"))
@@ -61,6 +62,7 @@ namespace OSM2019.Utility
                 string final_step = "";
                 string ave_weight = "";
                 string var_weight = "";
+                string simpsons_d = "";
 
                 foreach (var record_round in record_rounds)
                 {
@@ -77,6 +79,7 @@ namespace OSM2019.Utility
                     final_step = record_round.FinalSteps.Last().ToString();
                     ave_weight = record_round.AverageWeight.Last().ToString();
                     var_weight = record_round.VarWeight.Last().ToString();
+                    simpsons_d = record_round.SimpsonsDs.Last().ToString();
 
                     csv_writer.WriteField(round);
                     csv_writer.WriteField(correct_rate);
@@ -91,6 +94,7 @@ namespace OSM2019.Utility
                     csv_writer.WriteField(final_step);
                     csv_writer.WriteField(ave_weight);
                     csv_writer.WriteField(var_weight);
+                    csv_writer.WriteField(simpsons_d);
 
                     foreach (var subject in record_round.MySubjectManager.Subjects)
                     {
@@ -106,10 +110,6 @@ namespace OSM2019.Utility
                 }
 
             }
-
-
-
-
 
             //csv_writer.Configuration.HasHeaderRecord = true;
             //csv_writer.Configuration.RegisterClassMap<RecordRoundMapper>();
