@@ -51,23 +51,23 @@ namespace OSM2019
             //2, 0.62
             //3, 0.5
             //4, 0.45
-            //5
-            
+            //5, 0.42
+
 
 
 
             Parallel.For(0, 5, seed =>
             {
                 new Weight_Experiment()
-                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA })
+                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular })
                 .SetAlgos(new List<AlgoEnum>() { AlgoEnum.OSMonly })
                 .SetNetworkSize(300, 300, 100)
-                .SetDimSize(2).SetSensorRate(0.62)
+                .SetDimSize(10).SetSensorRate(0.35)
                 .SetSensorCommonWeight(0.70)
                 .SetSensorSizeRate(0.1)
                 //.SetSensorFixSize(10)
                 .SetWeights(Enumerable.Range(0, 50).Select(i => i / 50.0).ToList())
-                .SetLogFolder("dim2_rate_commonwight")
+                .SetLogFolder("dim10_rate_commonwight")
                 .SetRounds(300)
                 .SetSteps(1500)
                 .Run(seed);
