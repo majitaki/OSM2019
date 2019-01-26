@@ -39,8 +39,8 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
-            Test();
-            //TestExp();
+            //Test();
+            TestExp();
             this.MyAnimationForm.Show();
             this.MyAnimationForm.Left = this.Right;
         }
@@ -52,22 +52,22 @@ namespace OSM2019
             //3, 0.5
             //4, 0.45
             //5, 0.42
-
+            //10. 0.35
 
 
 
             Parallel.For(0, 5, seed =>
             {
                 new Weight_Experiment()
-                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular })
+                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D })
                 .SetAlgos(new List<AlgoEnum>() { AlgoEnum.OSMonly })
                 .SetNetworkSize(300, 300, 100)
-                .SetDimSize(10).SetSensorRate(0.35)
+                .SetDimSize(10).SetSensorRate(0.1)
                 .SetSensorCommonWeight(0.70)
                 .SetSensorSizeRate(0.1)
                 //.SetSensorFixSize(10)
                 .SetWeights(Enumerable.Range(0, 50).Select(i => i / 50.0).ToList())
-                .SetLogFolder("dim10_rate_commonwight")
+                .SetLogFolder("dim10_rate_commonwight_equal")
                 .SetRounds(300)
                 .SetSteps(1500)
                 .Run(seed);
@@ -78,15 +78,15 @@ namespace OSM2019
             //Parallel.For(0, 5, seed =>
             //{
             //    new TargetH_Experiment()
-            //    .SetGraphs(new List<GraphEnum>() { GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular })
+            //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Grid2D })
             //    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AATfix })
             //    .SetNetworkSize(300, 300, 100)
-            //    .SetDimSize(2).SetSensorRate(0.62)
+            //    .SetDimSize(10).SetSensorRate(0.10)
             //    .SetSensorCommonWeight(0.70)
-            //    //.SetSensorSizeRate(0.1)
-            //    .SetSensorFixSize(10)
+            //    .SetSensorSizeRate(0.1)
+            //    //.SetSensorFixSize(10)
             //    .SetTargetHs(Enumerable.Range(80, 21).Select(i => i / 100.0).ToList())
-            //    .SetLogFolder("dim2_target_h_dur0.02_fix_manygraph_speedtest")
+            //    .SetLogFolder("dim10_target_h_sizerate_manygraph_equal")
             //    .SetRounds(300)
             //    .SetSteps(1500)
             //    .Run(seed);
@@ -96,13 +96,13 @@ namespace OSM2019
             //Parallel.For(0, 5, seed =>
             //{
             //    new Normal_Experiment()
-            //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-            //    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATfix })
-            //    .SetNetworkSize(100, 1000, 100)
-            //    .SetDimSize(2).SetSensorRate(0.62)
+            //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Grid2D })
+            //    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AATfix })
+            //    .SetNetworkSize(100, 500, 100)
+            //    .SetDimSize(5).SetSensorRate(0.42)
             //    .SetSensorCommonWeight(0.70)
             //    .SetSensorSizeRate(0.1)
-            //    .SetLogFolder("dim2")
+            //    .SetLogFolder("dim5")
             //    .SetRounds(300)
             //    .SetSteps(1500)
             //    .Run(seed);

@@ -35,7 +35,8 @@ namespace OSM2019.Utility
                     "FinalSteps",
                     "AverageWeight",
                     "VarWeight",
-                    "SimpsonsD"
+                    "SimpsonsD",
+                    "BetterSimpsonD"
                      }.Concat(keys).ToList();
 
             using (var streamWriter = new StreamWriter(pass + "/" + dt_name + "_" + tag + @"_rounds.csv"))
@@ -63,6 +64,7 @@ namespace OSM2019.Utility
                 string ave_weight = "";
                 string var_weight = "";
                 string simpsons_d = "";
+                string better_simpsons_d = "";
 
                 foreach (var record_round in record_rounds)
                 {
@@ -80,6 +82,7 @@ namespace OSM2019.Utility
                     ave_weight = record_round.AverageWeight.Last().ToString();
                     var_weight = record_round.VarWeight.Last().ToString();
                     simpsons_d = record_round.SimpsonsDs.Last().ToString();
+                    better_simpsons_d = (double.Parse(simpsons_d) * (1 - double.Parse(undeter_rate))).ToString();
 
                     csv_writer.WriteField(round);
                     csv_writer.WriteField(correct_rate);
@@ -95,6 +98,7 @@ namespace OSM2019.Utility
                     csv_writer.WriteField(ave_weight);
                     csv_writer.WriteField(var_weight);
                     csv_writer.WriteField(simpsons_d);
+                    csv_writer.WriteField(better_simpsons_d);
 
                     foreach (var subject in record_round.MySubjectManager.Subjects)
                     {
