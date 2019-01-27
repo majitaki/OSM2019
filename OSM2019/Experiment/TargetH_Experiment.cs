@@ -23,6 +23,7 @@ namespace OSM2019.Experiment
         double SensorCommonWeight;
         bool SensorCommonWeightMode;
         double CommonWeight;
+        double CommonCuriocity;
         string LogFolder;
         int Rounds;
         int Steps;
@@ -104,6 +105,12 @@ namespace OSM2019.Experiment
         public TargetH_Experiment SetCommonWeight(double common_weight)
         {
             this.CommonWeight = common_weight;
+            return this;
+        }
+
+        public TargetH_Experiment SetCommonCuriocity(double common_curiocity)
+        {
+            this.CommonCuriocity = common_curiocity;
             return this;
         }
 
@@ -270,6 +277,12 @@ namespace OSM2019.Experiment
                                         var osm_aatfix = new AATfix_OSM();
                                         osm_aatfix.SetTargetH(target_h);
                                         osm = osm_aatfix;
+                                        break;
+                                    case AlgoEnum.IWTori:
+                                        var osm_iwtori = new IWTori_OSM();
+                                        osm_iwtori.SetCommonCuriocity(this.CommonCuriocity);
+                                        osm_iwtori.SetTargetH(target_h);
+                                        osm = osm_iwtori;
                                         break;
                                     default:
                                         break;

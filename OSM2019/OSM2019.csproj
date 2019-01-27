@@ -92,10 +92,12 @@
     <Compile Include="GUI\AnimationForm.Designer.cs">
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OSM\Algorithm\AAT\IWTori_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AATG_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AATfix_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AAT_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AATfix_Candidate.cs" />
+    <Compile Include="OSM\Algorithm\AAT\SelfInformation.cs" />
     <Compile Include="OSM\Component\AggregationFunctions.cs" />
     <Compile Include="OSM\Algorithm\AAT\Candidate.cs" />
     <Compile Include="OSM\Algorithm\AAT\CandidateRecord.cs" />

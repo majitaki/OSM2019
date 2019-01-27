@@ -24,8 +24,8 @@ namespace OSM2019.OSM
         public double OpinionIntroInterval { get; protected set; }
         public CalcWeightMode MyCalcWeightMode { get; protected set; }
         protected AggregationFunctions MyAggFuncs;
-        List<Message> Messages;
-        List<Agent> OpinionFormedAgents;
+        protected List<Message> Messages;
+        protected List<Agent> OpinionFormedAgents;
         //public RecordStep MyRecordStep { get; set; }
         //public Dictionary<int, RecordRound> MyRecordRounds { get; set; }
         bool SensorCommonWeightMode;
@@ -258,6 +258,11 @@ namespace OSM2019.OSM
                 dim++;
             }
 
+            foreach (var link in agent.AgentLinks)
+            {
+                Console.WriteLine($"- Weight: {link.AgentLinkID} Value {link.GetWeight(agent)}");
+            }
+
             if (this.MyRecordRounds.Count == 0) return;
             var is_recived = this.MyRecordRound.IsReceived(agent);
             Console.WriteLine($"Receive Opinion (Received:{is_recived})");
@@ -288,6 +293,7 @@ namespace OSM2019.OSM
             }
 
             var updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, weight, receive_op);
+
             if (message.FromAgent.AgentID < 0)
             {
                 double sensor_weight;
@@ -336,6 +342,8 @@ namespace OSM2019.OSM
                     messages.Add(new Message(agent, to_agent, agent_link, opinion));
                 }
             }
+
+            //messages.RemoveAll(message => message.ToAgent.IsSensor && message.FromAgent.AgentID >= 0);
 
             return messages;
         }

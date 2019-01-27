@@ -21,6 +21,8 @@ namespace OSM2019.Experiment
         int SensorSize;
         double SensorSizeRate;
         double SensorCommonWeight;
+        double CommonCuriocity;
+        double TargetH;
         bool SensorCommonWeightMode;
         string LogFolder;
         int Rounds;
@@ -97,6 +99,18 @@ namespace OSM2019.Experiment
         {
             this.SensorSizeFixMode = false;
             this.SensorSizeRate = sensor_size_rate;
+            return this;
+        }
+
+        public Weight_Experiment SetCommonCuriocity(double common_curiocity)
+        {
+            this.CommonCuriocity = common_curiocity;
+            return this;
+        }
+
+        public Weight_Experiment SetTargetHs(double target_h)
+        {
+            this.TargetH = target_h;
             return this;
         }
 
@@ -251,22 +265,28 @@ namespace OSM2019.Experiment
                                 {
                                     case AlgoEnum.AAT:
                                         var osm_aat = new AAT_OSM();
-                                        osm_aat.SetTargetH(weight);
+                                        osm_aat.SetTargetH(this.TargetH);
                                         osm = osm_aat;
                                         break;
                                     case AlgoEnum.AATG:
                                         var osm_aatg = new AATG_OSM();
-                                        osm_aatg.SetTargetH(weight);
+                                        osm_aatg.SetTargetH(this.TargetH);
                                         osm = osm_aatg;
                                         break;
                                     case AlgoEnum.AATfix:
                                         var osm_aatfix = new AATfix_OSM();
-                                        osm_aatfix.SetTargetH(weight);
+                                        osm_aatfix.SetTargetH(this.TargetH);
                                         osm = osm_aatfix;
                                         break;
                                     case AlgoEnum.OSMonly:
                                         var osm_only = new OSM_Only();
                                         osm = osm_only;
+                                        break;
+                                    case AlgoEnum.IWTori:
+                                        var osm_iwtori = new IWTori_OSM();
+                                        osm_iwtori.SetCommonCuriocity(this.CommonCuriocity);
+                                        osm_iwtori.SetTargetH(this.TargetH);
+                                        osm = osm_iwtori;
                                         break;
                                     default:
                                         break;

@@ -54,24 +54,22 @@ namespace OSM2019
             //5, 0.42
             //10. 0.35
 
-
-
-            Parallel.For(0, 5, seed =>
-            {
-                new Weight_Experiment()
-                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D })
-                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.OSMonly })
-                .SetNetworkSize(300, 300, 100)
-                .SetDimSize(10).SetSensorRate(0.1)
-                .SetSensorCommonWeight(0.70)
-                .SetSensorSizeRate(0.1)
-                //.SetSensorFixSize(10)
-                .SetWeights(Enumerable.Range(0, 50).Select(i => i / 50.0).ToList())
-                .SetLogFolder("dim10_rate_commonwight_equal")
-                .SetRounds(300)
-                .SetSteps(1500)
-                .Run(seed);
-            });
+            //Parallel.For(0, 5, seed =>
+            //{
+            //    new Weight_Experiment()
+            //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D })
+            //    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.OSMonly })
+            //    .SetNetworkSize(300, 300, 100)
+            //    .SetDimSize(10).SetSensorRate(0.1)
+            //    .SetSensorCommonWeight(0.70)
+            //    .SetSensorSizeRate(0.1)
+            //    //.SetSensorFixSize(10)
+            //    .SetWeights(Enumerable.Range(0, 50).Select(i => i / 50.0).ToList())
+            //    .SetLogFolder("dim10_rate_commonwight_equal")
+            //    .SetRounds(300)
+            //    .SetSteps(1500)
+            //    .Run(seed);
+            //});
 
 
 
@@ -93,20 +91,23 @@ namespace OSM2019
             //});
 
 
-            //Parallel.For(0, 5, seed =>
-            //{
-            //    new Normal_Experiment()
-            //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Grid2D })
-            //    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AATfix })
-            //    .SetNetworkSize(100, 500, 100)
-            //    .SetDimSize(5).SetSensorRate(0.42)
-            //    .SetSensorCommonWeight(0.70)
-            //    .SetSensorSizeRate(0.1)
-            //    .SetLogFolder("dim5")
-            //    .SetRounds(300)
-            //    .SetSteps(1500)
-            //    .Run(seed);
-            //});
+            Parallel.For(0, 5, seed =>
+            {
+                new Normal_Experiment()
+                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
+                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AATfix, AlgoEnum.IWTori })
+                .SetNetworkSize(100, 500, 100)
+                .SetDimSize(5).SetSensorRate(0.42)
+                .SetSensorCommonWeight(0.70)
+                .SetCommonCuriocity(1.0)
+                .SetTargetHs(0.9)
+                .SetSensorSizeRate(0.1)
+                .SetLogFolder("dim5_cc0.0")
+                .SetRounds(300)
+                .SetSteps(1500)
+                .Run(seed);
+            });
+
 
             Environment.Exit(0);
         }
@@ -115,7 +116,7 @@ namespace OSM2019
         {
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-            graph_generator = new WS_GraphGenerator().SetNodeSize(500).SetNearestNeighbors(6).SetRewireP(0.01);
+            graph_generator = new WS_GraphGenerator().SetNodeSize(300).SetNearestNeighbors(6).SetRewireP(0.01);
             //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(300);
 
             var pb = new ExtendProgressBar(100);
@@ -128,7 +129,7 @@ namespace OSM2019
 
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_company = new OpinionSubject("good_company", 2);
-            var subject_test = new OpinionSubject("test", 10);
+            var subject_test = new OpinionSubject("test", 5);
 
             double[] conv_array = { 1, 0, 0, 1, 1, 0 };
             var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
@@ -137,7 +138,7 @@ namespace OSM2019
                             //.SetSubject(subject_tv)
                             .SetSubject(subject_test)
                             .SetCorrectDim(0)
-                            .SetSensorRate(0.35);
+                            .SetSensorRate(0.42);
 
             var subject_manager = new SubjectManager()
                                 .AddSubject(subject_test)
@@ -161,7 +162,7 @@ namespace OSM2019
                                 .SetInitBeliefGene(init_belief_gene)
                                 .SetThreshold(op_form_threshold)
                                 .SetSubject(subject_test)
-                                .SetInitOpinion(Vector<double>.Build.Dense(10, 0.0));
+                                .SetInitOpinion(Vector<double>.Build.Dense(5, 0.0));
 
             var sensor_gene = new SensorGenerator()
                             .SetSensorSize((int)(0.1 * graph.Nodes.Count));
@@ -185,13 +186,15 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
 
-            var osm = new AATfix_OSM();
-            //var osm = new OSM_Only();
+            var osm = new IWTori_OSM();
+            //var osm = new AATfix_OSM();
+            //var osm = new OSM_Only(); 
+            osm.SetTargetH(0.9);
+            osm.SetCommonCuriocity(0.5);
             osm.SetRand(update_step_rand);
             osm.SetAgentNetwork(agent_network);
             osm.SetSubjectManager(subject_manager);
             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-            osm.SetTargetH(0.9);
             osm.SetOpinionIntroInterval(10);
             osm.SetOpinionIntroRate(0.1);
             osm.SetSensorCommonWeight(0.70);

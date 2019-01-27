@@ -24,6 +24,8 @@ namespace OSM2019.Experiment
         bool SensorCommonWeightMode;
         bool CommonWeightMode;
         double CommonWeight;
+        double TargetH;
+        double CommonCuriocity;
         string LogFolder;
         int Rounds;
         int Steps;
@@ -106,6 +108,18 @@ namespace OSM2019.Experiment
         {
             this.CommonWeightMode = true;
             this.CommonWeight = common_weight;
+            return this;
+        }
+
+        public Normal_Experiment SetTargetHs(double target_h)
+        {
+            this.TargetH = target_h;
+            return this;
+        }
+
+        public Normal_Experiment SetCommonCuriocity(double common_curiocity)
+        {
+            this.CommonCuriocity = common_curiocity;
             return this;
         }
 
@@ -251,27 +265,30 @@ namespace OSM2019.Experiment
                             switch (algo)
                             {
                                 case AlgoEnum.AAT:
-
                                     var osm_aat = new AAT_OSM();
-                                    osm_aat.SetTargetH(0.95);
+                                    osm_aat.SetTargetH(this.TargetH);
                                     osm = osm_aat;
                                     break;
                                 case AlgoEnum.AATG:
-
                                     var osm_aatg = new AATG_OSM();
-                                    osm_aatg.SetTargetH(0.95);
+                                    osm_aatg.SetTargetH(this.TargetH);
                                     osm = osm_aatg;
                                     break;
                                 case AlgoEnum.AATfix:
-
                                     var osm_aatfix = new AATfix_OSM();
-                                    osm_aatfix.SetTargetH(0.95);
+                                    osm_aatfix.SetTargetH(this.TargetH);
                                     osm = osm_aatfix;
                                     break;
                                 case AlgoEnum.OSMonly:
                                     var osm_only = new OSM_Only();
                                     if (this.CommonWeightMode) osm_only.SetCommonWeight(this.CommonWeight);
                                     osm = osm_only;
+                                    break;
+                                case AlgoEnum.IWTori:
+                                    var osm_iwtori = new IWTori_OSM();
+                                    osm_iwtori.SetCommonCuriocity(this.CommonCuriocity);
+                                    osm_iwtori.SetTargetH(this.TargetH);
+                                    osm = osm_iwtori;
                                     break;
                                 default:
                                     break;

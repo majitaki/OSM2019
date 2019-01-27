@@ -30,6 +30,7 @@ namespace OSM2019.OSM
         public SubjectManager MySubjectManager { get; private set; }
         public Dictionary<OpinionSubject, Dictionary<int, List<int>>> AllOpinionSizes;
         public List<double> SimpsonsDs { get; private set; }
+        public List<double> BetterSimpsonsDs { get; private set; }
 
 
         public RecordRound()
@@ -56,6 +57,7 @@ namespace OSM2019.OSM
             this.VarWeight = new List<double>();
             this.AllOpinionSizes = new Dictionary<OpinionSubject, Dictionary<int, List<int>>>();
             this.SimpsonsDs = new List<double>();
+            this.BetterSimpsonsDs = new List<double>();
 
             foreach (var agent in agents)
             {
@@ -101,6 +103,9 @@ namespace OSM2019.OSM
             }
             simpsond = 1 - simpsond;
 
+            var undeter_rate = Math.Round(undeter_size / (double)network_size, 4);
+            var better_simpsons_d = (simpsond * (1 - undeter_rate));
+
             this.CorrectSizes.Add(correct_size);
             this.UndeterSizes.Add(undeter_size);
             this.NetworkSizes.Add(network_size);
@@ -111,6 +116,7 @@ namespace OSM2019.OSM
             this.VarWeight.Add(var_weights);
             this.RecordAllOpinion(agents);
             this.SimpsonsDs.Add(simpsond);
+            this.BetterSimpsonsDs.Add(better_simpsons_d);
         }
 
         void RecordAllOpinion(List<Agent> agents)
@@ -167,7 +173,8 @@ namespace OSM2019.OSM
                $"cor:{Math.Round(this.CorrectSizes.Last() / network_size, 3):F3}|" +
                $"incor:{Math.Round(this.IncorrectSizes.Last() / network_size, 3):F3}|" +
                $"undeter:{Math.Round(this.UndeterSizes.Last() / network_size, 3):F3}|" +
-               $"simpsond:{Math.Round(this.SimpsonsDs.Last(), 3):F3}|"
+               $"simpsond:{Math.Round(this.SimpsonsDs.Last(), 3):F3}|" +
+               $"simpsond:{Math.Round(this.BetterSimpsonsDs.Last(), 3):F3}|"
                );
 
             foreach (var subject in this.MySubjectManager.Subjects)

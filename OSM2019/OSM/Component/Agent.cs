@@ -75,5 +75,14 @@ namespace OSM2019.OSM
                 link.SetWeight(this, common_weight);
             }
         }
+
+        public void SetWeights(Dictionary<Agent, double> weights)
+        {
+            foreach (var link in this.AgentLinks.Where(l => l.SourceAgent.AgentID >= 0 && l.TargetAgent.AgentID >= 0))
+            {
+                var weight = weights.First(wei => wei.Key == link.SourceAgent || wei.Key == link.TargetAgent).Value;
+                link.SetWeight(this, weight);
+            }
+        }
     }
 }

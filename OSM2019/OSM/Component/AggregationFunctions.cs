@@ -56,7 +56,7 @@ namespace OSM2019.OSM
         {
             var upper = pre_beliefs[belief_dim] * this.ConvertWeight(weight, belief_dim, op_dim, pre_beliefs.Count, op_dust);
 
-            var lower = 0.0;
+            var lower = 0.001;
             foreach (var lower_belief_dim in Enumerable.Range(0, pre_beliefs.Count))
             {
                 var pre_belief = pre_beliefs[lower_belief_dim];
@@ -64,6 +64,7 @@ namespace OSM2019.OSM
             }
 
             var pos_belief = upper / lower;
+
             return Math.Round(pos_belief, 4);
         }
 
