@@ -30,12 +30,16 @@ namespace OSM2019.OSM
         //public Dictionary<int, RecordRound> MyRecordRounds { get; set; }
         bool SensorCommonWeightMode;
         public double SensorCommonWeight { get; private set; }
+        public double CommonWeight { get; private set; }
+        public bool CommonWeightMode { get; private set; }
         public RecordRound MyRecordRound { get; set; }
         public List<RecordRound> MyRecordRounds { get; set; }
         public bool SimpleRecordFlag { get; set; }
 
         public OSMBase()
         {
+            this.CommonWeight = 0.0;
+            this.CommonWeightMode = false;
             this.CurrentStep = 0;
             this.CurrentRound = 0;
             this.SensorCommonWeightMode = false;
@@ -58,6 +62,16 @@ namespace OSM2019.OSM
         public virtual void SetAgentNetwork(AgentNetwork agent_network)
         {
             this.MyAgentNetwork = agent_network;
+
+            if (this.CommonWeightMode)
+            {
+                foreach (var link in this.MyAgentNetwork.AgentLinks)
+                {
+                    link.SetInitSourceWeight(this.CommonWeight);
+                    link.SetInitTargetWeight(this.CommonWeight);
+                }
+            }
+
             return;
         }
 
@@ -93,13 +107,12 @@ namespace OSM2019.OSM
             this.SensorCommonWeight = sensor_common_weight;
         }
 
-        public void SetCommonWeight(double common_weight)
+        public virtual void SetCommonWeight(double common_weight)
         {
-            foreach (var link in this.MyAgentNetwork.AgentLinks)
-            {
-                link.SetInitSourceWeight(common_weight);
-                link.SetInitTargetWeight(common_weight);
-            }
+            this.CommonWeight = common_weight;
+            this.CommonWeightMode = true;
+
+
         }
 
         //step
@@ -349,6 +362,19 @@ namespace OSM2019.OSM
         }
 
 
+        protected double GetObsU(Vector<double> received_sum_op)
+        {
+            List<double> op_list = received_sum_op.ToList();
+            var max_op_len = op_list.Max();
+            var max_index = op_list.IndexOf(max_op_len);
 
+            for (int index = 0; index < op_list.Count; index++)
+            {
+                if (index == max_index) continue;
+                max_op_len -= op_list[index];
+                if (max_op_len <= 0) return 0;
+            }
+            return max_op_len;
+        }
     }
 }

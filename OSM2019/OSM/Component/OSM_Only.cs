@@ -8,6 +8,5 @@ namespace OSM2019.OSM
 {
     class OSM_Only : OSMBase
     {
-       
     }
 }

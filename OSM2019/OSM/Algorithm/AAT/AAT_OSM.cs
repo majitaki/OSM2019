@@ -125,20 +125,7 @@ namespace OSM2019.OSM
             }
         }
 
-        protected double GetObsU(Vector<double> received_sum_op)
-        {
-            List<double> op_list = received_sum_op.ToList();
-            var max_op_len = op_list.Max();
-            var max_index = op_list.IndexOf(max_op_len);
-
-            for (int index = 0; index < op_list.Count; index++)
-            {
-                if (index == max_index) continue;
-                max_op_len -= op_list[index];
-                if (max_op_len <= 0) return 0;
-            }
-            return max_op_len;
-        }
+       
 
         protected virtual void UpdateAveAwaRates(Agent agent, Candidate candidate, double obs_u)
         {

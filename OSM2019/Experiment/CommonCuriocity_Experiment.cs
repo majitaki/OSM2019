@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.Experiment
 {
-    class TargetH_Experiment
+    class CommonCuriocity_Experiment
     {
         int StartSize;
         int FinalSize;
@@ -21,19 +21,18 @@ namespace OSM2019.Experiment
         int SensorSize;
         double SensorSizeRate;
         double SensorCommonWeight;
+        double TargetH;
         bool SensorCommonWeightMode;
-        double CommonWeight;
-        double CommonCuriocity;
         string LogFolder;
         int Rounds;
         int Steps;
         List<GraphEnum> MyGraphs;
         List<AlgoEnum> MyAlgos;
-        List<double> TargetHs;
+        List<double> CommonCuriocities;
 
         static object lock_object = new object();
 
-        public TargetH_Experiment()
+        public CommonCuriocity_Experiment()
         {
             this.SensorCommonWeightMode = false;
             this.SensorSizeFixMode = false;
@@ -41,19 +40,19 @@ namespace OSM2019.Experiment
             this.MyAlgos = new List<AlgoEnum>();
         }
 
-        public TargetH_Experiment SetAlgos(List<AlgoEnum> algos)
+        public CommonCuriocity_Experiment SetAlgos(List<AlgoEnum> algos)
         {
             this.MyAlgos = algos;
             return this;
         }
 
-        public TargetH_Experiment SetGraphs(List<GraphEnum> graphs)
+        public CommonCuriocity_Experiment SetGraphs(List<GraphEnum> graphs)
         {
             this.MyGraphs = graphs;
             return this;
         }
 
-        public TargetH_Experiment SetNetworkSize(int start_size, int final_size, int duration_size)
+        public CommonCuriocity_Experiment SetNetworkSize(int start_size, int final_size, int duration_size)
         {
             this.StartSize = start_size;
             this.FinalSize = final_size;
@@ -61,73 +60,67 @@ namespace OSM2019.Experiment
             return this;
         }
 
-        public TargetH_Experiment SetDimSize(int dim_size)
+        public CommonCuriocity_Experiment SetDimSize(int dim_size)
         {
             this.DimSize = dim_size;
             return this;
         }
 
-        public TargetH_Experiment SetSensorRate(double sensor_rate)
+        public CommonCuriocity_Experiment SetSensorRate(double sensor_rate)
         {
             this.SensorRate = sensor_rate;
             return this;
         }
 
-        public TargetH_Experiment SetLogFolder(string dt_name, string folder_name = "")
+        public CommonCuriocity_Experiment SetLogFolder(string dt_name, string folder_name = "")
         {
             var sensor_size_comment = this.SensorSizeFixMode ? $"fix{this.SensorSize}" : $"rate{this.SensorSizeRate}";
-            this.LogFolder = $"{dt_name}_{"th"}_dim{this.DimSize}_sr{this.SensorRate}_scw{this.SensorCommonWeight}_{sensor_size_comment}_cc{this.CommonCuriocity}_r{this.Rounds}_s{this.Steps}" + folder_name;
+            this.LogFolder = $"{dt_name}_{"cc"}_dim{this.DimSize}_sr{this.SensorRate}_scw{this.SensorCommonWeight}_{sensor_size_comment}_th{this.TargetH}_r{this.Rounds}_s{this.Steps}" + folder_name;
             return this;
         }
 
-        public TargetH_Experiment SetSensorCommonWeight(double sensor_common_weight)
+        public CommonCuriocity_Experiment SetSensorCommonWeight(double sensor_common_weight)
         {
             this.SensorCommonWeightMode = true;
             this.SensorCommonWeight = sensor_common_weight;
             return this;
         }
 
-        public TargetH_Experiment SetSensorFixSize(int sensor_size)
+        public CommonCuriocity_Experiment SetSensorFixSize(int sensor_size)
         {
             this.SensorSizeFixMode = true;
             this.SensorSize = sensor_size;
             return this;
         }
 
-        public TargetH_Experiment SetSensorSizeRate(double sensor_size_rate)
+        public CommonCuriocity_Experiment SetSensorSizeRate(double sensor_size_rate)
         {
             this.SensorSizeFixMode = false;
             this.SensorSizeRate = sensor_size_rate;
             return this;
         }
 
-        public TargetH_Experiment SetCommonWeight(double common_weight)
+        public CommonCuriocity_Experiment SetTargetH(double target_h)
         {
-            this.CommonWeight = common_weight;
+            this.TargetH = target_h;
             return this;
         }
 
-        public TargetH_Experiment SetCommonCuriocity(double common_curiocity)
-        {
-            this.CommonCuriocity = common_curiocity;
-            return this;
-        }
-
-        public TargetH_Experiment SetRounds(int rounds)
+        public CommonCuriocity_Experiment SetRounds(int rounds)
         {
             this.Rounds = rounds;
             return this;
         }
 
-        public TargetH_Experiment SetSteps(int steps)
+        public CommonCuriocity_Experiment SetSteps(int steps)
         {
             this.Steps = steps;
             return this;
         }
 
-        public TargetH_Experiment SetTargetHs(List<double> target_hs)
+        public CommonCuriocity_Experiment SetCommonCuriocities(List<double> weights)
         {
-            this.TargetHs = target_hs;
+            this.CommonCuriocities = weights;
             return this;
         }
 
@@ -156,7 +149,7 @@ namespace OSM2019.Experiment
                     {
                         foreach (var algo in algos)
                         {
-                            foreach (var target_h in this.TargetHs)
+                            foreach (var weight in this.CommonCuriocities)
                             {
                                 max++;
                             }
@@ -257,31 +250,21 @@ namespace OSM2019.Experiment
                         {
                             OSMBase osm = new OSM_Only();
 
-                            foreach (var target_h in this.TargetHs)
+                            foreach (var cc in this.CommonCuriocities)
                             {
 
                                 switch (algo)
                                 {
-                                    case AlgoEnum.AAT:
-                                        var osm_aat = new AAT_OSM();
-                                        osm_aat.SetTargetH(target_h);
-                                        osm = osm_aat;
-                                        break;
-                                    case AlgoEnum.AATG:
-                                        var osm_aatg = new AATG_OSM();
-                                        osm_aatg.SetTargetH(target_h);
-                                        osm = osm_aatg;
-                                        break;
-                                    case AlgoEnum.AATfix:
-                                        var osm_aatfix = new AATfix_OSM();
-                                        osm_aatfix.SetTargetH(target_h);
-                                        osm = osm_aatfix;
-                                        break;
                                     case AlgoEnum.IWTori:
                                         var osm_iwtori = new IWTori_OSM();
-                                        osm_iwtori.SetCommonCuriocity(this.CommonCuriocity);
-                                        osm_iwtori.SetTargetH(target_h);
+                                        osm_iwtori.SetCommonCuriocity(cc);
+                                        osm_iwtori.SetTargetH(this.TargetH);
                                         osm = osm_iwtori;
+                                        break;
+                                    case AlgoEnum.IWTorionly:
+                                        var osm_iwtonly = new IWTorionly_OSM();
+                                        osm_iwtonly.SetCommonCuriocity(cc);
+                                        osm = osm_iwtonly;
                                         break;
                                     default:
                                         break;
@@ -332,7 +315,7 @@ namespace OSM2019.Experiment
                                     + $"_{sensor_weight_mode}"
                                     + $"_{this.Rounds}"
                                     + $"_{this.Steps}"
-                                    + $"_{target_h}";
+                                    + $"_{cc}";
 
                                 Output.OutputRounds(output_pass, osm.MyRecordRounds, seed.ToString());
                                 pb.Next();

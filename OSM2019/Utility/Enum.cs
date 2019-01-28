@@ -85,6 +85,7 @@ namespace OSM2019.Utility
         AATG,
         AATfix,
         OSMonly,
-        IWTori
+        IWTori,
+        IWTorionly
     }
 }

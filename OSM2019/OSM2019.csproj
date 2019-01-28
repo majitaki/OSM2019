@@ -80,7 +80,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Experiment\Weight_Experiment.cs" />
+    <Compile Include="Experiment\CommonCuriocity_Experiment.cs" />
+    <Compile Include="Experiment\CommonWeight_Experiment.cs" />
     <Compile Include="Experiment\TargetH_Experiment.cs" />
     <Compile Include="Experiment\Normal_Experiment.cs" />
     <Compile Include="GUI\AnimationEvent.cs">
@@ -92,12 +93,12 @@
     <Compile Include="GUI\AnimationForm.Designer.cs">
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="OSM\Algorithm\AAT\IWTori_OSM.cs" />
+    <Compile Include="OSM\Algorithm\IWTori\IWTori_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AATG_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AATfix_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AAT_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AATfix_Candidate.cs" />
-    <Compile Include="OSM\Algorithm\AAT\SelfInformation.cs" />
+    <Compile Include="OSM\Algorithm\IWTori\SelfInformation.cs" />
     <Compile Include="OSM\Component\AggregationFunctions.cs" />
     <Compile Include="OSM\Algorithm\AAT\Candidate.cs" />
     <Compile Include="OSM\Algorithm\AAT\CandidateRecord.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="OSM\Component\AgentBase.cs" />
     <Compile Include="OSM\Component\AgentLink.cs" />
     <Compile Include="OSM\Component\OpinionEnvironment.cs" />
+    <Compile Include="OSM\Algorithm\IWTori\IWTorionly_OSM.cs" />
     <Compile Include="OSM\Component\OSM_Only.cs" />
     <Compile Include="OSM\GraphGenerator\Null_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\GraphGeneratorBase.cs" />

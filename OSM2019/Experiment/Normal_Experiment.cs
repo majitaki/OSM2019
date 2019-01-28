@@ -75,11 +75,10 @@ namespace OSM2019.Experiment
             return this;
         }
 
-        public Normal_Experiment SetLogFolder(string folder_name)
+        public Normal_Experiment SetLogFolder(string dt_name, string folder_name = "")
         {
-            var dt = DateTime.Now;
-            var dt_name = dt.ToString("yyyy-MMdd-HHmm");
-            this.LogFolder = $"{dt_name}_" + folder_name;
+            var sensor_size_comment = this.SensorSizeFixMode ? $"fix{this.SensorSize}" : $"rate{this.SensorSizeRate}";
+            this.LogFolder = $"{dt_name}_{"nor"}_dim{this.DimSize}_sr{this.SensorRate}_scw{this.SensorCommonWeight}_{sensor_size_comment}_th{this.TargetH}_cc{this.CommonCuriocity}_cw{this.CommonWeight}_r{this.Rounds}_s{this.Steps}" + folder_name;
             return this;
         }
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.Experiment
 {
-    class Weight_Experiment
+    class CommonWeight_Experiment
     {
         int StartSize;
         int FinalSize;
@@ -29,11 +29,11 @@ namespace OSM2019.Experiment
         int Steps;
         List<GraphEnum> MyGraphs;
         List<AlgoEnum> MyAlgos;
-        List<double> Weights;
+        List<double> CommonWeights;
 
         static object lock_object = new object();
 
-        public Weight_Experiment()
+        public CommonWeight_Experiment()
         {
             this.SensorCommonWeightMode = false;
             this.SensorSizeFixMode = false;
@@ -41,19 +41,19 @@ namespace OSM2019.Experiment
             this.MyAlgos = new List<AlgoEnum>();
         }
 
-        public Weight_Experiment SetAlgos(List<AlgoEnum> algos)
+        public CommonWeight_Experiment SetAlgos(List<AlgoEnum> algos)
         {
             this.MyAlgos = algos;
             return this;
         }
 
-        public Weight_Experiment SetGraphs(List<GraphEnum> graphs)
+        public CommonWeight_Experiment SetGraphs(List<GraphEnum> graphs)
         {
             this.MyGraphs = graphs;
             return this;
         }
 
-        public Weight_Experiment SetNetworkSize(int start_size, int final_size, int duration_size)
+        public CommonWeight_Experiment SetNetworkSize(int start_size, int final_size, int duration_size)
         {
             this.StartSize = start_size;
             this.FinalSize = final_size;
@@ -61,74 +61,73 @@ namespace OSM2019.Experiment
             return this;
         }
 
-        public Weight_Experiment SetDimSize(int dim_size)
+        public CommonWeight_Experiment SetDimSize(int dim_size)
         {
             this.DimSize = dim_size;
             return this;
         }
 
-        public Weight_Experiment SetSensorRate(double sensor_rate)
+        public CommonWeight_Experiment SetSensorRate(double sensor_rate)
         {
             this.SensorRate = sensor_rate;
             return this;
         }
 
-        public Weight_Experiment SetLogFolder(string folder_name)
+        public CommonWeight_Experiment SetLogFolder(string dt_name, string folder_name = "")
         {
-            var dt = DateTime.Now;
-            var dt_name = dt.ToString("yyyy-MMdd-HHmm");
-            this.LogFolder = $"{dt_name}_" + folder_name;
+            var sensor_size_comment = this.SensorSizeFixMode ? $"fix{this.SensorSize}" : $"rate{this.SensorSizeRate}";
+            this.LogFolder = $"{dt_name}_{"cw"}_dim{this.DimSize}_sr{this.SensorRate}_scw{this.SensorCommonWeight}_{sensor_size_comment}_cc{this.CommonCuriocity}_r{this.Rounds}_s{this.Steps}" + folder_name;
             return this;
         }
 
-        public Weight_Experiment SetSensorCommonWeight(double sensor_common_weight)
+        public CommonWeight_Experiment SetSensorCommonWeight(double sensor_common_weight)
         {
             this.SensorCommonWeightMode = true;
             this.SensorCommonWeight = sensor_common_weight;
             return this;
         }
 
-        public Weight_Experiment SetSensorFixSize(int sensor_size)
+        public CommonWeight_Experiment SetSensorFixSize(int sensor_size)
         {
             this.SensorSizeFixMode = true;
             this.SensorSize = sensor_size;
             return this;
         }
 
-        public Weight_Experiment SetSensorSizeRate(double sensor_size_rate)
+        public CommonWeight_Experiment SetSensorSizeRate(double sensor_size_rate)
         {
             this.SensorSizeFixMode = false;
             this.SensorSizeRate = sensor_size_rate;
             return this;
         }
 
-        public Weight_Experiment SetCommonCuriocity(double common_curiocity)
+        public CommonWeight_Experiment SetCommonCuriocity(double common_curiocity)
         {
             this.CommonCuriocity = common_curiocity;
             return this;
         }
 
-        public Weight_Experiment SetTargetHs(double target_h)
+        public CommonWeight_Experiment SetTargetHs(double target_h)
         {
             this.TargetH = target_h;
             return this;
         }
 
-        public Weight_Experiment SetRounds(int rounds)
+        public CommonWeight_Experiment SetRounds(int rounds)
         {
             this.Rounds = rounds;
             return this;
         }
 
-        public Weight_Experiment SetSteps(int steps)
+        public CommonWeight_Experiment SetSteps(int steps)
         {
             this.Steps = steps;
             return this;
         }
 
-        public Weight_Experiment SetWeights(List<double> weights)
+        public CommonWeight_Experiment SetCommonWeights(List<double> weights)
         {
-            this.Weights = weights;
+            this.CommonWeights = weights;
             return this;
         }
 
@@ -157,7 +156,7 @@ namespace OSM2019.Experiment
                     {
                         foreach (var algo in algos)
                         {
-                            foreach (var weight in this.Weights)
+                            foreach (var weight in this.CommonWeights)
                             {
                                 max++;
                             }
@@ -258,35 +257,21 @@ namespace OSM2019.Experiment
                         {
                             OSMBase osm = new OSM_Only();
 
-                            foreach (var weight in this.Weights)
+                            foreach (var weight in this.CommonWeights)
                             {
 
                                 switch (algo)
                                 {
-                                    case AlgoEnum.AAT:
-                                        var osm_aat = new AAT_OSM();
-                                        osm_aat.SetTargetH(this.TargetH);
-                                        osm = osm_aat;
-                                        break;
-                                    case AlgoEnum.AATG:
-                                        var osm_aatg = new AATG_OSM();
-                                        osm_aatg.SetTargetH(this.TargetH);
-                                        osm = osm_aatg;
-                                        break;
-                                    case AlgoEnum.AATfix:
-                                        var osm_aatfix = new AATfix_OSM();
-                                        osm_aatfix.SetTargetH(this.TargetH);
-                                        osm = osm_aatfix;
-                                        break;
                                     case AlgoEnum.OSMonly:
                                         var osm_only = new OSM_Only();
+                                        osm_only.SetCommonWeight(weight);
                                         osm = osm_only;
                                         break;
-                                    case AlgoEnum.IWTori:
-                                        var osm_iwtori = new IWTori_OSM();
-                                        osm_iwtori.SetCommonCuriocity(this.CommonCuriocity);
-                                        osm_iwtori.SetTargetH(this.TargetH);
-                                        osm = osm_iwtori;
+                                    case AlgoEnum.IWTorionly:
+                                        var osm_iwtorionly = new IWTorionly_OSM();
+                                        osm_iwtorionly.SetCommonWeight(weight);
+                                        osm_iwtorionly.SetCommonCuriocity(this.CommonCuriocity);
+                                        osm = osm_iwtorionly;
                                         break;
                                     default:
                                         break;
@@ -299,7 +284,6 @@ namespace OSM2019.Experiment
                                 osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
                                 osm.SetOpinionIntroInterval(10);
                                 osm.SetOpinionIntroRate(0.1);
-                                osm.SetCommonWeight(weight);
                                 osm.SimpleRecordFlag = true;
                                 if (this.SensorCommonWeightMode) osm.SetSensorCommonWeight(this.SensorCommonWeight);
 

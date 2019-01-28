@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-    class IWTori_OSM : AAT_OSM
+    class IWTorionly_OSM : OSM_Only
     {
         public List<SelfInformation> SelfInformations { get; private set; }
         public double CommonCuriocity { get; private set; }
@@ -32,17 +32,6 @@ namespace OSM2019.OSM
         {
             base.InitializeToFirstRound();
             this.SetSelfInformations(this.MyAgentNetwork);
-        }
-
-        protected override void SetCandidate()
-        {
-            this.Candidates = new Dictionary<Agent, Candidate>();
-            foreach (var agent in this.MyAgentNetwork.Agents)
-            {
-                var can = new AATfix_Candidate(agent);
-                this.Candidates.Add(agent, can);
-                agent.SetCommonWeight(can.GetSelectCanWeight());
-            }
         }
 
         protected void SetSelfInformations(AgentNetwork agent_network)
@@ -88,51 +77,43 @@ namespace OSM2019.OSM
             this.CurrentStep++;
         }
 
-        protected override void SelectionWeight()
+
+        protected void SelectionWeight()
         {
-            foreach (var candidate in this.Candidates)
+
+
+
+            foreach (var agent in this.MyAgentNetwork.Agents)
             {
-                var received_sum_op = this.MyRecordRounds.Last().AgentReceiveOpinionsInRound[candidate.Key];
+                var received_sum_op = this.MyRecordRounds.Last().AgentReceiveOpinionsInRound[agent];
                 double obs_u = this.GetObsU(received_sum_op);
                 if (obs_u == 0) continue;
 
-
-                var current_h = candidate.Value.GetCurrentSelectRecord().AwaRate;
-                var current_l = candidate.Value.SelectSortedIndex;
-                var can_size = candidate.Value.SortedDataBase.Count;
-
-                if (current_l < can_size - 1 && current_h < this.TargetH)
+                if (agent.IsSensor)
                 {
-                    candidate.Value.SelectSortedIndex++;
-                }
-                else if (current_l > 0)
-                {
-                    var pre_h = candidate.Value.GetSortedRecord(current_l - 1).AwaRate;
-                    if (pre_h >= (this.TargetH + this.Epsilon))
-                    {
-                        candidate.Value.SelectSortedIndex--;
-                    }
-                }
-
-                if (candidate.Key.IsSensor)
-                {
-                    candidate.Key.SetCommonWeight(candidate.Value.GetSelectCanWeight());
+                    agent.SetCommonWeight(this.CommonWeight);
                 }
                 else
                 {
-                    var weights = this.CalcIndividualCuriocities(candidate.Key, candidate.Value.GetSelectCanWeight());
-                    candidate.Key.SetWeights(weights);
+                    var weights = this.CalcIndividualCuriocities(agent, this.CommonWeight);
+                    if (weights.Where(w => Double.IsNaN(w.Value)).Count() > 0)
+                    {
+                        Console.WriteLine();
+                    }
+                    agent.SetWeights(weights);
                 }
             }
         }
 
         public override void FinalizeRound()
         {
-            base.FinalizeRound();
+            this.SelectionWeight();
             foreach (var self_info in this.SelfInformations)
             {
                 self_info.ClearValue();
             }
+            base.FinalizeRound();
+
         }
 
         Dictionary<Agent, double> CalcIndividualCuriocities(Agent agent, double sel_can_weight)
@@ -142,15 +123,44 @@ namespace OSM2019.OSM
             var max_info_value = agent_self_informations.Select(self_info => self_info.Value).Max();
             var ave_info_value = agent_self_informations.Select(self_info => self_info.Value).Average();
 
+
+            if (agent_self_informations.Where(w => Double.IsNaN(w.Value)).Count() > 0)
+            {
+                Console.WriteLine();
+            }
+
             Dictionary<Agent, double> weights = new Dictionary<Agent, double>();
             foreach (var self_info in agent_self_informations)
             {
-                var indivi_curiocity = (self_info.Value / max_info_value) * (1 - 1.0 / agent.MySubject.SubjectDimSize) + (1.0 / agent.MySubject.SubjectDimSize);
-                var indivi_weight = sel_can_weight * (1 - this.AgentCuriocities[agent]) + indivi_curiocity * this.AgentCuriocities[agent];
+                var indivi_curiocity = 0.0;
+                var indivi_weight = 0.0;
+                indivi_curiocity = (self_info.Value / max_info_value) * (1 - 1.0 / agent.MySubject.SubjectDimSize) + (1.0 / agent.MySubject.SubjectDimSize);
+                indivi_weight = sel_can_weight * (1 - this.AgentCuriocities[agent]) + indivi_curiocity * this.AgentCuriocities[agent];
                 indivi_weight = Math.Round(indivi_weight, 4);
+
+
+                //if (max_info_value == 0)
+                //{
+                //    indivi_weight = sel_can_weight;
+                //}
+                //else
+                //{
+                //    indivi_curiocity = (self_info.Value / max_info_value) * (1 - 1.0 / agent.MySubject.SubjectDimSize) + (1.0 / agent.MySubject.SubjectDimSize);
+                //    indivi_weight = sel_can_weight * (1 - this.AgentCuriocities[agent]) + indivi_curiocity * this.AgentCuriocities[agent];
+                //    indivi_weight = Math.Round(indivi_weight, 4);
+
+                //}
+
                 weights.Add(self_info.NeighborAgent, indivi_weight);
+
+                if (Double.IsNaN(indivi_weight))
+                {
+                    Console.WriteLine();
+                }
             }
             return weights;
         }
+
     }
+
 }

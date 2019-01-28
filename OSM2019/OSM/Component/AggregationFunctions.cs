@@ -11,6 +11,11 @@ namespace OSM2019.OSM
     {
         public Vector<double> UpdateBelief(Vector<double> belief, double weight, Vector<double> receive_opinion)
         {
+            if (Double.IsNaN(weight))
+            {
+                Console.WriteLine();
+            }
+
             var pre_belief_list = belief.Clone();
             var op_list = receive_opinion.Clone();
 
