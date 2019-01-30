@@ -89,6 +89,14 @@ namespace OSM2019.OSM
                 double obs_u = this.GetObsU(received_sum_op);
                 if (obs_u == 0) continue;
 
+
+                //var weights = this.CalcIndividualCuriocities(agent, this.CommonWeight);
+                //if (weights.Where(w => Double.IsNaN(w.Value)).Count() > 0)
+                //{
+                //    Console.WriteLine();
+                //}
+                //agent.SetWeights(weights);
+
                 if (agent.IsSensor)
                 {
                     agent.SetCommonWeight(this.CommonWeight);
@@ -134,10 +142,10 @@ namespace OSM2019.OSM
             {
                 var indivi_curiocity = 0.0;
                 var indivi_weight = 0.0;
+
                 indivi_curiocity = (self_info.Value / max_info_value) * (1 - 1.0 / agent.MySubject.SubjectDimSize) + (1.0 / agent.MySubject.SubjectDimSize);
                 indivi_weight = sel_can_weight * (1 - this.AgentCuriocities[agent]) + indivi_curiocity * this.AgentCuriocities[agent];
                 indivi_weight = Math.Round(indivi_weight, 4);
-
 
                 //if (max_info_value == 0)
                 //{

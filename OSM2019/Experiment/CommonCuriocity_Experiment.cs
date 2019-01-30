@@ -29,6 +29,7 @@ namespace OSM2019.Experiment
         List<GraphEnum> MyGraphs;
         List<AlgoEnum> MyAlgos;
         List<double> CommonCuriocities;
+        double CommonWeight;
 
         static object lock_object = new object();
 
@@ -75,7 +76,7 @@ namespace OSM2019.Experiment
         public CommonCuriocity_Experiment SetLogFolder(string dt_name, string folder_name = "")
         {
             var sensor_size_comment = this.SensorSizeFixMode ? $"fix{this.SensorSize}" : $"rate{this.SensorSizeRate}";
-            this.LogFolder = $"{dt_name}_{"cc"}_dim{this.DimSize}_sr{this.SensorRate}_scw{this.SensorCommonWeight}_{sensor_size_comment}_th{this.TargetH}_r{this.Rounds}_s{this.Steps}" + folder_name;
+            this.LogFolder = $"{dt_name}_{"cc"}_dim{this.DimSize}_sr{this.SensorRate}_scw{this.SensorCommonWeight}_{sensor_size_comment}_th{this.TargetH}_cw{this.CommonWeight}_r{this.Rounds}_s{this.Steps}_" + folder_name;
             return this;
         }
 
@@ -103,6 +104,12 @@ namespace OSM2019.Experiment
         public CommonCuriocity_Experiment SetTargetH(double target_h)
         {
             this.TargetH = target_h;
+            return this;
+        }
+
+        public CommonCuriocity_Experiment SetCommonWeight(double common_weight)
+        {
+            this.CommonWeight = common_weight;
             return this;
         }
 
@@ -262,9 +269,10 @@ namespace OSM2019.Experiment
                                         osm = osm_iwtori;
                                         break;
                                     case AlgoEnum.IWTorionly:
-                                        var osm_iwtonly = new IWTorionly_OSM();
-                                        osm_iwtonly.SetCommonCuriocity(cc);
-                                        osm = osm_iwtonly;
+                                        var osm_iwtorionly = new IWTorionly_OSM();
+                                        osm_iwtorionly.SetCommonWeight(this.CommonWeight);
+                                        osm_iwtorionly.SetCommonCuriocity(cc);
+                                        osm = osm_iwtorionly;
                                         break;
                                     default:
                                         break;

@@ -67,6 +67,7 @@ namespace OSM2019
             //    .SetSensorSizeRate(0.1)
             //    //.SetSensorFixSize(10)
             //    //.SetTargetH(0.90)
+            //    .SetCommonWeight(0.4)
             //    .SetCommonCuriocities(Enumerable.Range(0, 11).Select(i => i / 10.0).ToList())
             //    .SetRounds(300)
             //    .SetSteps(1500)
@@ -75,24 +76,67 @@ namespace OSM2019
             //});
 
 
-            Parallel.For(0, 5, seed =>
-            {
-                new CommonWeight_Experiment()
-                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.IWTorionly })
-                .SetNetworkSize(300, 300, 100)
-                .SetDimSize(10).SetSensorRate(0.3)
-                .SetSensorCommonWeight(0.70)
-                .SetSensorSizeRate(0.7)
-                //.SetSensorFixSize(10)
-                .SetCommonWeights(Enumerable.Range(0, 21).Select(i => i / 20.0).Where(j => j >= 1.0 / 10).ToList())
-                .SetCommonCuriocity(0.2)
-                .SetLogFolder(dt_name, "")
-                .SetRounds(300)
-                .SetSteps(1500)
-                .Run(seed);
-            });
+            //dt = DateTime.Now;
+            //dt_name = dt.ToString("yyyy-MMdd-HHmm");
+            //Parallel.For(0, 5, seed =>
+            //{
+            //    new CommonWeight_Experiment()
+            //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
+            //    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.IWTorionly })
+            //    .SetNetworkSize(300, 300, 100)
+            //    .SetDimSize(10).SetSensorRate(0.3)
+            //    .SetSensorCommonWeight(0.70)
+            //    .SetSensorSizeRate(0.1)
+            //    //.SetSensorFixSize(10)
+            //    .SetCommonWeights(Enumerable.Range(0, 21).Select(i => i / 20.0).Where(j => j >= 1.0 / 10).ToList())
+            //    .SetCommonCuriocity(0.0)
+            //    .SetLogFolder(dt_name, "")
+            //    .SetRounds(300)
+            //    .SetSteps(1500)
+            //    .Run(seed);
+            //});
 
+
+            for (double cc = 0.0; cc <= 1.0; cc += 0.2)
+            {
+                dt = DateTime.Now;
+                dt_name = dt.ToString("yyyy-MMdd-HHmm");
+                Parallel.For(0, 5, seed =>
+                {
+                    new CommonWeight_Experiment()
+                    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D })
+                    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.IWTorionly })
+                    .SetNetworkSize(300, 300, 100)
+                    .SetDimSize(10).SetSensorRate(0.3)
+                    .SetSensorCommonWeight(0.70)
+                    .SetSensorSizeRate(0.1)
+                    //.SetSensorFixSize(10)
+                    .SetCommonWeights(Enumerable.Range(0, 21).Select(i => i / 20.0).Where(j => j >= 1.0 / 10).ToList())
+                    .SetCommonCuriocity(cc)
+                    .SetLogFolder(dt_name, "")
+                    .SetRounds(300)
+                    .SetSteps(1500)
+                    .Run(seed);
+                });
+
+                Parallel.For(5, 10, seed =>
+                {
+                    new CommonWeight_Experiment()
+                    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D })
+                    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.IWTorionly })
+                    .SetNetworkSize(300, 300, 100)
+                    .SetDimSize(10).SetSensorRate(0.3)
+                    .SetSensorCommonWeight(0.70)
+                    .SetSensorSizeRate(0.1)
+                    //.SetSensorFixSize(10)
+                    .SetCommonWeights(Enumerable.Range(0, 21).Select(i => i / 20.0).Where(j => j >= 1.0 / 10).ToList())
+                    .SetCommonCuriocity(cc)
+                    .SetLogFolder(dt_name, "")
+                    .SetRounds(300)
+                    .SetSteps(1500)
+                    .Run(seed);
+                });
+            }
 
 
             //Parallel.For(0, 5, seed =>
@@ -208,12 +252,13 @@ namespace OSM2019
             var update_step_rand = new ExtendRandom(update_step_seed);
 
 
-            var osm = new IWTorionly_OSM();
+            //var osm = new IWTorionly_OSM();
+            var osm = new IWTori_OSM();
             //var osm = new AATfix_OSM();
             //var osm = new OSM_Only(); 
-            //osm.SetTargetH(0.9);
-            osm.SetCommonWeight(0.7);
-            osm.SetCommonCuriocity(0.8);
+            osm.SetTargetH(0.9);
+            //osm.SetCommonWeight(0.6);
+            osm.SetCommonCuriocity(0.7);
             osm.SetRand(update_step_rand);
             osm.SetAgentNetwork(agent_network);
             osm.SetSubjectManager(subject_manager);

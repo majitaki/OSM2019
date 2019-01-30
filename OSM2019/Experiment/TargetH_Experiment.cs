@@ -76,7 +76,7 @@ namespace OSM2019.Experiment
         public TargetH_Experiment SetLogFolder(string dt_name, string folder_name = "")
         {
             var sensor_size_comment = this.SensorSizeFixMode ? $"fix{this.SensorSize}" : $"rate{this.SensorSizeRate}";
-            this.LogFolder = $"{dt_name}_{"th"}_dim{this.DimSize}_sr{this.SensorRate}_scw{this.SensorCommonWeight}_{sensor_size_comment}_cc{this.CommonCuriocity}_r{this.Rounds}_s{this.Steps}" + folder_name;
+            this.LogFolder = $"{dt_name}_{"th"}_dim{this.DimSize}_sr{this.SensorRate}_scw{this.SensorCommonWeight}_{sensor_size_comment}_cc{this.CommonCuriocity}_r{this.Rounds}_s{this.Steps}_" + folder_name;
             return this;
         }
 
