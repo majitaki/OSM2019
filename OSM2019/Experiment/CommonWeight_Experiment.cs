@@ -30,6 +30,9 @@ namespace OSM2019.Experiment
         List<GraphEnum> MyGraphs;
         List<AlgoEnum> MyAlgos;
         List<double> CommonWeights;
+        bool IsRandomCommonCuriocity;
+        bool IsManualSensorRate;
+        List<double> SensorRates;
 
         static object lock_object = new object();
 
@@ -39,6 +42,9 @@ namespace OSM2019.Experiment
             this.SensorSizeFixMode = false;
             this.MyGraphs = new List<GraphEnum>();
             this.MyAlgos = new List<AlgoEnum>();
+            this.IsRandomCommonCuriocity = false;
+            this.IsManualSensorRate = false;
+            this.SensorRates = new List<double>();
         }
 
         public CommonWeight_Experiment SetAlgos(List<AlgoEnum> algos)
@@ -70,6 +76,13 @@ namespace OSM2019.Experiment
         public CommonWeight_Experiment SetSensorRate(double sensor_rate)
         {
             this.SensorRate = sensor_rate;
+            return this;
+        }
+
+        public CommonWeight_Experiment SetSensorRates(List<double> sensor_rates)
+        {
+            this.IsManualSensorRate = true;
+            this.SensorRates = sensor_rates;
             return this;
         }
 
@@ -106,6 +119,13 @@ namespace OSM2019.Experiment
             this.CommonCuriocity = common_curiocity;
             return this;
         }
+
+        public CommonWeight_Experiment SetRandomCommonCuriocity()
+        {
+            this.IsRandomCommonCuriocity = true;
+            return this;
+        }
+
 
         public CommonWeight_Experiment SetTargetHs(double target_h)
         {
@@ -211,11 +231,21 @@ namespace OSM2019.Experiment
 
                         var subject_test = new OpinionSubject("test", op_dim_size);
 
-
-                        var osm_env = new OpinionEnvironment()
-                                        .SetSubject(subject_test)
-                                        .SetCorrectDim(0)
-                                        .SetSensorRate(sensor_rate);
+                        var osm_env = new OpinionEnvironment();
+                        if (this.IsManualSensorRate)
+                        {
+                            osm_env = new OpinionEnvironment()
+                                .SetSubject(subject_test)
+                                .SetCorrectDim(0)
+                                .SetSensorRates(this.SensorRates);
+                        }
+                        else
+                        {
+                            osm_env = new OpinionEnvironment()
+                                .SetSubject(subject_test)
+                                .SetCorrectDim(0)
+                                .SetSensorRate(sensor_rate);
+                        }
 
                         var subject_manager = new SubjectManager()
                             .AddSubject(subject_test)
@@ -271,6 +301,7 @@ namespace OSM2019.Experiment
                                         var osm_iwtorionly = new IWTorionly_OSM();
                                         osm_iwtorionly.SetCommonWeight(weight);
                                         osm_iwtorionly.SetCommonCuriocity(this.CommonCuriocity);
+                                        if (this.IsRandomCommonCuriocity) osm_iwtorionly.IsRandomCommonCuriocity = true;
                                         osm = osm_iwtorionly;
                                         break;
                                     default:

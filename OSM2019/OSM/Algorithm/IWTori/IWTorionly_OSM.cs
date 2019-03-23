@@ -11,6 +11,7 @@ namespace OSM2019.OSM
         public List<SelfInformation> SelfInformations { get; private set; }
         public double CommonCuriocity { get; private set; }
         public Dictionary<Agent, double> AgentCuriocities { get; private set; }
+        public bool IsRandomCommonCuriocity { get; set; }
 
         public void SetCommonCuriocity(double common_curiocity)
         {
@@ -23,10 +24,30 @@ namespace OSM2019.OSM
             base.SetAgentNetwork(agent_network);
             foreach (var agent in this.MyAgentNetwork.Agents)
             {
-                this.AgentCuriocities.Add(agent, this.CommonCuriocity);
+                if (this.IsRandomCommonCuriocity)
+                {
+                    var random_cc = this.MyAgentNetwork.AgentGenerateRand.NextDouble();
+                    random_cc = Math.Round(random_cc, 4);
+                    this.AgentCuriocities.Add(agent, random_cc);
+                }
+                else
+                {
+                    this.AgentCuriocities.Add(agent, this.CommonCuriocity);
+                }
             }
             this.SetSelfInformations(agent_network);
         }
+
+        public override void PrintAgentInfo(Agent agent)
+        {
+            base.PrintAgentInfo(agent);
+
+            var cc = this.AgentCuriocities[agent];
+            Console.Write($"Curiocity {cc}");
+            Console.WriteLine();
+        }
+
+
 
         public override void InitializeToFirstRound()
         {

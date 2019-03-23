@@ -9,7 +9,7 @@ namespace OSM2019.OSM
 {
     class AgentNetwork
     {
-        ExtendRandom AgentGenerateRand;
+        public ExtendRandom AgentGenerateRand { get; private set; }
         public RawGraph MyGraph { get; private set; }
         public Layout MyLayout { get; private set; }
         public SubjectManager MySubjectManager { get; private set; }

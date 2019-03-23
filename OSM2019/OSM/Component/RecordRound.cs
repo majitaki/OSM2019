@@ -174,7 +174,7 @@ namespace OSM2019.OSM
                $"incor:{Math.Round(this.IncorrectSizes.Last() / network_size, 3):F3}|" +
                $"undeter:{Math.Round(this.UndeterSizes.Last() / network_size, 3):F3}|" +
                $"simpsond:{Math.Round(this.SimpsonsDs.Last(), 3):F3}|" +
-               $"simpsond:{Math.Round(this.BetterSimpsonsDs.Last(), 3):F3}|"
+               $"bettersimpsond:{Math.Round(this.BetterSimpsonsDs.Last(), 3):F3}|"
                );
 
             foreach (var subject in this.MySubjectManager.Subjects)

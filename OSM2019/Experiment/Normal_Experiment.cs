@@ -300,6 +300,7 @@ namespace OSM2019.Experiment
                             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
                             osm.SetOpinionIntroInterval(10);
                             osm.SetOpinionIntroRate(0.1);
+                            //osm.SimpleRecordFlag = false;
                             osm.SimpleRecordFlag = true;
                             if (this.SensorCommonWeightMode) osm.SetSensorCommonWeight(this.SensorCommonWeight);
 
@@ -340,6 +341,7 @@ namespace OSM2019.Experiment
                                 + $"_{this.Steps}";
 
                             Output.OutputRounds(output_pass, osm.MyRecordRounds, seed.ToString());
+                            //Output.OutputSteps(output_pass, osm.MyRecordRounds, seed.ToString());
                             pb.Next();
                         }
 
