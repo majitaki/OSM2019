@@ -57,7 +57,8 @@ namespace OSM2019.OSM
         double CalcCanWeight(int belief_dim, int requre_num, Agent agent)
         {
             var diff = 0.01;
-            var init_can_weight = (1.0 / agent.InitBelief.Count) + diff;
+            //var init_can_weight = (1.0 / agent.InitBelief.Count) + diff;
+            var init_can_weight = 0.0;
             init_can_weight = Math.Round(init_can_weight, 4);
             var init_belief = agent.InitBelief;
             Vector<double> receive_op = agent.InitOpinion.Clone();
@@ -73,7 +74,7 @@ namespace OSM2019.OSM
 
             if (can_weight >= 1)
             {
-                throw new Exception("error over can weight");
+                //throw new Exception("error over can weight");
             }
 
             can_weight = MyMath.Ceiling(can_weight, 4);
