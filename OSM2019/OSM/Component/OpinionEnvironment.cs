@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +14,10 @@ namespace OSM2019.OSM
         public OpinionSubject EnvSubject { get; protected set; }
         public int CorrectDim { get; protected set; }
         Agent EnvironmentAgent;
-        bool ManualSensorRateMode;
-        public List<double> SensorRates { get; protected set; }
+        public CustomDistribution MyCustomDistribution { get; protected set; }
 
         public OpinionEnvironment()
         {
-            this.SensorRates = new List<double>();
-            ManualSensorRateMode = false;
         }
 
         public OpinionEnvironment SetSubject(OpinionSubject subject)
@@ -36,15 +34,19 @@ namespace OSM2019.OSM
 
         public OpinionEnvironment SetSensorRate(double sensor_rate)
         {
-            this.ManualSensorRateMode = false;
             this.SensorRate = sensor_rate;
             return this;
         }
 
-        public OpinionEnvironment SetSensorRates(List<double> sensor_rates)
+        public OpinionEnvironment SetCustomDistribution(CustomDistribution custom_dist)
         {
-            this.ManualSensorRateMode = true;
-            this.SensorRates = sensor_rates;
+            this.MyCustomDistribution = custom_dist;
+            return this;
+        }
+
+        public OpinionEnvironment SetCustomDistribution()
+        {
+
             return this;
         }
 
@@ -71,7 +73,7 @@ namespace OSM2019.OSM
             this.EnvironmentAgent.AttachAgentLinks(env_links);
         }
 
-        public List<Message> SendMessages(List<Agent> sensor_agents, ExtendRandom update_step_rand)
+        public List<Message> SendMessages(List<Agent> sensor_agents, ExtendRandom update_step_rand, int sample_size = 1)
         {
             List<Message> messages = new List<Message>();
             foreach (var sensor_agent in sensor_agents)
@@ -80,31 +82,10 @@ namespace OSM2019.OSM
                 var opinion = this.EnvironmentAgent.Opinion.Clone();
                 opinion.Clear();
 
-                if (this.ManualSensorRateMode)
+                foreach (int i in Enumerable.Range(0, sample_size))
                 {
-                    var random_num = update_step_rand.NextDouble();
-                    double stock_random_num = 0;
-                    int count_num = 0;
-                    foreach (var s_r in this.SensorRates)
-                    {
-                        stock_random_num += s_r;
-                        if (stock_random_num >= random_num || s_r ==this.SensorRates.Last()) break;
-                        count_num += 1;
-                    }
-                    opinion[count_num] = 1.0;
-                }
-                else
-                {
-                    if (update_step_rand.NextDouble() < this.SensorRate)
-                    {
-                        opinion[this.CorrectDim] = 1.0;
-                    }
-                    else
-                    {
-                        List<int> incor_dim_list = Enumerable.Range(0, opinion.Count).Where(i => i != this.CorrectDim).ToList();
-                        int incor_dim = incor_dim_list.OrderBy(_ => update_step_rand.Next()).First();
-                        opinion[incor_dim] = 1.0;
-                    }
+                    int sample_index = this.MyCustomDistribution.SampleCustomDistribution(update_step_rand);
+                    opinion[sample_index] += 1.0;
                 }
                 messages.Add(new Message(this.EnvironmentAgent, sensor_agent, agent_link, opinion));
             }

@@ -21,7 +21,7 @@ namespace OSM2019.Experiment
         int SensorSize;
         double SensorSizeRate;
         double SensorCommonWeight;
-        bool SensorCommonWeightMode;
+        BeliefUpdater MyBeliefUpdater;
         double CommonWeight;
         double CommonCuriocity;
         string LogFolder;
@@ -30,12 +30,14 @@ namespace OSM2019.Experiment
         List<GraphEnum> MyGraphs;
         List<AlgoEnum> MyAlgos;
         List<double> TargetHs;
+        CustomDistribution MyCustomDistribution;
+        double OpinionThreshold;
 
         static object lock_object = new object();
 
         public TargetH_Experiment()
         {
-            this.SensorCommonWeightMode = false;
+            //this.SensorCommonWeightMode = false;
             this.SensorSizeFixMode = false;
             this.MyGraphs = new List<GraphEnum>();
             this.MyAlgos = new List<AlgoEnum>();
@@ -80,10 +82,18 @@ namespace OSM2019.Experiment
             return this;
         }
 
+        /*
         public TargetH_Experiment SetSensorCommonWeight(double sensor_common_weight)
         {
             this.SensorCommonWeightMode = true;
             this.SensorCommonWeight = sensor_common_weight;
+            return this;
+        }
+        */
+
+        public TargetH_Experiment SetBeliefUpdater(BeliefUpdater belief_updater)
+        {
+            this.MyBeliefUpdater = belief_updater;
             return this;
         }
 
@@ -128,6 +138,18 @@ namespace OSM2019.Experiment
         public TargetH_Experiment SetTargetHs(List<double> target_hs)
         {
             this.TargetHs = target_hs;
+            return this;
+        }
+
+        public TargetH_Experiment SetCustomDistribution(CustomDistribution custom_dist)
+        {
+            this.MyCustomDistribution = custom_dist;
+            return this;
+        }
+
+        public TargetH_Experiment SetOpinionThreshold(double op_threshold)
+        {
+            this.OpinionThreshold = op_threshold;
             return this;
         }
 
@@ -211,22 +233,24 @@ namespace OSM2019.Experiment
 
                         var subject_test = new OpinionSubject("test", op_dim_size);
 
+                        int correct_dim = 0;
+
+                        //var dist_gene = new Turara_DistGenerator(subject_test.SubjectDimSize, sensor_rate, correct_dim);
 
                         var osm_env = new OpinionEnvironment()
                                         .SetSubject(subject_test)
-                                        .SetCorrectDim(0)
-                                        .SetSensorRate(sensor_rate);
+                                        .SetCorrectDim(correct_dim)
+                                        .SetSensorRate(sensor_rate)
+                                        .SetCustomDistribution(this.MyCustomDistribution);
 
                         var subject_manager = new SubjectManager()
                             .AddSubject(subject_test)
                             .SetEnvironment(osm_env);
 
 
-                        var op_form_threshold = 0.9;
-
                         var sample_agent_test = new SampleAgent()
                                             .SetInitBeliefGene(init_belief_gene)
-                                            .SetThreshold(op_form_threshold)
+                                            .SetThreshold(this.OpinionThreshold)
                                             .SetSubject(subject_test)
                                             .SetInitOpinion(Vector<double>.Build.Dense(op_dim_size, 0.0));
 
@@ -283,6 +307,12 @@ namespace OSM2019.Experiment
                                         osm_iwtori.SetTargetH(target_h);
                                         osm = osm_iwtori;
                                         break;
+                                    case AlgoEnum.AATparticle:
+                                        var osm_aatpar = new AATparticle_OSM();
+                                        osm_aatpar.SetSampleSize(10);
+                                        osm_aatpar.SetTargetH(target_h);
+                                        osm = osm_aatpar;
+                                        break;
                                     default:
                                         break;
                                 }
@@ -295,8 +325,7 @@ namespace OSM2019.Experiment
                                 osm.SetOpinionIntroInterval(10);
                                 osm.SetOpinionIntroRate(0.1);
                                 osm.SimpleRecordFlag = true;
-                                if (this.SensorCommonWeightMode) osm.SetSensorCommonWeight(this.SensorCommonWeight);
-
+                                osm.SetBeliefUpdater(this.MyBeliefUpdater);
 
                                 pb.Tag = $"{select_graph.ToString()} {size.ToString()} {algo.ToString()} {seed}";
                                 osm.UpdateRounds(this.Rounds, this.Steps, pb);
@@ -311,15 +340,7 @@ namespace OSM2019.Experiment
                                     sensor_size_mode = "rate" + Math.Round(this.SensorSizeRate, 3).ToString();
                                 }
 
-                                string sensor_weight_mode = "";
-                                if (this.SensorCommonWeightMode)
-                                {
-                                    sensor_weight_mode = $"{this.SensorCommonWeight}";
-                                }
-                                else
-                                {
-                                    sensor_weight_mode = $"off";
-                                }
+                                string sensor_weight_mode = $"{this.MyBeliefUpdater.SensorWeightMode}";
 
                                 var output_pass = Properties.Settings.Default.OutputLogPath
                                     + $"/{save_folder}/"

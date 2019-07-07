@@ -48,7 +48,7 @@ namespace OSM2019.OSM
             for (; belief[0] < agent.OpinionThreshold && require_num < max_count; require_num++)
             {
                 receive_op[0] = require_num;
-                belief = this.MyAggFuncs.UpdateBelief(init_belief, can_weight, receive_op);
+                belief = this.MyAggFuncs.UpdateBelief(init_belief, can_weight, receive_op, BeliefUpdateFunctionEnum.Bayse);
             }
 
             return require_num;
@@ -68,7 +68,7 @@ namespace OSM2019.OSM
             double can_weight = 0.00;
             for (can_weight = init_can_weight; can_weight < 1.0; can_weight += diff)
             {
-                var belief = this.MyAggFuncs.UpdateBelief(init_belief, can_weight, receive_op);
+                var belief = this.MyAggFuncs.UpdateBelief(init_belief, can_weight, receive_op, BeliefUpdateFunctionEnum.Bayse);
                 if (belief[belief_dim] >= agent.OpinionThreshold) break;
             }
 

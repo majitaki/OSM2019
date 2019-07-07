@@ -34,5 +34,12 @@ namespace OSM2019.Utility
                 throw;
             }
         }
+
+        public static (double max, double other) MakeTurara(int dim, double weight)
+        {
+            double max = 1 / (1 + (dim - 1) * (1 - weight));
+            double other = max * (1 - weight);
+            return (max, other);
+        }
     }
 }

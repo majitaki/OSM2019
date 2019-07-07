@@ -93,6 +93,9 @@
     <Compile Include="GUI\AnimationForm.Designer.cs">
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OSM\Component\BeliefUpdater.cs" />
+    <Compile Include="OSM\Algorithm\AATparticle\AATparticle_Candidate.cs" />
+    <Compile Include="OSM\Algorithm\AATparticle\AATparticle_OSM.cs" />
     <Compile Include="OSM\Algorithm\IWTori\IWTori_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AATG_OSM.cs" />
     <Compile Include="OSM\Algorithm\AAT\AATfix_OSM.cs" />
@@ -109,6 +112,8 @@
     <Compile Include="OSM\Component\OpinionEnvironment.cs" />
     <Compile Include="OSM\Algorithm\IWTori\IWTorionly_OSM.cs" />
     <Compile Include="OSM\Component\OSM_Only.cs" />
+    <Compile Include="OSM\DistributionGenerator\I_DistGenerator.cs" />
+    <Compile Include="OSM\DistributionGenerator\Turara_DistGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\Null_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\GraphGeneratorBase.cs" />
     <Compile Include="OSM\Component\I_OSM.cs" />
@@ -172,6 +177,7 @@
     <Compile Include="OSM\Component\RecordRound.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\CustomDistribution.cs" />
     <Compile Include="Utility\DrawSetting.cs" />
     <Compile Include="Utility\Enum.cs" />
     <Compile Include="Utility\CsvMapper.cs" />

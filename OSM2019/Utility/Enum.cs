@@ -86,6 +86,20 @@ namespace OSM2019.Utility
         AATfix,
         OSMonly,
         IWTori,
-        IWTorionly
+        IWTorionly,
+        AATparticle
+    }
+
+    enum SensorWeightEnum
+    {
+        DependSensorRate,
+        Custom,
+        SameNoneSensor
+    }
+
+    enum BeliefUpdateFunctionEnum
+    {
+        Bayse,
+        Particle
     }
 }

@@ -3,6 +3,7 @@ using MathNet.Numerics.LinearAlgebra;
 using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -19,22 +20,22 @@ namespace OSM2019.OSM
 
         protected ExtendRandom UpdateStepRand;
         public OpinionEnvironment MyEnvManager { get; protected set; }
+        public Dictionary<int, SubjectManager> MySubjectManagerDic { get; protected set; }
         public SubjectManager MySubjectManager { get; protected set; }
         public double OpinionIntroRate { get; protected set; }
         public double OpinionIntroInterval { get; protected set; }
         public CalcWeightMode MyCalcWeightMode { get; protected set; }
-        protected AggregationFunctions MyAggFuncs;
+        public AggregationFunctions MyAggFuncs { get; protected set; }
         protected List<Message> Messages;
         protected List<Agent> OpinionFormedAgents;
         //public RecordStep MyRecordStep { get; set; }
         //public Dictionary<int, RecordRound> MyRecordRounds { get; set; }
-        bool SensorCommonWeightMode;
-        public double SensorCommonWeight { get; private set; }
         public double CommonWeight { get; private set; }
         public bool CommonWeightMode { get; private set; }
         public RecordRound MyRecordRound { get; set; }
         public List<RecordRound> MyRecordRounds { get; set; }
         public bool SimpleRecordFlag { get; set; }
+        public BeliefUpdater MyBeliefUpdater { get; protected set; }
 
         public OSMBase()
         {
@@ -42,7 +43,7 @@ namespace OSM2019.OSM
             this.CommonWeightMode = false;
             this.CurrentStep = 0;
             this.CurrentRound = 0;
-            this.SensorCommonWeightMode = false;
+            //this.SensorCommonWeightMode = false;
             this.SimpleRecordFlag = false;
             this.MyAggFuncs = new AggregationFunctions();
             Messages = new List<Message>();
@@ -75,6 +76,11 @@ namespace OSM2019.OSM
             return;
         }
 
+        public void SetSubjectManagerDic(Dictionary<int, SubjectManager> subject_manager_dic)
+        {
+            this.MySubjectManagerDic = subject_manager_dic;
+        }
+
         public void SetSubjectManager(SubjectManager subject_mgr)
         {
             this.MySubjectManager = subject_mgr;
@@ -101,12 +107,6 @@ namespace OSM2019.OSM
             return;
         }
 
-        public void SetSensorCommonWeight(double sensor_common_weight)
-        {
-            this.SensorCommonWeightMode = true;
-            this.SensorCommonWeight = sensor_common_weight;
-        }
-
         public virtual void SetCommonWeight(double common_weight)
         {
             this.CommonWeight = common_weight;
@@ -115,9 +115,19 @@ namespace OSM2019.OSM
 
         }
 
+        public virtual void SetBeliefUpdater(BeliefUpdater belief_updater)
+        {
+            this.MyBeliefUpdater = belief_updater;
+        }
+
         //step
         public virtual void InitializeToFirstStep()
         {
+            if (this.MySubjectManagerDic.ContainsKey(this.CurrentRound))
+            {
+                this.SetSubjectManager(this.MySubjectManagerDic[this.CurrentRound]);
+            }
+
             foreach (var agent in this.MyAgentNetwork.Agents)
             {
                 agent.SetBelief(agent.InitBelief.Clone());
@@ -185,6 +195,8 @@ namespace OSM2019.OSM
 
         public virtual void UpdateSteps(int step_count)
         {
+
+
             foreach (var step in Enumerable.Range(0, step_count))
             {
                 var final = (step == (step_count - 1));
@@ -203,8 +215,8 @@ namespace OSM2019.OSM
         //round
         public virtual void InitializeToFirstRound()
         {
-            this.InitializeToFirstStep();
             this.CurrentRound = 0;
+            this.InitializeToFirstStep();
             this.MyRecordRounds = new List<RecordRound>();
         }
 
@@ -235,6 +247,9 @@ namespace OSM2019.OSM
 
             foreach (var round in Enumerable.Range(0, round_count))
             {
+                if (round == 100)
+                {
+                }
                 this.InitializeRound();
                 this.NextRound(step_count);
                 this.RecordRound();
@@ -291,36 +306,9 @@ namespace OSM2019.OSM
         //osm
         protected virtual void UpdateBeliefByMessage(Message message)
         {
-            Vector<double> receive_op;
-            var pre_belief = message.ToAgent.Belief;
-            var weight = message.GetToWeight();
+            var updated_belief = this.MyBeliefUpdater.UpdateBelief(this, message);
 
-            if (message.Subject != message.ToAgent.MySubject)
-            {
-                var to_subject = message.ToAgent.MySubject;
-                receive_op = message.Subject.ConvertOpinionForSubject(message.Opinion, to_subject);
-            }
-            else
-            {
-                receive_op = message.Opinion.Clone();
-            }
-
-            var updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, weight, receive_op);
-
-            if (message.FromAgent.AgentID < 0)
-            {
-                double sensor_weight;
-                if (this.SensorCommonWeightMode)
-                {
-                    sensor_weight = this.SensorCommonWeight;
-                }
-                else
-                {
-                    sensor_weight = this.MyEnvManager.SensorRate;
-                }
-                updated_belief = this.MyAggFuncs.UpdateBelief(pre_belief, sensor_weight, receive_op);
-            }
-
+            Debug.Assert(updated_belief != null);
             message.ToAgent.SetBelief(updated_belief);
         }
 
@@ -364,17 +352,18 @@ namespace OSM2019.OSM
 
         protected double GetObsU(Vector<double> received_sum_op)
         {
-            List<double> op_list = received_sum_op.ToList();
-            var max_op_len = op_list.Max();
-            var max_index = op_list.IndexOf(max_op_len);
+            return received_sum_op.Sum();
 
-            for (int index = 0; index < op_list.Count; index++)
-            {
-                if (index == max_index) continue;
-                max_op_len -= op_list[index];
-                if (max_op_len <= 0) return 0;
-            }
-            return max_op_len;
+            //var max_op_len = received_sum_op.Max();
+            //var max_index = received_sum_op.MaximumIndex();
+
+            //for (int index = 0; index < received_sum_op.Count; index++)
+            //{
+            //    if (index == max_index) continue;
+            //    max_op_len -= received_sum_op[index];
+            //    if (max_op_len <= 0) return 0;
+            //}
+            //return max_op_len;
         }
     }
 }

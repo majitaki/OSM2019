@@ -23,7 +23,6 @@ namespace OSM2019.Experiment
         double SensorCommonWeight;
         double CommonCuriocity;
         double TargetH;
-        bool SensorCommonWeightMode;
         string LogFolder;
         int Rounds;
         int Steps;
@@ -31,20 +30,19 @@ namespace OSM2019.Experiment
         List<AlgoEnum> MyAlgos;
         List<double> CommonWeights;
         bool IsRandomCommonCuriocity;
-        bool IsManualSensorRate;
-        List<double> SensorRates;
+        CustomDistribution MyCustomDistribution;
+        public BeliefUpdater MyBeliefUpdater { get; protected set; }
+        double OpinionThreshold;
 
         static object lock_object = new object();
 
         public CommonWeight_Experiment()
         {
-            this.SensorCommonWeightMode = false;
+            //this.SensorCommonWeightMode = false;
             this.SensorSizeFixMode = false;
             this.MyGraphs = new List<GraphEnum>();
             this.MyAlgos = new List<AlgoEnum>();
             this.IsRandomCommonCuriocity = false;
-            this.IsManualSensorRate = false;
-            this.SensorRates = new List<double>();
         }
 
         public CommonWeight_Experiment SetAlgos(List<AlgoEnum> algos)
@@ -79,13 +77,6 @@ namespace OSM2019.Experiment
             return this;
         }
 
-        public CommonWeight_Experiment SetSensorRates(List<double> sensor_rates)
-        {
-            this.IsManualSensorRate = true;
-            this.SensorRates = sensor_rates;
-            return this;
-        }
-
         public CommonWeight_Experiment SetLogFolder(string dt_name, string folder_name = "")
         {
             var sensor_size_comment = this.SensorSizeFixMode ? $"fix{this.SensorSize}" : $"rate{this.SensorSizeRate}";
@@ -93,12 +84,20 @@ namespace OSM2019.Experiment
             return this;
         }
 
+        /*
         public CommonWeight_Experiment SetSensorCommonWeight(double sensor_common_weight)
         {
             this.SensorCommonWeightMode = true;
             this.SensorCommonWeight = sensor_common_weight;
             return this;
         }
+        */
+        public CommonWeight_Experiment SetBeliefUpdater(BeliefUpdater belief_updater)
+        {
+            this.MyBeliefUpdater = belief_updater;
+            return this;
+        }
+
 
         public CommonWeight_Experiment SetSensorFixSize(int sensor_size)
         {
@@ -150,6 +149,18 @@ namespace OSM2019.Experiment
             this.CommonWeights = weights;
             return this;
         }
+
+        public CommonWeight_Experiment SetCustomDistribution(CustomDistribution custom_dist)
+        {
+            this.MyCustomDistribution = custom_dist;
+            return this;
+        }
+        public CommonWeight_Experiment SetOpinionThreshold(double op_threshold)
+        {
+            this.OpinionThreshold = op_threshold;
+            return this;
+        }
+
 
         public void Run(int seed)
         {
@@ -232,20 +243,11 @@ namespace OSM2019.Experiment
                         var subject_test = new OpinionSubject("test", op_dim_size);
 
                         var osm_env = new OpinionEnvironment();
-                        if (this.IsManualSensorRate)
-                        {
-                            osm_env = new OpinionEnvironment()
-                                .SetSubject(subject_test)
-                                .SetCorrectDim(0)
-                                .SetSensorRates(this.SensorRates);
-                        }
-                        else
-                        {
-                            osm_env = new OpinionEnvironment()
-                                .SetSubject(subject_test)
-                                .SetCorrectDim(0)
-                                .SetSensorRate(sensor_rate);
-                        }
+                        osm_env = new OpinionEnvironment()
+                              .SetSubject(subject_test)
+                              .SetCorrectDim(0)
+                              .SetSensorRate(sensor_rate)
+                              .SetCustomDistribution(this.MyCustomDistribution);
 
                         var subject_manager = new SubjectManager()
                             .AddSubject(subject_test)
@@ -316,8 +318,7 @@ namespace OSM2019.Experiment
                                 osm.SetOpinionIntroInterval(10);
                                 osm.SetOpinionIntroRate(0.1);
                                 osm.SimpleRecordFlag = true;
-                                if (this.SensorCommonWeightMode) osm.SetSensorCommonWeight(this.SensorCommonWeight);
-
+                                osm.SetBeliefUpdater(this.MyBeliefUpdater);
 
                                 pb.Tag = $"{select_graph.ToString()} {size.ToString()} {algo.ToString()} {seed}";
                                 osm.UpdateRounds(this.Rounds, this.Steps, pb);
@@ -332,15 +333,7 @@ namespace OSM2019.Experiment
                                     sensor_size_mode = "rate" + Math.Round(this.SensorSizeRate, 3).ToString();
                                 }
 
-                                string sensor_weight_mode = "";
-                                if (this.SensorCommonWeightMode)
-                                {
-                                    sensor_weight_mode = $"{this.SensorCommonWeight}";
-                                }
-                                else
-                                {
-                                    sensor_weight_mode = $"off";
-                                }
+                                string sensor_weight_mode = $"{this.MyBeliefUpdater.SensorWeightMode}";
 
                                 var output_pass = Properties.Settings.Default.OutputLogPath
                                     + $"/{save_folder}/"
