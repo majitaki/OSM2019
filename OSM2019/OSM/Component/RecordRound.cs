@@ -136,7 +136,7 @@ namespace OSM2019.OSM
             foreach (var step_message in step_messages)
             {
                 Vector<double> receive_op = null;
-                if (step_message.Subject != step_message.ToAgent.MySubject)
+                if (step_message.Subject.SubjectName != step_message.ToAgent.MySubject.SubjectName)
                 {
                     var to_subject = step_message.ToAgent.MySubject;
                     receive_op = step_message.Subject.ConvertOpinionForSubject(step_message.Opinion, to_subject);

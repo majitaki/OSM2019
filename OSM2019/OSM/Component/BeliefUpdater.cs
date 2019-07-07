@@ -47,7 +47,7 @@ namespace OSM2019
             var pre_belief = message.ToAgent.Belief;
             var weight = message.GetToWeight();
 
-            if (message.Subject != message.ToAgent.MySubject)
+            if (message.Subject.SubjectName != message.ToAgent.MySubject.SubjectName)
             {
                 var to_subject = message.ToAgent.MySubject;
                 receive_op = message.Subject.ConvertOpinionForSubject(message.Opinion, to_subject);

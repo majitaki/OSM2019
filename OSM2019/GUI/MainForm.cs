@@ -297,8 +297,10 @@ namespace OSM2019
             osm.SetRand(update_step_rand);
             osm.SetAgentNetwork(agent_network);
             var subject_mgr_dic = new Dictionary<int, SubjectManager>();
-            subject_mgr_dic.Add(0, subject_manager);
-            subject_mgr_dic.Add(change_round, changed_subject_manager);
+            //subject_mgr_dic.Add(0, subject_manager);
+            //subject_mgr_dic.Add(change_round, changed_subject_manager);
+            subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(dim, turara_weight, correct_dim, sensor_rate));
+            subject_mgr_dic.Add(10, new SubjectManagerGenerator().Generate(dim, turara_weight, changed_correct_dim, sensor_rate));
             osm.SetSubjectManagerDic(subject_mgr_dic);
             //osm.SetSubjectManager(subject_manager);
             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);

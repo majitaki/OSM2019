@@ -177,6 +177,7 @@
     <Compile Include="OSM\Component\RecordRound.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OSM\Component\SubjectManagerGenerator.cs" />
     <Compile Include="Utility\CustomDistribution.cs" />
     <Compile Include="Utility\DrawSetting.cs" />
     <Compile Include="Utility\Enum.cs" />
