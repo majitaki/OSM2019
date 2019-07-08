@@ -135,7 +135,7 @@ namespace OSM2019.OSM
         //step
         public virtual void InitializeToFirstStep()
         {
-            if (this.MySubjectManagerDic.ContainsKey(this.CurrentRound))
+            if (this.MySubjectManagerDic != null && this.MySubjectManagerDic.ContainsKey(this.CurrentRound))
             {
                 this.SetAgentNetwork();
                 this.SetSubjectManager(this.MySubjectManagerDic[this.CurrentRound]);

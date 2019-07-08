@@ -39,8 +39,8 @@ namespace OSM2019
             InitializeComponent();
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
-            Test();
-            //TestExp();
+            //Test();
+            TestExp();
             this.MyAnimationForm.Show();
             this.MyAnimationForm.Left = this.Right;
         }
@@ -103,16 +103,16 @@ namespace OSM2019
 
             dt = DateTime.Now;
             dt_name = dt.ToString("yyyy-MMdd-HHmm");
-            int dim = 5;
+            int dim = 2;
             int correct_dim = 0;
             double sensor_rate = 0.8;
             int network_size = 100;
             double turara_weight = 0.3;
-            Parallel.For(0, 3, seed =>
+            Parallel.For(0, 1, seed =>
             {
                 new TargetH_Experiment()
                 .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AATparticle })
+                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT })
                 .SetNetworkSize(network_size, network_size, 100)
                 .SetDimSize(dim).SetSensorRate(sensor_rate)
                 //.SetSensorCommonWeight(0.70)
@@ -128,22 +128,32 @@ namespace OSM2019
                 .Run(seed);
             });
 
-
-            //Parallel.For(0, 5, seed =>
+            //dt = DateTime.Now;
+            //dt_name = dt.ToString("yyyy-MMdd-HHmm");
+            //int seeds = 1;
+            //int dim = 5;
+            //int correct_dim = 0;
+            //double sensor_rate = 0.8;
+            //int network_size = 100;
+            //double turara_weight = 0.3;
+            //int rounds = 2000;
+            //int steps = 1500;
+            //Parallel.For(0, seeds, seed =>
             //{
             //    new Normal_Experiment()
             //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-            //    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.IWTori })
-            //    .SetNetworkSize(300, 300, 100)
-            //    .SetDimSize(2).SetSensorRate(0.62)
-            //    .SetSensorCommonWeight(0.70)
+            //    .SetAlgos(new List<AlgoEnum>() {AlgoEnum.AATparticle})
+            //    .SetNetworkSize(network_size, network_size, 100)
+            //    .SetDimSize(dim).SetSensorRate(sensor_rate)
+            //    //.SetCustomDistribution(new Turara_DistGenerator(dim, turara_weight, correct_dim).Generate())
+            //    .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
             //    //.SetCommonWeight(0.8)
             //    //.SetCommonCuriocity(0.5)
             //    //.SetTargetHs(0.95)
             //    .SetSensorSizeRate(0.1)
             //    .SetLogFolder(dt_name, "")
-            //    .SetRounds(300)
-            //    .SetSteps(1500)
+            //    .SetRounds(rounds)
+            //    .SetSteps(steps)
             //    .SetOpinionThreshold(0.9)
             //    .Run(seed);
             //});
@@ -161,8 +171,8 @@ namespace OSM2019
             AlgoEnum algo = AlgoEnum.AATparticle;
             double targeth = 0.9;
             double common_weight = 0.5;
-            double sensor_rate = 0.6;
-            double turara_weight = 0.4;
+            double sensor_rate = 0.8;
+            double turara_weight = 0.3;
             var op_form_threshold = 0.9;
             int sample_size = 10;
             int change_round = 30;
@@ -299,9 +309,13 @@ namespace OSM2019
             var subject_mgr_dic = new Dictionary<int, SubjectManager>();
             //subject_mgr_dic.Add(0, subject_manager);
             //subject_mgr_dic.Add(change_round, changed_subject_manager);
-            subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(dim, turara_weight, 0, sensor_rate));
-            subject_mgr_dic.Add(5, new SubjectManagerGenerator().Generate(dim, turara_weight, 1, sensor_rate));
-            subject_mgr_dic.Add(10, new SubjectManagerGenerator().Generate(dim, turara_weight, 2, sensor_rate));
+            for (int i = 0; i < 10; i++)
+            {
+                subject_mgr_dic.Add(i * 100, new SubjectManagerGenerator().Generate(dim, turara_weight, i % dim, sensor_rate));
+            }
+            //subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(dim, turara_weight, 0, sensor_rate));
+            //subject_mgr_dic.Add(5, new SubjectManagerGenerator().Generate(dim, turara_weight, 1, sensor_rate));
+            //subject_mgr_dic.Add(10, new SubjectManagerGenerator().Generate(dim, turara_weight, 2, sensor_rate));
             osm.SetSubjectManagerDic(subject_mgr_dic);
             //osm.SetSubjectManager(subject_manager);
             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);

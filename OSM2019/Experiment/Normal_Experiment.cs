@@ -239,7 +239,8 @@ namespace OSM2019.Experiment
                         var osm_env = new OpinionEnvironment()
                                         .SetSubject(subject_test)
                                         .SetCorrectDim(0)
-                                        .SetSensorRate(sensor_rate);
+                                        .SetSensorRate(sensor_rate)
+                                        .SetCustomDistribution(this.MyCustomDistribution);
 
                         var subject_manager = new SubjectManager()
                             .AddSubject(subject_test)
@@ -310,6 +311,12 @@ namespace OSM2019.Experiment
                                     osm_iwtori.SetTargetH(this.TargetH);
                                     osm = osm_iwtori;
                                     break;
+                                case AlgoEnum.AATparticle:
+                                    var osm_aatpar = new AATparticle_OSM();
+                                    osm_aatpar.SetSampleSize(10);
+                                    osm_aatpar.SetTargetH(this.TargetH);
+                                    osm = osm_aatpar;
+                                    break;
                                 default:
                                     break;
                             }
@@ -317,7 +324,15 @@ namespace OSM2019.Experiment
                             var update_step_rand_tmp = new ExtendRandom(update_step_seed);
                             osm.SetRand(update_step_rand_tmp);
                             osm.SetAgentNetwork(agent_network);
-                            osm.SetSubjectManager(subject_manager);
+                            var subject_mgr_dic = new Dictionary<int, SubjectManager>();
+                            //subject_mgr_dic.Add(0, subject_manager);
+                            //subject_mgr_dic.Add(change_round, changed_subject_manager);
+                            for (int i = 0; i < 100; i++)
+                            {
+                                subject_mgr_dic.Add(i * 100, new SubjectManagerGenerator().Generate(this.DimSize, 0.3, i % this.DimSize, sensor_rate));
+                            }
+                            osm.SetSubjectManagerDic(subject_mgr_dic);
+                            //osm.SetSubjectManager(subject_manager);
                             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
                             osm.SetOpinionIntroInterval(10);
                             osm.SetOpinionIntroRate(0.1);
