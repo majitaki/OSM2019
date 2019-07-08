@@ -21,6 +21,7 @@ namespace OSM2019.OSM
         protected ExtendRandom UpdateStepRand;
         public OpinionEnvironment MyEnvManager { get; protected set; }
         public Dictionary<int, SubjectManager> MySubjectManagerDic { get; protected set; }
+        public List<int> MySensorChangeRoundList { get; protected set; }
         public SubjectManager MySubjectManager { get; protected set; }
         public double OpinionIntroRate { get; protected set; }
         public double OpinionIntroInterval { get; protected set; }
@@ -76,9 +77,20 @@ namespace OSM2019.OSM
             return;
         }
 
+        public virtual void SetAgentNetwork()
+        {
+            Debug.Assert(this.MyAgentNetwork != null);
+            this.MyAgentNetwork.GenerateSensor();
+        }
+
         public void SetSubjectManagerDic(Dictionary<int, SubjectManager> subject_manager_dic)
         {
             this.MySubjectManagerDic = subject_manager_dic;
+        }
+
+        public void SetSensorChangeRoundList(List<int> sensor_change_round_list)
+        {
+            this.MySensorChangeRoundList = sensor_change_round_list;
         }
 
         public void SetSubjectManager(SubjectManager subject_mgr)
@@ -125,6 +137,7 @@ namespace OSM2019.OSM
         {
             if (this.MySubjectManagerDic.ContainsKey(this.CurrentRound))
             {
+                this.SetAgentNetwork();
                 this.SetSubjectManager(this.MySubjectManagerDic[this.CurrentRound]);
             }
 

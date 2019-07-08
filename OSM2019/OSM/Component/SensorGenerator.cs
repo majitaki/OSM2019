@@ -18,7 +18,11 @@ namespace OSM2019.OSM
 
         public void Generate(ExtendRandom agent_network_rand, List<Agent> agents)
         {
-            agents.Select(agent => agent.SetSensor(false));
+            //agents.Select(agent => agent.SetSensor(false));
+            foreach (var agent in agents)
+            {
+                agent.SetSensor(false);
+            }
 
             var list = agents.Select(agent => agent.AgentID).OrderBy(id => agent_network_rand.Next()).Take(this.SensorSize)
                        .ToList();

@@ -299,8 +299,9 @@ namespace OSM2019
             var subject_mgr_dic = new Dictionary<int, SubjectManager>();
             //subject_mgr_dic.Add(0, subject_manager);
             //subject_mgr_dic.Add(change_round, changed_subject_manager);
-            subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(dim, turara_weight, correct_dim, sensor_rate));
-            subject_mgr_dic.Add(10, new SubjectManagerGenerator().Generate(dim, turara_weight, changed_correct_dim, sensor_rate));
+            subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(dim, turara_weight, 0, sensor_rate));
+            subject_mgr_dic.Add(5, new SubjectManagerGenerator().Generate(dim, turara_weight, 1, sensor_rate));
+            subject_mgr_dic.Add(10, new SubjectManagerGenerator().Generate(dim, turara_weight, 2, sensor_rate));
             osm.SetSubjectManagerDic(subject_mgr_dic);
             //osm.SetSubjectManager(subject_manager);
             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);

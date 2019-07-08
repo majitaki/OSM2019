@@ -1,6 +1,7 @@
 ﻿using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace OSM2019.OSM
         public List<Agent> Agents { get; private set; }
         public List<AgentLink> AgentLinks { get; private set; }
 
+        public SensorGenerator MySensorGenerator { get; private set; }
         public AgentNetwork()
         {
             this.Agents = new List<Agent>();
@@ -75,7 +77,15 @@ namespace OSM2019.OSM
 
         public AgentNetwork GenerateSensor(SensorGenerator sensor_gene)
         {
-            sensor_gene.Generate(this.AgentGenerateRand, this.Agents);
+            this.MySensorGenerator = sensor_gene;
+            this.MySensorGenerator.Generate(this.AgentGenerateRand, this.Agents);
+            return this;
+        }
+
+        public AgentNetwork GenerateSensor()
+        {
+            Debug.Assert(this.MySensorGenerator != null);
+            this.MySensorGenerator.Generate(this.AgentGenerateRand, this.Agents);
             return this;
         }
 
