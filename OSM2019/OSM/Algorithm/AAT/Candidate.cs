@@ -17,7 +17,7 @@ namespace OSM2019.OSM
 
         }
 
-        public Candidate(Agent agent)
+        public Candidate(Agent agent, int awa_window_size = 1)
         {
             this.DataBase = new List<CandidateRecord>();
             if (agent.GetNeighbors().Count == 0) return;
@@ -29,7 +29,7 @@ namespace OSM2019.OSM
             {
                 for (int req_num = 1; req_num <= max_require_num; req_num++)
                 {
-                    this.DataBase.Add(new CandidateRecord(dim, req_num, agent));
+                    this.DataBase.Add(new CandidateRecord(dim, req_num, agent, awa_window_size));
                 }
             }
 

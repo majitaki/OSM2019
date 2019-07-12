@@ -87,7 +87,12 @@ namespace OSM2019.Utility
         OSMonly,
         IWTori,
         IWTorionly,
-        AATparticle
+        AATparticle,
+        AATwindow,
+        AATwindowparticle,
+        AATfunction,
+        AATfunctionparticle,
+        AATfunctioniwt
     }
 
     enum SensorWeightEnum

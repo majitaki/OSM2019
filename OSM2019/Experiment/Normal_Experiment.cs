@@ -4,6 +4,7 @@ using OSM2019.OSM;
 using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace OSM2019.Experiment
         int SensorSize;
         double SensorSizeRate;
         double SensorCommonWeight;
+        double EnvTuraraWeight;
         bool CommonWeightMode;
         double CommonWeight;
         double TargetH;
@@ -33,7 +35,8 @@ namespace OSM2019.Experiment
         public BeliefUpdater MyBeliefUpdater { get; protected set; }
         CustomDistribution MyCustomDistribution;
         double OpinionThreshold;
-
+        string SubjectName;
+        public bool IsDynamic;
         static object lock_object = new object();
 
         public Normal_Experiment()
@@ -43,6 +46,7 @@ namespace OSM2019.Experiment
             this.CommonWeightMode = false;
             this.MyGraphs = new List<GraphEnum>();
             this.MyAlgos = new List<AlgoEnum>();
+            this.IsDynamic = false;
         }
 
         public Normal_Experiment SetAlgos(List<AlgoEnum> algos)
@@ -84,14 +88,6 @@ namespace OSM2019.Experiment
             return this;
         }
 
-        /*
-        public Normal_Experiment SetSensorCommonWeight(double sensor_common_weight)
-        {
-            this.SensorCommonWeightMode = true;
-            this.SensorCommonWeight = sensor_common_weight;
-            return this;
-        }
-        */
         public Normal_Experiment SetBeliefUpdater(BeliefUpdater belief_updater)
         {
             this.MyBeliefUpdater = belief_updater;
@@ -125,6 +121,18 @@ namespace OSM2019.Experiment
             return this;
         }
 
+        public Normal_Experiment SetSubjectName(string subject_name)
+        {
+            this.SubjectName = subject_name;
+            return this;
+        }
+
+        public Normal_Experiment SetEnvTuraraWeight(double turara_weight)
+        {
+            this.EnvTuraraWeight = turara_weight;
+            return this;
+        }
+
         public Normal_Experiment SetCommonCuriocity(double common_curiocity)
         {
             this.CommonCuriocity = common_curiocity;
@@ -154,6 +162,12 @@ namespace OSM2019.Experiment
             return this;
         }
 
+        public Normal_Experiment SetDynamic(bool is_dynamic)
+        {
+            this.IsDynamic = is_dynamic;
+            return this;
+        }
+
 
         public void Run(int seed)
         {
@@ -164,12 +178,8 @@ namespace OSM2019.Experiment
         public void Run(int start_seed, int final_seed)
         {
             string save_folder = this.LogFolder;
-            //List<GraphEnum> graphs = new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Hexagonal, GraphEnum.Grid2D, GraphEnum.Triangular };
-            //List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATGfix };
             var graphs = this.MyGraphs;
             var algos = this.MyAlgos;
-            //List<AlgoEnum> algos = new List<AlgoEnum>() { AlgoEnum.AAT };
-
             int op_dim_size = this.DimSize;
             double sensor_rate = this.SensorRate;
 
@@ -233,18 +243,18 @@ namespace OSM2019.Experiment
                         var init_belief_gene = new InitBeliefGenerator()
                                                 .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
 
-                        var subject_test = new OpinionSubject("test", op_dim_size);
+                        var subject_test = new OpinionSubject(this.SubjectName, op_dim_size);
 
 
-                        var osm_env = new OpinionEnvironment()
-                                        .SetSubject(subject_test)
-                                        .SetCorrectDim(0)
-                                        .SetSensorRate(sensor_rate)
-                                        .SetCustomDistribution(this.MyCustomDistribution);
+                        //var osm_env = new OpinionEnvironment()
+                        //                .SetSubject(subject_test)
+                        //                .SetCorrectDim(0)
+                        //                .SetSensorRate(sensor_rate)
+                        //                .SetCustomDistribution(this.MyCustomDistribution);
 
-                        var subject_manager = new SubjectManager()
-                            .AddSubject(subject_test)
-                            .SetEnvironment(osm_env);
+                        //var subject_manager = new SubjectManager()
+                        //    .AddSubject(subject_test)
+                        //    .SetEnvironment(osm_env);
 
 
                         var op_form_threshold = 0.9;
@@ -288,34 +298,77 @@ namespace OSM2019.Experiment
                                 case AlgoEnum.AAT:
                                     var osm_aat = new AAT_OSM();
                                     osm_aat.SetTargetH(this.TargetH);
+                                    Debug.Assert(this.TargetH != 0);
                                     osm = osm_aat;
                                     break;
                                 case AlgoEnum.AATG:
                                     var osm_aatg = new AATG_OSM();
                                     osm_aatg.SetTargetH(this.TargetH);
+                                    Debug.Assert(this.TargetH != 0);
                                     osm = osm_aatg;
                                     break;
                                 case AlgoEnum.AATfix:
                                     var osm_aatfix = new AATfix_OSM();
                                     osm_aatfix.SetTargetH(this.TargetH);
+                                    Debug.Assert(this.TargetH != 0);
                                     osm = osm_aatfix;
                                     break;
                                 case AlgoEnum.OSMonly:
                                     var osm_only = new OSM_Only();
-                                    if (this.CommonWeightMode) osm_only.SetCommonWeight(this.CommonWeight);
+                                    if (this.CommonWeightMode)
+                                    {
+                                        osm_only.SetCommonWeight(this.CommonWeight);
+                                        Debug.Assert(this.CommonWeight != 0);
+                                    }
                                     osm = osm_only;
                                     break;
                                 case AlgoEnum.IWTori:
                                     var osm_iwtori = new IWTori_OSM();
                                     osm_iwtori.SetCommonCuriocity(this.CommonCuriocity);
                                     osm_iwtori.SetTargetH(this.TargetH);
+                                    Debug.Assert(this.CommonCuriocity != 0);
+                                    Debug.Assert(this.TargetH != 0);
                                     osm = osm_iwtori;
                                     break;
                                 case AlgoEnum.AATparticle:
                                     var osm_aatpar = new AATparticle_OSM();
                                     osm_aatpar.SetSampleSize(10);
                                     osm_aatpar.SetTargetH(this.TargetH);
+                                    Debug.Assert(this.TargetH != 0);
                                     osm = osm_aatpar;
+                                    break;
+                                case AlgoEnum.AATwindow:
+                                    var osm_window = new AATwindow_OSM();
+                                    osm_window.SetTargetH(this.TargetH);
+                                    osm_window.SetAwaRateWindowSize(100);
+                                    osm = osm_window;
+                                    break;
+                                case AlgoEnum.AATwindowparticle:
+                                    var osm_window_particle = new AATwindow_particle_OSM();
+                                    osm_window_particle.SetTargetH(this.TargetH);
+                                    osm_window_particle.SetAwaRateWindowSize(100);
+                                    osm_window_particle.SetSampleSize(10);
+                                    osm = osm_window_particle;
+                                    break;
+                                case AlgoEnum.AATfunction:
+                                    var osm_function = new AATfunction_OSM();
+                                    osm_function.SetTargetH(this.TargetH);
+                                    osm_function.SetAwaRateWindowSize(100);
+                                    osm = osm_function;
+                                    break;
+                                case AlgoEnum.AATfunctionparticle:
+                                    var osm_function_particle = new AATfunction_particle_OSM();
+                                    osm_function_particle.SetTargetH(this.TargetH);
+                                    osm_function_particle.SetAwaRateWindowSize(100);
+                                    osm_function_particle.SetSampleSize(10);
+                                    osm = osm_function_particle;
+                                    break;
+                                case AlgoEnum.AATfunctioniwt:
+                                    var osm_function_iwt = new AATfunction_iwt_OSM();
+                                    osm_function_iwt.SetTargetH(this.TargetH);
+                                    osm_function_iwt.SetCommonCuriocity(this.CommonCuriocity);
+                                    osm_function_iwt.SetAwaRateWindowSize(100);
+                                    osm = osm_function_iwt;
                                     break;
                                 default:
                                     break;
@@ -325,18 +378,22 @@ namespace OSM2019.Experiment
                             osm.SetRand(update_step_rand_tmp);
                             osm.SetAgentNetwork(agent_network);
                             var subject_mgr_dic = new Dictionary<int, SubjectManager>();
-                            //subject_mgr_dic.Add(0, subject_manager);
-                            //subject_mgr_dic.Add(change_round, changed_subject_manager);
-                            for (int i = 0; i < 100; i++)
+                            if (IsDynamic)
                             {
-                                subject_mgr_dic.Add(i * 100, new SubjectManagerGenerator().Generate(this.DimSize, 0.3, i % this.DimSize, sensor_rate));
+                                for (int i = 0; i < 100; i++)
+                                {
+                                    subject_mgr_dic.Add(i * 100, new SubjectManagerGenerator().Generate(subject_test, this.EnvTuraraWeight, i % this.DimSize, sensor_rate));
+                                }
+
+                            }
+                            else
+                            {
+                                subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(subject_test, this.EnvTuraraWeight, 0, sensor_rate));
                             }
                             osm.SetSubjectManagerDic(subject_mgr_dic);
-                            //osm.SetSubjectManager(subject_manager);
                             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
                             osm.SetOpinionIntroInterval(10);
                             osm.SetOpinionIntroRate(0.1);
-                            //osm.SimpleRecordFlag = false;
                             osm.SimpleRecordFlag = true;
                             osm.SetBeliefUpdater(this.MyBeliefUpdater);
 

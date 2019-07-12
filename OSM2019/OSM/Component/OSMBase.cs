@@ -135,7 +135,7 @@ namespace OSM2019.OSM
         //step
         public virtual void InitializeToFirstStep()
         {
-            if (this.MySubjectManagerDic != null && this.MySubjectManagerDic.ContainsKey(this.CurrentRound))
+            if (this.MySubjectManagerDic.ContainsKey(this.CurrentRound))
             {
                 this.SetAgentNetwork();
                 this.SetSubjectManager(this.MySubjectManagerDic[this.CurrentRound]);
@@ -260,9 +260,6 @@ namespace OSM2019.OSM
 
             foreach (var round in Enumerable.Range(0, round_count))
             {
-                if (round == 100)
-                {
-                }
                 this.InitializeRound();
                 this.NextRound(step_count);
                 this.RecordRound();
@@ -321,7 +318,6 @@ namespace OSM2019.OSM
         {
             var updated_belief = this.MyBeliefUpdater.UpdateBelief(this, message);
 
-            Debug.Assert(updated_belief != null);
             message.ToAgent.SetBelief(updated_belief);
         }
 

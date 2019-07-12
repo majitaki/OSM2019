@@ -22,6 +22,7 @@ namespace OSM2019.OSM
         public List<int> ActiveAgentSizes { get; private set; }
         public List<int> DeterminedSensorSizes { get; private set; }
         public List<int> SensorSizes { get; private set; }
+        public List<double> CorrectSensorSizeRates { get; private set; }
         public List<int> NetworkSizes { get; private set; }
         public List<int> FinalSteps { get; private set; }
         public List<double> AverageWeight { get; private set; }
@@ -51,6 +52,7 @@ namespace OSM2019.OSM
             this.ActiveAgentSizes = new List<int>();
             this.DeterminedSensorSizes = new List<int>();
             this.SensorSizes = new List<int>();
+            this.CorrectSensorSizeRates = new List<double>();
             this.NetworkSizes = new List<int>();
             this.FinalSteps = new List<int>();
             this.AverageWeight = new List<double>();
@@ -86,11 +88,13 @@ namespace OSM2019.OSM
         {
             var cor_dim = this.MySubjectManager.OSM_Env.CorrectDim;
             var cor_subject = this.MySubjectManager.OSM_Env.EnvSubject;
+            //var correct_size = agents.Where(agent => agent.MySubject.SubjectName == cor_subject.SubjectName && agent.GetOpinionDim() == cor_dim).Count();
             var correct_size = agents.Where(agent => agent.MySubject.SubjectName == cor_subject.SubjectName && agent.GetOpinionDim() == cor_dim).Count();
             var undeter_size = agents.Where(agent => agent.GetOpinionDim() == -1).Count();
             var network_size = agents.Count;
             var incorrect_size = network_size - correct_size - undeter_size;
             var sensor_size = agents.Where(agent => agent.IsSensor).Count();
+            var correct_sensor_size_rate = agents.Where(agent => agent.IsSensor && agent.MySubject.SubjectName == cor_subject.SubjectName && agent.GetOpinionDim() == cor_dim).Count() / (double)sensor_size;
             var determined_sensor_size = agents.Where(agent => agent.IsSensor && agent.IsDetermined()).Count();
             var ave_weights = agents.Select(agent => agent.AgentLinks.Average(link => link.GetWeight(agent))).Mean();
             var var_weights = agents.Select(agent => agent.AgentLinks.Average(link => link.GetWeight(agent))).PopulationVariance();
@@ -111,6 +115,7 @@ namespace OSM2019.OSM
             this.NetworkSizes.Add(network_size);
             this.IncorrectSizes.Add(incorrect_size);
             this.SensorSizes.Add(sensor_size);
+            this.CorrectSensorSizeRates.Add(correct_sensor_size_rate);
             this.DeterminedSensorSizes.Add(determined_sensor_size);
             this.AverageWeight.Add(ave_weights);
             this.VarWeight.Add(var_weights);
@@ -125,7 +130,7 @@ namespace OSM2019.OSM
             {
                 foreach (var dim in Enumerable.Range(0, subject.SubjectDimSize))
                 {
-                    var each_op_size = agents.Where(agent => agent.MySubject == subject && agent.GetOpinionDim() == dim).Count();
+                    var each_op_size = agents.Where(agent => agent.MySubject.SubjectName == subject.SubjectName && agent.GetOpinionDim() == dim).Count();
                     this.AllOpinionSizes[subject][dim].Add(each_op_size);
                 }
             }

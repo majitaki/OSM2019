@@ -58,6 +58,7 @@ namespace OSM2019.Utility
                     string determined_sensor_rate = "";
                     string step_message_size = "";
                     string sensor_size = "";
+                    string correct_sensor_size = "";
                     string network_size = "";
                     string final_step = "";
                     string ave_weight = "";
@@ -76,6 +77,7 @@ namespace OSM2019.Utility
                         determined_sensor_rate = Math.Round(record_round.DeterminedSensorSizes[step_num] / (double)record_round.SensorSizes[step_num], 4).ToString();
                         step_message_size = record_round.StepMessageSizes[step_num].ToString();
                         sensor_size = record_round.SensorSizes[step_num].ToString();
+                        correct_sensor_size = record_round.CorrectSensorSizeRates[step_num].ToString();
                         network_size = record_round.NetworkSizes[step_num].ToString();
                         final_step = record_round.FinalSteps[step_num].ToString();
                         ave_weight = record_round.AverageWeight[step_num].ToString();
@@ -92,6 +94,7 @@ namespace OSM2019.Utility
                         csv_writer.WriteField(determined_sensor_rate);
                         csv_writer.WriteField(step_message_size);
                         csv_writer.WriteField(sensor_size);
+                        csv_writer.WriteField(correct_sensor_size);
                         csv_writer.WriteField(network_size);
                         csv_writer.WriteField(final_step);
                         csv_writer.WriteField(ave_weight);
@@ -135,6 +138,7 @@ namespace OSM2019.Utility
                     "DeterminedSensorRate",
                     "StepMessageSize",
                     "SensorSize",
+                    "CorrectSensorSizeRate",
                     "NetworkSize",
                     "FinalSteps",
                     "AverageWeight",
@@ -163,6 +167,7 @@ namespace OSM2019.Utility
                 string determined_sensor_rate = "";
                 string step_message_size = "";
                 string sensor_size = "";
+                string correct_sensor_size_rate = "";
                 string network_size = "";
                 string final_step = "";
                 string ave_weight = "";
@@ -181,6 +186,7 @@ namespace OSM2019.Utility
                     determined_sensor_rate = Math.Round(record_round.DeterminedSensorSizes.Last() / (double)record_round.SensorSizes.Last(), 4).ToString();
                     step_message_size = record_round.StepMessageSizes.Sum().ToString();
                     sensor_size = record_round.SensorSizes.Last().ToString();
+                    correct_sensor_size_rate = record_round.CorrectSensorSizeRates.Last().ToString();
                     network_size = record_round.NetworkSizes.Last().ToString();
                     final_step = record_round.FinalSteps.Last().ToString();
                     ave_weight = record_round.AverageWeight.Last().ToString();
@@ -197,6 +203,7 @@ namespace OSM2019.Utility
                     csv_writer.WriteField(determined_sensor_rate);
                     csv_writer.WriteField(step_message_size);
                     csv_writer.WriteField(sensor_size);
+                    csv_writer.WriteField(correct_sensor_size_rate);
                     csv_writer.WriteField(network_size);
                     csv_writer.WriteField(final_step);
                     csv_writer.WriteField(ave_weight);

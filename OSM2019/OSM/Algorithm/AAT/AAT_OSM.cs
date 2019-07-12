@@ -12,11 +12,13 @@ namespace OSM2019.OSM
         protected double TargetH;
         protected double Epsilon;
         protected Dictionary<Agent, Candidate> Candidates;
+        public int AwaRateWindowSize { get; protected set; }
 
         public AAT_OSM() : base()
         {
             //this.Epsilon = 0.05;
             this.Epsilon = 0.00;
+            this.AwaRateWindowSize = 1;
         }
 
         public override void PrintAgentInfo(Agent agent)
@@ -48,7 +50,7 @@ namespace OSM2019.OSM
             this.Candidates = new Dictionary<Agent, Candidate>();
             foreach (var agent in this.MyAgentNetwork.Agents)
             {
-                var can = new Candidate(agent);
+                var can = new Candidate(agent, this.AwaRateWindowSize);
                 this.Candidates.Add(agent, can);
                 agent.SetCommonWeight(can.GetSelectCanWeight());
             }
@@ -125,7 +127,7 @@ namespace OSM2019.OSM
             }
         }
 
-       
+
 
         protected virtual void UpdateAveAwaRates(Agent agent, Candidate candidate, double obs_u)
         {
@@ -135,7 +137,7 @@ namespace OSM2019.OSM
 
             foreach (var record in candidate.SortedDataBase)
             {
-                var pre_counts = (current_round) * record.AwaRate;
+                var pre_counts = (record.AwaRates.Count == 0) ? 0 : (current_round) * record.AwaRate;
 
                 if (this.IsEvsOpinionFormed(agent, select_record, record, obs_u))
                 {

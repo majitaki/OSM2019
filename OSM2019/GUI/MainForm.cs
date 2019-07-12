@@ -40,9 +40,148 @@ namespace OSM2019
             this.UserInitialize();
             this.MyAnimationForm = new AnimationForm();
             //Test();
-            TestExp();
+            //NormalExp();
+            TargethExp();
+            //TestExp();
             this.MyAnimationForm.Show();
             this.MyAnimationForm.Left = this.Right;
+        }
+
+        void NormalExp()
+        {
+            var dt = DateTime.Now;
+            var dt_name = dt.ToString("yyyy-MMdd-HHmm");
+            int seeds = 2;
+            int dim = 5;
+            double sensor_rate = 0.8;
+            int network_size = 200;
+            double turara_weight = 0.5;
+            int rounds = 1000;
+            int steps = 3000;
+            bool is_dynamic = false;
+
+
+            dt = DateTime.Now;
+            dt_name = dt.ToString("yyyy-MMdd-HHmm");
+            Parallel.For(0, seeds, seed =>
+            {
+                new Normal_Experiment()
+                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal })
+                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATfunction, AlgoEnum.AATparticle, AlgoEnum.AATfunctionparticle, AlgoEnum.IWTori, AlgoEnum.AATfunctioniwt })
+                .SetNetworkSize(network_size, network_size, 500)
+                .SetDimSize(dim).SetSensorRate(sensor_rate)
+                .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
+                .SetSubjectName("test")
+                .SetEnvTuraraWeight(turara_weight)
+                //.SetCommonWeight(0.8)
+                .SetCommonCuriocity(0.5)
+                .SetTargetHs(0.9)
+                //.SetSensorSizeRate(0.1)
+                .SetSensorFixSize(10)
+                .SetLogFolder(dt_name, "normal_static")
+                .SetRounds(rounds)
+                .SetSteps(steps)
+                .SetOpinionThreshold(0.9)
+                .SetDynamic(is_dynamic)
+                .Run(seed);
+            });
+
+            dt = DateTime.Now;
+            dt_name = dt.ToString("yyyy-MMdd-HHmm");
+            is_dynamic = true;
+            Parallel.For(0, seeds, seed =>
+            {
+                new Normal_Experiment()
+                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal })
+                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATfunction, AlgoEnum.AATparticle, AlgoEnum.AATfunctionparticle, AlgoEnum.IWTori, AlgoEnum.AATfunctioniwt })
+                .SetNetworkSize(network_size, network_size, 500)
+                .SetDimSize(dim).SetSensorRate(sensor_rate)
+                .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
+                .SetSubjectName("test")
+                .SetEnvTuraraWeight(turara_weight)
+                //.SetCommonWeight(0.8)
+                .SetCommonCuriocity(0.5)
+                .SetTargetHs(0.9)
+                //.SetSensorSizeRate(0.1)
+                .SetSensorFixSize(10)
+                .SetLogFolder(dt_name, "normal_dynamic")
+                .SetRounds(rounds)
+                .SetSteps(steps)
+                .SetOpinionThreshold(0.9)
+                .SetDynamic(is_dynamic)
+                .Run(seed);
+            });
+
+
+            Environment.Exit(0);
+        }
+
+        void TargethExp()
+        {
+            var dt = DateTime.Now;
+            var dt_name = dt.ToString("yyyy-MMdd-HHmm");
+            int seeds = 3;
+            int dim = 5;
+            double sensor_rate = 0.8;
+            int network_size = 200;
+            double turara_weight = 0.5;
+            int rounds = 300;
+            int steps = 3000;
+            bool is_dynamic = false;
+
+            dt = DateTime.Now;
+            dt_name = dt.ToString("yyyy-MMdd-HHmm");
+            is_dynamic = false;
+            Parallel.For(0, seeds, seed =>
+            {
+                new TargetH_Experiment()
+                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal })
+                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AATwindow })
+                .SetNetworkSize(network_size, network_size, 100)
+                .SetDimSize(dim).SetSensorRate(sensor_rate)
+                //.SetSensorCommonWeight(0.70)
+                //.SetSensorSizeRate(0.1)
+                .SetSensorFixSize(10)
+                .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
+                .SetSubjectName("test")
+                .SetEnvTuraraWeight(turara_weight)
+                //.SetSensorFixSize(10)
+                .SetTargetHs(Enumerable.Range(0, 21).Select(i => i / 20.0).ToList())
+                .SetLogFolder(dt_name, "target_static_aatwindow")
+                .SetRounds(rounds)
+                .SetSteps(steps)
+                .SetOpinionThreshold(0.9)
+                .SetDynamic(is_dynamic)
+                .Run(seed);
+            });
+
+            dt = DateTime.Now;
+            dt_name = dt.ToString("yyyy-MMdd-HHmm");
+            is_dynamic = true;
+            Parallel.For(0, seeds, seed =>
+            {
+                new TargetH_Experiment()
+                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal })
+                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AATwindow })
+                .SetNetworkSize(network_size, network_size, 100)
+                .SetDimSize(dim).SetSensorRate(sensor_rate)
+                //.SetSensorCommonWeight(0.70)
+                //.SetSensorSizeRate(0.1)
+                .SetSensorFixSize(10)
+                .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
+                .SetSubjectName("test")
+                .SetEnvTuraraWeight(turara_weight)
+                //.SetSensorFixSize(10)
+                .SetTargetHs(Enumerable.Range(0, 21).Select(i => i / 20.0).ToList())
+                .SetLogFolder(dt_name, "target_dynamic_aatwindow")
+                .SetRounds(rounds)
+                .SetSteps(steps)
+                .SetOpinionThreshold(0.9)
+                .SetDynamic(is_dynamic)
+                .Run(seed);
+            });
+
+            Environment.Exit(0);
         }
 
         void TestExp()
@@ -101,85 +240,25 @@ namespace OSM2019
             //    .Run(seed);
             //});
 
-            dt = DateTime.Now;
-            dt_name = dt.ToString("yyyy-MMdd-HHmm");
-            int dim = 2;
-            int correct_dim = 0;
-            double sensor_rate = 0.8;
-            int network_size = 100;
-            double turara_weight = 0.3;
-            Parallel.For(0, 1, seed =>
-            {
-                new TargetH_Experiment()
-                .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-                .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT })
-                .SetNetworkSize(network_size, network_size, 100)
-                .SetDimSize(dim).SetSensorRate(sensor_rate)
-                //.SetSensorCommonWeight(0.70)
-                .SetSensorSizeRate(0.1)
-                .SetCustomDistribution(new Turara_DistGenerator(dim, turara_weight, correct_dim).Generate())
-                .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
-                //.SetSensorFixSize(10)
-                .SetTargetHs(Enumerable.Range(0, 21).Select(i => i / 20.0).ToList())
-                .SetLogFolder(dt_name, "")
-                .SetRounds(300)
-                .SetSteps(1500)
-                .SetOpinionThreshold(0.5)
-                .Run(seed);
-            });
-
-            //dt = DateTime.Now;
-            //dt_name = dt.ToString("yyyy-MMdd-HHmm");
-            //int seeds = 1;
-            //int dim = 5;
-            //int correct_dim = 0;
-            //double sensor_rate = 0.8;
-            //int network_size = 100;
-            //double turara_weight = 0.3;
-            //int rounds = 2000;
-            //int steps = 1500;
-            //Parallel.For(0, seeds, seed =>
-            //{
-            //    new Normal_Experiment()
-            //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-            //    .SetAlgos(new List<AlgoEnum>() {AlgoEnum.AATparticle})
-            //    .SetNetworkSize(network_size, network_size, 100)
-            //    .SetDimSize(dim).SetSensorRate(sensor_rate)
-            //    //.SetCustomDistribution(new Turara_DistGenerator(dim, turara_weight, correct_dim).Generate())
-            //    .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
-            //    //.SetCommonWeight(0.8)
-            //    //.SetCommonCuriocity(0.5)
-            //    //.SetTargetHs(0.95)
-            //    .SetSensorSizeRate(0.1)
-            //    .SetLogFolder(dt_name, "")
-            //    .SetRounds(rounds)
-            //    .SetSteps(steps)
-            //    .SetOpinionThreshold(0.9)
-            //    .Run(seed);
-            //});
-
-
             Environment.Exit(0);
         }
 
         void Test()
         {
-            int agent_size = 100;
+            int agent_size = 200;
             int dim = 5;
             int correct_dim = 0;
-            int changed_correct_dim = 1;
-            AlgoEnum algo = AlgoEnum.AATparticle;
+            AlgoEnum algo = AlgoEnum.AATfunctioniwt;
             double targeth = 0.9;
             double common_weight = 0.5;
+            double common_curiocity = 0.5;
             double sensor_rate = 0.8;
-            double turara_weight = 0.3;
+            double turara_weight = 0.4;
             var op_form_threshold = 0.9;
             int sample_size = 10;
-            int change_round = 30;
+            int change_round = 100;
 
             var belief_updater = new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate);
-            var env_dist = new Turara_DistGenerator(dim, turara_weight, correct_dim).Generate();
-            var changed_env_dist = new Turara_DistGenerator(dim, turara_weight, changed_correct_dim).Generate();
 
             GraphGeneratorBase graph_generator;
             //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
@@ -195,49 +274,7 @@ namespace OSM2019
                                     .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
 
 
-            var subject_tv = new OpinionSubject("good_tv", 3);
-            var subject_company = new OpinionSubject("good_company", 2);
             var subject_test = new OpinionSubject("test", dim);
-
-            double[] conv_array = { 1, 0, 0, 1, 1, 0 };
-            var conv_matrix = Matrix<double>.Build.DenseOfColumnMajor(2, 3, conv_array);
-
-            var osm_env = new OpinionEnvironment()
-                            .SetSubject(subject_test)
-                            .SetCorrectDim(correct_dim)
-                            .SetSensorRate(sensor_rate)
-                            .SetCustomDistribution(env_dist);
-
-            var changed_osm_env = new OpinionEnvironment()
-                           .SetSubject(subject_test)
-                           .SetCorrectDim(changed_correct_dim)
-                           .SetSensorRate(sensor_rate)
-                           .SetCustomDistribution(changed_env_dist);
-
-
-
-            var subject_manager = new SubjectManager()
-                                .AddSubject(subject_test)
-                                .RegistConversionMatrix(subject_tv, subject_company, conv_matrix)
-                                .SetEnvironment(osm_env);
-
-            var changed_subject_manager = new SubjectManager()
-                               .AddSubject(subject_test)
-                               .RegistConversionMatrix(subject_tv, subject_company, conv_matrix)
-                               .SetEnvironment(changed_osm_env);
-
-
-            var sample_agent_1 = new SampleAgent()
-                                .SetInitBeliefGene(init_belief_gene)
-                                .SetThreshold(op_form_threshold)
-                                .SetSubject(subject_tv)
-                                .SetInitOpinion(Vector<double>.Build.Dense(3, 0.0));
-
-            var sample_agent_2 = new SampleAgent()
-                                .SetInitBeliefGene(init_belief_gene)
-                                .SetThreshold(op_form_threshold)
-                                .SetSubject(subject_company)
-                                .SetInitOpinion(Vector<double>.Build.Dense(2, 0.0));
 
             var sample_agent_test = new SampleAgent()
                                 .SetInitBeliefGene(init_belief_gene)
@@ -247,7 +284,6 @@ namespace OSM2019
 
             var sensor_gene = new SensorGenerator()
                             .SetSensorSize((int)(0.1 * graph.Nodes.Count));
-            //.SetSensorSize((int)10);
 
             int agent_gene_seed = 0;
             var agent_gene_rand = new ExtendRandom(agent_gene_seed);
@@ -291,7 +327,7 @@ namespace OSM2019
                     break;
                 case AlgoEnum.IWTori:
                     var osm_iwtori = new IWTori_OSM();
-                    osm_iwtori.SetCommonCuriocity(common_weight);
+                    osm_iwtori.SetCommonCuriocity(common_curiocity);
                     osm_iwtori.SetTargetH(targeth);
                     osm = osm_iwtori;
                     break;
@@ -301,23 +337,43 @@ namespace OSM2019
                     osm_aatpar.SetTargetH(targeth);
                     osm = osm_aatpar;
                     break;
+                case AlgoEnum.AATwindow:
+                    var osm_window = new AATwindow_OSM();
+                    osm_window.SetTargetH(targeth);
+                    osm_window.SetAwaRateWindowSize(20);
+                    osm = osm_window;
+                    break;
+                case AlgoEnum.AATwindowparticle:
+                    var osm_window_particle = new AATwindow_particle_OSM();
+                    osm_window_particle.SetTargetH(targeth);
+                    osm_window_particle.SetAwaRateWindowSize(20);
+                    osm_window_particle.SetSampleSize(10);
+                    osm = osm_window_particle;
+                    break;
+                case AlgoEnum.AATfunction:
+                    var osm_function = new AATfunction_OSM();
+                    osm_function.SetTargetH(targeth);
+                    osm_function.SetAwaRateWindowSize(20);
+                    osm = osm_function;
+                    break;
+                case AlgoEnum.AATfunctioniwt:
+                    var osm_function_iwt = new AATfunction_iwt_OSM();
+                    osm_function_iwt.SetCommonCuriocity(common_curiocity);
+                    osm_function_iwt.SetTargetH(targeth);
+                    osm_function_iwt.SetAwaRateWindowSize(20);
+                    osm = osm_function_iwt;
+                    break;
                 default:
                     break;
             }
             osm.SetRand(update_step_rand);
             osm.SetAgentNetwork(agent_network);
             var subject_mgr_dic = new Dictionary<int, SubjectManager>();
-            //subject_mgr_dic.Add(0, subject_manager);
-            //subject_mgr_dic.Add(change_round, changed_subject_manager);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 100; i++)
             {
-                subject_mgr_dic.Add(i * 100, new SubjectManagerGenerator().Generate(dim, turara_weight, i % dim, sensor_rate));
+                subject_mgr_dic.Add(i * change_round, new SubjectManagerGenerator().Generate(subject_test, turara_weight, i % dim, sensor_rate));
             }
-            //subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(dim, turara_weight, 0, sensor_rate));
-            //subject_mgr_dic.Add(5, new SubjectManagerGenerator().Generate(dim, turara_weight, 1, sensor_rate));
-            //subject_mgr_dic.Add(10, new SubjectManagerGenerator().Generate(dim, turara_weight, 2, sensor_rate));
             osm.SetSubjectManagerDic(subject_mgr_dic);
-            //osm.SetSubjectManager(subject_manager);
             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
             osm.SetOpinionIntroInterval(10);
             osm.SetOpinionIntroRate(0.1);

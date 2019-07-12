@@ -93,6 +93,12 @@
     <Compile Include="GUI\AnimationForm.Designer.cs">
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OSM\Algorithm\AATfunction\AATfunction_iwt_OSM.cs" />
+    <Compile Include="OSM\Algorithm\AATfunction\AATfunction_particle_OSM.cs" />
+    <Compile Include="OSM\Algorithm\AAT\AATwindow_particle_OSM.cs" />
+    <Compile Include="OSM\Algorithm\AAT\AATwindow_OSM.cs" />
+    <Compile Include="OSM\Algorithm\AATfunction\AATfunction_Candidate.cs" />
+    <Compile Include="OSM\Algorithm\AATfunction\AATfunction_OSM.cs" />
     <Compile Include="OSM\Component\BeliefUpdater.cs" />
     <Compile Include="OSM\Algorithm\AATparticle\AATparticle_Candidate.cs" />
     <Compile Include="OSM\Algorithm\AATparticle\AATparticle_OSM.cs" />
