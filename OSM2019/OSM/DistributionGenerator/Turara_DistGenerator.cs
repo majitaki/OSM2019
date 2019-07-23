@@ -11,11 +11,11 @@ namespace OSM2019.OSM
     class Turara_DistGenerator : I_DistGenerator
     {
         public CustomDistribution MyCustomDistribution { get; set; }
-        public Turara_DistGenerator(int dim, double turara_weight, int turara_index)
+        public Turara_DistGenerator(int dim, double dist_weight, int main_index)
         {
-            var turara = MyMath.MakeTurara(dim, turara_weight);
+            var turara = MyMath.MakeTurara(dim, dist_weight);
             var dist = Vector<double>.Build.Dense(dim, turara.other);
-            dist[turara_index] = turara.max;
+            dist[main_index] = turara.max;
             this.MyCustomDistribution = new CustomDistribution(dist);
         }
         public CustomDistribution Generate()

@@ -46,7 +46,7 @@
       <HintPath>..\packages\MathNet.Numerics.4.7.0\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -119,6 +119,7 @@
     <Compile Include="OSM\Algorithm\IWTori\IWTorionly_OSM.cs" />
     <Compile Include="OSM\Component\OSM_Only.cs" />
     <Compile Include="OSM\DistributionGenerator\I_DistGenerator.cs" />
+    <Compile Include="OSM\DistributionGenerator\Exponential_DistGenerator.cs" />
     <Compile Include="OSM\DistributionGenerator\Turara_DistGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\Null_GraphGenerator.cs" />
     <Compile Include="OSM\GraphGenerator\GraphGeneratorBase.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="Utility\DrawSetting.cs" />
     <Compile Include="Utility\Enum.cs" />
     <Compile Include="Utility\CsvMapper.cs" />
+    <Compile Include="Utility\ExperimentSetting.cs" />
     <Compile Include="Utility\ExtendProgressBar.cs" />
     <Compile Include="Utility\MyMath.cs" />
     <Compile Include="Utility\Output.cs" />

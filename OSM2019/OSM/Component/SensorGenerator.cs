@@ -8,7 +8,7 @@ namespace OSM2019.OSM
 {
     class SensorGenerator
     {
-        int SensorSize;
+        public int SensorSize { get; private set; }
 
         public SensorGenerator SetSensorSize(int sensor_size)
         {

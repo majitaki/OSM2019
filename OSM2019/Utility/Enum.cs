@@ -107,4 +107,11 @@ namespace OSM2019.Utility
         Bayse,
         Particle
     }
+
+    enum EnvDistributionEnum
+    {
+        Turara,
+        Exponential
+
+    }
 }

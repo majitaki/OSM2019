@@ -17,8 +17,8 @@ namespace OSM2019.OSM
 
         public AATfunction_OSM() : base()
         {
-            this.Epsilon = 0.01;
-            this.AwaRateWindowSize = 1;
+            this.Epsilon = 0.001;
+            this.AwaRateWindowSize = 10;
         }
         public void SetAwaRateWindowSize(int size)
         {

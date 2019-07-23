@@ -28,7 +28,7 @@ namespace OSM2019.OSM
         public AATfunction_Candidate(Agent agent, int awa_window_size = 1)
         {
             if (agent.GetNeighbors().Count == 0) return;
-            this.Slope = 5.0;
+            this.Slope = 3.0;
             this.Translation = 0.0;
             this.AwaCounts = new Queue<int>();
             this.AwaWindowSize = awa_window_size;

@@ -1,7 +1,9 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using OSM2019.OSM;
+using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,9 +12,20 @@ namespace OSM2019
 {
     class SubjectManagerGenerator
     {
-        public SubjectManager Generate(OpinionSubject opinion_subject, double turara_weight, int correct_dim, double sensor_rate)
+        public SubjectManager Generate(OpinionSubject opinion_subject, double dist_weight, int correct_dim, double sensor_rate, EnvDistributionEnum env_dis_mode)
         {
-            var env_dist = new Turara_DistGenerator(opinion_subject.SubjectDimSize, turara_weight, correct_dim).Generate();
+            CustomDistribution env_dist = null;
+            switch (env_dis_mode)
+            {
+                case EnvDistributionEnum.Turara:
+                    env_dist = new Turara_DistGenerator(opinion_subject.SubjectDimSize, dist_weight, correct_dim).Generate();
+                    break;
+                case EnvDistributionEnum.Exponential:
+                    env_dist = new Exponential_DistGenerator(opinion_subject.SubjectDimSize, dist_weight, correct_dim).Generate();
+                    break;
+            }
+            Debug.Assert(env_dist != null);
+
             var subject_tv = new OpinionSubject("good_tv", 3);
             var subject_test = new OpinionSubject("test", opinion_subject.SubjectDimSize);
             var subject_company = new OpinionSubject("good_company", 2);

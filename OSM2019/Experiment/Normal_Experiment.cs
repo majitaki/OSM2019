@@ -22,7 +22,7 @@ namespace OSM2019.Experiment
         int SensorSize;
         double SensorSizeRate;
         double SensorCommonWeight;
-        double EnvTuraraWeight;
+        double EnvDistWeight;
         bool CommonWeightMode;
         double CommonWeight;
         double TargetH;
@@ -127,9 +127,9 @@ namespace OSM2019.Experiment
             return this;
         }
 
-        public Normal_Experiment SetEnvTuraraWeight(double turara_weight)
+        public Normal_Experiment SetEnvDistWeight(double dist_weight)
         {
-            this.EnvTuraraWeight = turara_weight;
+            this.EnvDistWeight = dist_weight;
             return this;
         }
 
@@ -382,13 +382,13 @@ namespace OSM2019.Experiment
                             {
                                 for (int i = 0; i < 100; i++)
                                 {
-                                    subject_mgr_dic.Add(i * 100, new SubjectManagerGenerator().Generate(subject_test, this.EnvTuraraWeight, i % this.DimSize, sensor_rate));
+                                    subject_mgr_dic.Add(i * 100, new SubjectManagerGenerator().Generate(subject_test, this.EnvDistWeight, i % this.DimSize, sensor_rate, EnvDistributionEnum.Turara));
                                 }
 
                             }
                             else
                             {
-                                subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(subject_test, this.EnvTuraraWeight, 0, sensor_rate));
+                                subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(subject_test, this.EnvDistWeight, 0, sensor_rate, EnvDistributionEnum.Turara));
                             }
                             osm.SetSubjectManagerDic(subject_mgr_dic);
                             osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);

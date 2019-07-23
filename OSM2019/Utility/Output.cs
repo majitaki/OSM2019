@@ -111,7 +111,6 @@ namespace OSM2019.Utility
                             }
                             //Console.WriteLine();
                         }
-
                         csv_writer.NextRecord();
                     }
 
@@ -119,13 +118,17 @@ namespace OSM2019.Utility
             }
         }
 
-        static public void OutputRounds(string pass, List<RecordRound> record_rounds, string tag = "")
+        static public void OutputRounds(string pass, List<RecordRound> record_rounds, string json_setting = "", string seed = "")
         {
             SafeCreateDirectory(pass);
 
             var dt = DateTime.Now;
             var dt_name = dt.ToString("yyyy-MM-dd-HH-mm-ss");
 
+            using (var sw = new StreamWriter(pass + "/setting.json", false, Encoding.UTF8))
+            {
+                sw.Write(json_setting);
+            }
 
             var keys = record_rounds.First().AllOpinionSizes.Values.SelectMany(value => value.Keys).Select(key => key.ToString());
             var headers = new[] {
@@ -147,7 +150,7 @@ namespace OSM2019.Utility
                     "BetterSimpsonD"
                      }.Concat(keys).ToList();
 
-            using (var streamWriter = new StreamWriter(pass + "/" + dt_name + "_" + tag + @"_rounds.csv"))
+            using (var streamWriter = new StreamWriter(pass + "/" + dt_name + "_" + seed + @"_rounds.csv"))
             using (var csv_writer = new CsvWriter(streamWriter))
             {
                 //header
