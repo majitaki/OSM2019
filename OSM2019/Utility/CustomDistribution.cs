@@ -31,8 +31,7 @@ namespace OSM2019.Utility
                 }
                 index += 1;
             }
-            Debug.Assert(false);
-            return -1;
+            return this.MyDistribution.Count() - 1;
         }
     }
 }

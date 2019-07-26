@@ -92,7 +92,8 @@ namespace OSM2019.Utility
         AATwindowparticle,
         AATfunction,
         AATfunctionparticle,
-        AATfunctioniwt
+        AATfunctioniwt,
+        AATinfo
     }
 
     enum SensorWeightEnum

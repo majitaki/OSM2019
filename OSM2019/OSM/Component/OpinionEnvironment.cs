@@ -13,7 +13,7 @@ namespace OSM2019.OSM
         public double SensorRate { get; protected set; }
         public OpinionSubject EnvSubject { get; protected set; }
         public int CorrectDim { get; protected set; }
-        Agent EnvironmentAgent;
+        public Agent EnvironmentAgent { get; protected set; }
         public CustomDistribution MyCustomDistribution { get; protected set; }
 
         public OpinionEnvironment()
