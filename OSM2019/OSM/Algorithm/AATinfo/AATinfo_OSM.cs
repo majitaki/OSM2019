@@ -41,13 +41,13 @@ namespace OSM2019.OSM
         {
           var aat_weight = candidate.Value.EstimateWeight(this.TargetH);
           candidate.Value.CanWeight = aat_weight;
-          candidate.Key.SetCommonWeight(aat_weight);
           if (candidate.Key.IsSensor)
           {
             candidate.Key.SetCommonWeight(aat_weight);
           }
           else
           {
+            //candidate.Key.SetCommonWeight(aat_weight);
             var weights = this.CalcInfoWeight(candidate.Key, aat_weight);
             candidate.Key.SetWeights(weights);
           }
@@ -56,7 +56,7 @@ namespace OSM2019.OSM
       }
     }
 
-    Dictionary<Agent, double> CalcInfoWeight(Agent agent, double aat_weight)
+    protected virtual Dictionary<Agent, double> CalcInfoWeight(Agent agent, double aat_weight)
     {
       var link_info_values = this.LinkInfoValues.Where(info_value => info_value.ReceiveAgent == agent).ToList();
       var log_link_info_values = new Dictionary<Agent, double>();

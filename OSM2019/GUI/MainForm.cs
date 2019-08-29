@@ -122,8 +122,8 @@ namespace OSM2019
       var dt_name = dt.ToString("yyyyMMddHHmm");
       int seeds = 3;
       double sensor_rate = 0.8;
-      int rounds = 300;
-      int steps = 3000;
+      int rounds = 200;
+      int steps = 2000;
       var th_duration = 0.05;
 
       dt = DateTime.Now;
@@ -131,19 +131,19 @@ namespace OSM2019
       Parallel.For(0, seeds, seed =>
       {
         new TargetH_Experiment()
-              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Grid2D })
-              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATfunction, AlgoEnum.AATinfo })
-              .SetNetworkSize(new List<int>() { 100, 200, 300 })
-              .SetDims(new List<int>() { 2, 3, 4, 5 }).SetSensorRate(sensor_rate)
+              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Grid2D })
+              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATinfo })
+              .SetNetworkSize(new List<int>() { 100, 500, 1000 })
+              .SetDims(new List<int>() { 2, 5, 10 }).SetSensorRate(sensor_rate)
               //.SetSensorCommonWeight(0.70)
               .SetSensorSizeRate(0.05)
               //.SetSensorFixSize(10)
               .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
               .SetSubjectName("test")
-              .SetEnvDistWeights(new List<double>() { 0.2 })
+              .SetEnvDistWeights(new List<double>() { 0.5 })
               .SetCommonCuriocity(0.1)
               //.SetSensorFixSize(10)
-              .SetTargetHs(Enumerable.Range(10, 21 - 10).Select(i => i * th_duration).ToList())
+              .SetTargetHs(Enumerable.Range(10, 20 - 9).Select(i => i * th_duration).ToList())
               .SetLogFolder(dt_name, "")
               .SetRounds(rounds)
               .SetSteps(steps)
@@ -219,9 +219,9 @@ namespace OSM2019
     void Test()
     {
       int agent_size = 200;
-      int dim = 5;
+      int dim = 2;
       int correct_dim = 0;
-      AlgoEnum algo = AlgoEnum.AATinfo;
+      AlgoEnum algo = AlgoEnum.AATinfostep;
       double targeth = 0.9;
       double common_weight = 0.5;
       double common_curiocity = 0.5;
@@ -235,7 +235,8 @@ namespace OSM2019
 
       GraphGeneratorBase graph_generator;
       //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-      graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
+      //graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
+      graph_generator = new BA_GraphGenerator().SetNodeSize(agent_size).SetAttachEdges(2);
       //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(agent_size);
 
       var pb = new ExtendProgressBar(100);
@@ -344,13 +345,22 @@ namespace OSM2019
           osm_aat_info.SetInfoWeightRate(0.5);
           osm = osm_aat_info;
           break;
+        case AlgoEnum.AATinfostep:
+          var osm_aat_info_step = new AATinfo_step_OSM();
+          osm_aat_info_step.SetTargetH(targeth);
+          osm_aat_info_step.SetAwaRateWindowSize(100);
+          osm_aat_info_step.SetLinkInfoValueWindowSize(100);
+          osm_aat_info_step.SetInfoWeightRate(1.0);
+          osm_aat_info_step.SetInfoLearningRate(0.2);
+          osm = osm_aat_info_step;
+          break;
         default:
           break;
       }
       osm.SetRand(update_step_rand);
       osm.SetAgentNetwork(agent_network);
       var subject_mgr_dic = new Dictionary<int, SubjectManager>();
-      for (int i = 0; i < 100; i++)
+      for (int i = 0; i < 1; i++)
       {
         subject_mgr_dic.Add(i * change_round, new SubjectManagerGenerator().Generate(subject_test, dist_weight, i % dim, sensor_rate, EnvDistributionEnum.Exponential));
       }

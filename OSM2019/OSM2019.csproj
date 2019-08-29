@@ -93,6 +93,7 @@
     <Compile Include="GUI\AnimationForm.Designer.cs">
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OSM\Algorithm\AATinfo\AATinfo_step_OSM.cs" />
     <Compile Include="OSM\Algorithm\AATinfo\AATinfo_OSM.cs" />
     <Compile Include="OSM\Algorithm\AATfunction\AATfunction_iwt_OSM.cs" />
     <Compile Include="OSM\Algorithm\AATfunction\AATfunction_particle_OSM.cs" />
