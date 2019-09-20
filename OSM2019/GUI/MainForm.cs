@@ -39,9 +39,9 @@ namespace OSM2019
       InitializeComponent();
       this.UserInitialize();
       this.MyAnimationForm = new AnimationForm();
-      //Test();
+      Test();
       //NormalExp();
-      TargethExp();
+      //TargethExp();
       //TestExp();
       this.MyAnimationForm.Show();
       this.MyAnimationForm.Left = this.Right;
@@ -92,7 +92,7 @@ namespace OSM2019
       Parallel.For(0, seeds, seed =>
       {
         new Normal_Experiment()
-              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal })
+              .SetGraphs(new List<GraphEnum>() { GraphEnum.BA })
               .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATfunction, AlgoEnum.AATparticle, AlgoEnum.AATfunctionparticle, AlgoEnum.IWTori, AlgoEnum.AATfunctioniwt })
               .SetNetworkSize(network_size, network_size, 500)
               .SetDimSize(dim).SetSensorRate(sensor_rate)
@@ -120,7 +120,7 @@ namespace OSM2019
     {
       var dt = DateTime.Now;
       var dt_name = dt.ToString("yyyyMMddHHmm");
-      int seeds = 3;
+      int seeds = 5;
       double sensor_rate = 0.8;
       int rounds = 200;
       int steps = 2000;
@@ -131,23 +131,26 @@ namespace OSM2019
       Parallel.For(0, seeds, seed =>
       {
         new TargetH_Experiment()
-              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Grid2D })
+              .SetGraphs(new List<GraphEnum>() { GraphEnum.Hexagonal })
               .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATinfo })
-              .SetNetworkSize(new List<int>() { 100, 500, 1000 })
-              .SetDims(new List<int>() { 2, 5, 10 }).SetSensorRate(sensor_rate)
+              .SetNetworkSize(new List<int>() { 500 })
+              .SetDims(new List<int>() { 10 }).SetSensorRate(sensor_rate)
               //.SetSensorCommonWeight(0.70)
               .SetSensorSizeRate(0.05)
               //.SetSensorFixSize(10)
               .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
               .SetSubjectName("test")
+              //.SetEnvDistWeights(new List<double>() { 0.5 })
               .SetEnvDistWeights(new List<double>() { 0.5 })
               .SetCommonCuriocity(0.1)
               //.SetSensorFixSize(10)
-              .SetTargetHs(Enumerable.Range(10, 20 - 9).Select(i => i * th_duration).ToList())
-              .SetLogFolder(dt_name, "")
+              //.SetTargetHs(Enumerable.Range(10, 20 - 9).Select(i => i * th_duration).ToList())
+              .SetTargetHs(new List<double>() { 0.95 })
+              .SetLogFolder(dt_name, "size_exp")
               .SetRounds(rounds)
               .SetSteps(steps)
               .SetOpinionThreshold(0.9)
+
               .SetDynamics(new List<bool>() { false })
               .SetEnvDistModes(new List<EnvDistributionEnum> { EnvDistributionEnum.Exponential })
               .SetInfoWeightRates(new List<double>() { 1.0 })
@@ -219,9 +222,9 @@ namespace OSM2019
     void Test()
     {
       int agent_size = 200;
-      int dim = 2;
+      int dim = 5;
       int correct_dim = 0;
-      AlgoEnum algo = AlgoEnum.AATinfostep;
+      AlgoEnum algo = AlgoEnum.AATinfo;
       double targeth = 0.9;
       double common_weight = 0.5;
       double common_curiocity = 0.5;
@@ -392,6 +395,7 @@ namespace OSM2019
       this.numericUpDownSpeedControl.Value = 1;
       this.labelRoundNum.Text = 0.ToString();
       this.PlayStopFlag = true;
+      this.checkBoxMenu.Checked = true;
 
     }
 

@@ -252,9 +252,11 @@ namespace OSM2019.Experiment
                                             {
                                                 case GraphEnum.WS:
                                                     graph_generator = new WS_GraphGenerator().SetNodeSize(size).SetNearestNeighbors(6).SetRewireP(0.01);
+                                                    //graph_generator = new WS_GraphGenerator().SetNodeSize(size).SetNearestNeighbors(15).SetRewireP(0.1);
                                                     break;
                                                 case GraphEnum.BA:
                                                     graph_generator = new BA_GraphGenerator().SetNodeSize(size).SetAttachEdges(2);
+                                                    //graph_generator = new BA_GraphGenerator().SetNodeSize(size).SetAttachEdges(10);
                                                     break;
                                                 case GraphEnum.Hexagonal:
                                                     graph_generator = new Hexagonal_GraphGenerator().SetNodeSize(size);
