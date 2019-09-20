@@ -81,7 +81,7 @@ namespace OSM2019.Utility
             this.RedPen = new Pen(Color.Red);
             this.RedPen.Width = 3f;
             this.MeterPen = new Pen(StaticColor.ConvertHSBtoARGB(this.Hue, 1f - 0f, this.Voffset));
-            this.MeterPen.Width = 4; //2
+            this.MeterPen.Width = 6; //2
             this.MeterPen.StartCap = this.MeterPen.EndCap = LineCap.Round;
             this.InitMeterPen = new Pen(Color.Indigo);
             this.InitMeterPen.Width = 6;

@@ -248,10 +248,14 @@ namespace OSM2019.GUI
     {
       this.MyPen = (Pen)this.MyDrawSetting.LinkPen.Clone();
       var selected_pen = (Pen)this.MyDrawSetting.SelectedLinkPen.Clone();
+      var weight_pen = (Pen)this.MyDrawSetting.MeterPen.Clone();
       var base_edge_width = this.MyPen.Width / this.ViewScale;
+      var weight_edge_width = weight_pen.Width / this.ViewScale;
 
       this.MyPen.Width = base_edge_width;
       selected_pen.Width = base_edge_width;
+
+      var length = 2 * this.AgentViews.First().R;
 
       foreach (var link_view in this.LinkViews)
       {
@@ -269,6 +273,29 @@ namespace OSM2019.GUI
         {
           e.Graphics.DrawLine(this.MyPen, x1, y1, x2, y2);
         }
+      }
+
+      foreach (var link_view in this.LinkViews)
+      {
+        var x1 = link_view.SourcePos.X;
+        var y1 = link_view.SourcePos.Y;
+        var x2 = link_view.TargetPos.X;
+        var y2 = link_view.TargetPos.Y;
+
+        double angle_s = Math.Atan2(y2 - y1, x2 - x1);
+        var w_x_s = x1 + length * Math.Cos(angle_s);
+        var w_y_s = y1 + length * Math.Sin(angle_s);
+
+        double angle_t = Math.Atan2(y1 - y2, x1 - x2);
+        var w_x_t = x2 + length * Math.Cos(angle_t);
+        var w_y_t = y2 + length * Math.Sin(angle_t);
+
+        weight_pen.Width = (float)(weight_edge_width * (Math.Exp(link_view.MyAgentLink.SourceWeight) - 1));
+        e.Graphics.DrawLine(weight_pen, x1, y1, (float)w_x_s, (float)w_y_s);
+
+        weight_pen.Width = (float)(weight_edge_width * (Math.Exp(link_view.MyAgentLink.TargetWeight) - 1));
+        e.Graphics.DrawLine(weight_pen, x2, y2, (float)w_x_t, (float)w_y_t);
+
       }
 
 
@@ -338,6 +365,7 @@ namespace OSM2019.GUI
       if (agent_view.MyAgent.GetOpinionDim() != -1)
       {
         var pen = new Pen(dim_brush, 5);
+        pen.Width = r / 3;
         e.Graphics.DrawRectangle(pen, base_x, base_y, length, height);
       }
 
@@ -345,6 +373,7 @@ namespace OSM2019.GUI
       {
         //var pen = new Pen(dim_brush, 3);
         var pen = this.MyDrawSetting.SensorPen;
+        pen.Width = r / 5;
         e.Graphics.DrawRectangle(pen, base_x, base_y, length, height);
 
       }
@@ -352,6 +381,7 @@ namespace OSM2019.GUI
       if (this.NeighborAgentIDs.Contains(agent_view.MyAgent.AgentID))
       {
         var pen = this.MyDrawSetting.RedPen;
+        pen.Width = r / 4;
         e.Graphics.DrawRectangle(pen, base_x, base_y, length, height);
       }
     }
