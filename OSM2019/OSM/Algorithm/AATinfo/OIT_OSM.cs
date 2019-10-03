@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-  class AATinfo_OSM : AATfunction_OSM
+  class OIT_OSM : AATfunction_OSM
   {
     public double InfoWeightRate { get; private set; }
 

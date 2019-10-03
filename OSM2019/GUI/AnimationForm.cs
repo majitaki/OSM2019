@@ -290,10 +290,10 @@ namespace OSM2019.GUI
         var w_x_t = x2 + length * Math.Cos(angle_t);
         var w_y_t = y2 + length * Math.Sin(angle_t);
 
-        weight_pen.Width = (float)(weight_edge_width * (Math.Exp(link_view.MyAgentLink.SourceWeight) - 1));
+        weight_pen.Width = (float)(weight_edge_width * ((Math.Pow(100, link_view.MyAgentLink.SourceWeight) - 1) / 100));
         e.Graphics.DrawLine(weight_pen, x1, y1, (float)w_x_s, (float)w_y_s);
 
-        weight_pen.Width = (float)(weight_edge_width * (Math.Exp(link_view.MyAgentLink.TargetWeight) - 1));
+        weight_pen.Width = (float)(weight_edge_width * ((Math.Pow(100, link_view.MyAgentLink.TargetWeight) - 1) / 100));
         e.Graphics.DrawLine(weight_pen, x2, y2, (float)w_x_t, (float)w_y_t);
 
       }

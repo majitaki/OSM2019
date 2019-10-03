@@ -120,9 +120,9 @@ namespace OSM2019
     {
       var dt = DateTime.Now;
       var dt_name = dt.ToString("yyyyMMddHHmm");
-      int seeds = 5;
+      int seeds = 3;
       double sensor_rate = 0.8;
-      int rounds = 200;
+      //int rounds = 200;
       int steps = 2000;
       var th_duration = 0.05;
 
@@ -131,8 +131,8 @@ namespace OSM2019
       Parallel.For(0, seeds, seed =>
       {
         new TargetH_Experiment()
-              .SetGraphs(new List<GraphEnum>() { GraphEnum.Hexagonal })
-              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATinfo })
+              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS})
+              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.OIT })
               .SetNetworkSize(new List<int>() { 500 })
               .SetDims(new List<int>() { 10 }).SetSensorRate(sensor_rate)
               //.SetSensorCommonWeight(0.70)
@@ -146,11 +146,10 @@ namespace OSM2019
               //.SetSensorFixSize(10)
               //.SetTargetHs(Enumerable.Range(10, 20 - 9).Select(i => i * th_duration).ToList())
               .SetTargetHs(new List<double>() { 0.95 })
-              .SetLogFolder(dt_name, "size_exp")
-              .SetRounds(rounds)
+              .SetLogFolder(dt_name, "")
+              .SetRounds(new List<int>() { 1000 })
               .SetSteps(steps)
               .SetOpinionThreshold(0.9)
-
               .SetDynamics(new List<bool>() { false })
               .SetEnvDistModes(new List<EnvDistributionEnum> { EnvDistributionEnum.Exponential })
               .SetInfoWeightRates(new List<double>() { 1.0 })
@@ -221,10 +220,10 @@ namespace OSM2019
 
     void Test()
     {
-      int agent_size = 200;
-      int dim = 5;
+      int agent_size = 1000;
+      int dim = 10;
       int correct_dim = 0;
-      AlgoEnum algo = AlgoEnum.AATinfo;
+      AlgoEnum algo = AlgoEnum.OIT;
       double targeth = 0.9;
       double common_weight = 0.5;
       double common_curiocity = 0.5;
@@ -238,8 +237,8 @@ namespace OSM2019
 
       GraphGeneratorBase graph_generator;
       //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-      //graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
-      graph_generator = new BA_GraphGenerator().SetNodeSize(agent_size).SetAttachEdges(2);
+      graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
+      //graph_generator = new BA_GraphGenerator().SetNodeSize(agent_size).SetAttachEdges(2);
       //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(agent_size);
 
       var pb = new ExtendProgressBar(100);
@@ -249,7 +248,6 @@ namespace OSM2019
 
       var init_belief_gene = new InitBeliefGenerator()
                               .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
-
 
       var subject_test = new OpinionSubject("test", dim);
 
@@ -262,7 +260,7 @@ namespace OSM2019
       var sensor_gene = new SensorGenerator()
                       .SetSensorSize((int)(0.05 * graph.Nodes.Count));
 
-      int agent_gene_seed = 0;
+      int agent_gene_seed = 4;
       var agent_gene_rand = new ExtendRandom(agent_gene_seed);
 
 
@@ -274,7 +272,6 @@ namespace OSM2019
                               .ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
                               .GenerateSensor(sensor_gene)
                               .SetLayout(layout);
-
 
       int update_step_seed = 0;
       var update_step_rand = new ExtendRandom(update_step_seed);
@@ -340,16 +337,16 @@ namespace OSM2019
           osm_function_iwt.SetAwaRateWindowSize(20);
           osm = osm_function_iwt;
           break;
-        case AlgoEnum.AATinfo:
-          var osm_aat_info = new AATinfo_OSM();
+        case AlgoEnum.OIT:
+          var osm_aat_info = new OIT_OSM();
           osm_aat_info.SetTargetH(targeth);
           osm_aat_info.SetAwaRateWindowSize(20);
           osm_aat_info.SetLinkInfoValueWindowSize(20);
           osm_aat_info.SetInfoWeightRate(0.5);
           osm = osm_aat_info;
           break;
-        case AlgoEnum.AATinfostep:
-          var osm_aat_info_step = new AATinfo_step_OSM();
+        case AlgoEnum.OITstep:
+          var osm_aat_info_step = new OIT_step_OSM();
           osm_aat_info_step.SetTargetH(targeth);
           osm_aat_info_step.SetAwaRateWindowSize(100);
           osm_aat_info_step.SetLinkInfoValueWindowSize(100);

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-  class AATinfo_step_OSM : AATinfo_OSM
+  class OIT_step_OSM : OIT_OSM
   {
     public double InfoLearningRate { get; private set; }
 
