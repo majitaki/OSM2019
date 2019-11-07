@@ -373,6 +373,7 @@ namespace OSM2019.GUI
       {
         //var pen = new Pen(dim_brush, 3);
         var pen = this.MyDrawSetting.SensorPen;
+        if (agent_view.MyAgent.IsMalicious) pen = this.MyDrawSetting.MaliciousSensorPen;
         pen.Width = r / 5;
         e.Graphics.DrawRectangle(pen, base_x, base_y, length, height);
 

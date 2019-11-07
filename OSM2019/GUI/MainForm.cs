@@ -39,83 +39,11 @@ namespace OSM2019
       InitializeComponent();
       this.UserInitialize();
       this.MyAnimationForm = new AnimationForm();
-      Test();
-      //NormalExp();
-      //TargethExp();
-      //TestExp();
+      //Test();
+      TargethExp();
       this.MyAnimationForm.Show();
       this.MyAnimationForm.Left = this.Right;
     }
-
-    void NormalExp()
-    {
-      var dt = DateTime.Now;
-      var dt_name = dt.ToString("yyyy-MMdd-HHmm");
-      int seeds = 2;
-      int dim = 5;
-      double sensor_rate = 0.8;
-      int network_size = 200;
-      double dist_weight = 0.5;
-      int rounds = 1000;
-      int steps = 3000;
-      bool is_dynamic = false;
-
-
-      dt = DateTime.Now;
-      dt_name = dt.ToString("yyyy-MMdd-HHmm");
-      Parallel.For(0, seeds, seed =>
-      {
-        new Normal_Experiment()
-              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Hexagonal })
-              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATfunction, AlgoEnum.AATparticle, AlgoEnum.AATfunctionparticle, AlgoEnum.IWTori, AlgoEnum.AATfunctioniwt })
-              .SetNetworkSize(network_size, network_size, 500)
-              .SetDimSize(dim).SetSensorRate(sensor_rate)
-              .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
-              .SetSubjectName("test")
-              .SetEnvDistWeight(dist_weight)
-              //.SetCommonWeight(0.8)
-              .SetCommonCuriocity(0.5)
-              .SetTargetHs(0.9)
-              //.SetSensorSizeRate(0.1)
-              .SetSensorFixSize(10)
-              .SetLogFolder(dt_name, "normal_static")
-              .SetRounds(rounds)
-              .SetSteps(steps)
-              .SetOpinionThreshold(0.9)
-              .SetDynamic(is_dynamic)
-              .Run(seed);
-      });
-
-      dt = DateTime.Now;
-      dt_name = dt.ToString("yyyy-MMdd-HHmm");
-      is_dynamic = true;
-      Parallel.For(0, seeds, seed =>
-      {
-        new Normal_Experiment()
-              .SetGraphs(new List<GraphEnum>() { GraphEnum.BA })
-              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.AATfunction, AlgoEnum.AATparticle, AlgoEnum.AATfunctionparticle, AlgoEnum.IWTori, AlgoEnum.AATfunctioniwt })
-              .SetNetworkSize(network_size, network_size, 500)
-              .SetDimSize(dim).SetSensorRate(sensor_rate)
-              .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
-              .SetSubjectName("test")
-              .SetEnvDistWeight(dist_weight)
-              //.SetCommonWeight(0.8)
-              .SetCommonCuriocity(0.5)
-              .SetTargetHs(0.9)
-              //.SetSensorSizeRate(0.1)
-              .SetSensorFixSize(10)
-              .SetLogFolder(dt_name, "normal_dynamic")
-              .SetRounds(rounds)
-              .SetSteps(steps)
-              .SetOpinionThreshold(0.9)
-              .SetDynamic(is_dynamic)
-              .Run(seed);
-      });
-
-
-      Environment.Exit(0);
-    }
-
     void TargethExp()
     {
       var dt = DateTime.Now;
@@ -131,115 +59,60 @@ namespace OSM2019
       Parallel.For(0, seeds, seed =>
       {
         new TargetH_Experiment()
-              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS})
-              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.OIT })
-              .SetNetworkSize(new List<int>() { 500 })
-              .SetDims(new List<int>() { 10 }).SetSensorRate(sensor_rate)
+              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Grid2D, GraphEnum.Hexagonal })
+              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.SWT, AlgoEnum.AATfunction })
+              .SetNetworkSize(new List<int>() { 200 })
+              .SetDims(new List<int>() { 2, 5, 10 }).SetSensorRate(sensor_rate)
               //.SetSensorCommonWeight(0.70)
-              .SetSensorSizeRate(0.05)
+              .SetSensorSizeRate(new List<double>() { 0.1 })
+              .SetMaliciousSensorSizeRate(new List<double>() { 0.0, 0.02, 0.04, 0.06, 0.08, 0.1 })
               //.SetSensorFixSize(10)
               .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
               .SetSubjectName("test")
               //.SetEnvDistWeights(new List<double>() { 0.5 })
-              .SetEnvDistWeights(new List<double>() { 0.5 })
+              .SetEnvDistWeights(new List<double>() { 0.8 })
+              .SetMaliciousEnvDistWeights(new List<double>() { 0.8 })
               .SetCommonCuriocity(0.1)
-              //.SetSensorFixSize(10)
               //.SetTargetHs(Enumerable.Range(10, 20 - 9).Select(i => i * th_duration).ToList())
-              .SetTargetHs(new List<double>() { 0.95 })
-              .SetLogFolder(dt_name, "")
-              .SetRounds(new List<int>() { 1000 })
+              .SetTargetHs(new List<double>() { 0.9 })
+              .SetLogFolder(dt_name, "senrio2")
+              .SetRounds(new List<int>() { 300 })
               .SetSteps(steps)
               .SetOpinionThreshold(0.9)
               .SetDynamics(new List<bool>() { false })
-              .SetEnvDistModes(new List<EnvDistributionEnum> { EnvDistributionEnum.Exponential })
+              .SetEnvDistModes(new List<EnvDistributionEnum> { EnvDistributionEnum.Turara })
               .SetInfoWeightRates(new List<double>() { 1.0 })
               .Run(seed);
       });
 
       Environment.Exit(0);
     }
-
-    void TestExp()
-    {
-      //dim, rate
-      //2, 0.62
-      //3, 0.5
-      //4, 0.45
-      //5, 0.42
-      //10. 0.35
-      var dt = DateTime.Now;
-      var dt_name = dt.ToString("yyyy-MMdd-HHmm");
-      //Parallel.For(0, 5, seed =>
-      //{
-      //    new CommonCuriocity_Experiment()
-      //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-      //    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.IWTorionly })
-      //    .SetNetworkSize(300, 300, 100)
-      //    .SetDimSize(10).SetSensorRate(0.3)
-      //    .SetSensorCommonWeight(0.70)
-      //    .SetSensorSizeRate(0.1)
-      //    //.SetSensorFixSize(10)
-      //    //.SetTargetH(0.90)
-      //    .SetCommonWeight(0.4)
-      //    .SetCommonCuriocities(Enumerable.Range(0, 11).Select(i => i / 10.0).ToList())
-      //    .SetRounds(300)
-      //    .SetSteps(1500)
-      //    .SetOpinionThreshold(0.9)
-      //    .SetLogFolder(dt_name, "")
-      //    .Run(seed);
-      //});
-      //dt = DateTime.Now;
-      //dt_name = dt.ToString("yyyy-MMdd-HHmm");
-      //int dim = 2;
-      //int correct_dim = 0;
-      //double sensor_rate = 0.6;
-      //int network_size = 100;
-      //Parallel.For(0, 5, seed =>
-      //{
-      //    new CommonWeight_Experiment()
-      //    .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-      //    .SetAlgos(new List<AlgoEnum>() { AlgoEnum.OSMonly })
-      //    .SetNetworkSize(network_size, network_size, 100)
-      //    .SetDimSize(dim).SetSensorRate(sensor_rate)
-      //    .SetSensorSizeRate(0.1)
-      //    .SetCustomDistribution(new Turara_DistGenerator(dim, 0.3, correct_dim).Generate())
-      //    .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.Custom, sensor_rate))
-      //    //.SetSensorFixSize(10)
-      //    .SetCommonWeights(Enumerable.Range(0, 21).Select(i => i / 20.0).Where(j => j >= 1.0 / 10).ToList())
-      //    //.SetCommonCuriocity(0.8)
-      //    //.SetRandomCommonCuriocity()
-      //    .SetLogFolder(dt_name, "")
-      //    .SetRounds(300)
-      //    .SetSteps(3000)
-      //    .SetOpinionThreshold(0.9)
-      //    .Run(seed);
-      //});
-
-      Environment.Exit(0);
-    }
-
     void Test()
     {
-      int agent_size = 1000;
-      int dim = 10;
+      int agent_size = 300;
+      int dim = 2;
       int correct_dim = 0;
-      AlgoEnum algo = AlgoEnum.OIT;
+      int malicious_dim = 1;
+      AlgoEnum algo = AlgoEnum.SWT;
       double targeth = 0.9;
       double common_weight = 0.5;
       double common_curiocity = 0.5;
       double sensor_rate = 0.8;
       double dist_weight = 0.5;
+      double malicious_dist_weight = 0.8;
+      int sensor_size = (int)(0.05 * agent_size);
+      int malicious_sensor_size = (int)(0.01 * agent_size);
       var op_form_threshold = 0.9;
       int sample_size = 10;
-      int change_round = 25;
+      int change_round = 0;
 
       var belief_updater = new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate);
 
       GraphGeneratorBase graph_generator;
       //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-      graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
+      //graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
       //graph_generator = new BA_GraphGenerator().SetNodeSize(agent_size).SetAttachEdges(2);
-      //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(agent_size);
+      graph_generator = new Grid2D_GraphGenerator().SetNodeSize(agent_size);
 
       var pb = new ExtendProgressBar(100);
       var graph = graph_generator.Generate(0, pb);
@@ -258,7 +131,8 @@ namespace OSM2019
                           .SetInitOpinion(Vector<double>.Build.Dense(dim, 0.0));
 
       var sensor_gene = new SensorGenerator()
-                      .SetSensorSize((int)(0.05 * graph.Nodes.Count));
+      //                .SetSensorSize((int)5);
+      .SetSensorSize(sensor_size, malicious_sensor_size);
 
       int agent_gene_seed = 4;
       var agent_gene_rand = new ExtendRandom(agent_gene_seed);
@@ -337,15 +211,15 @@ namespace OSM2019
           osm_function_iwt.SetAwaRateWindowSize(20);
           osm = osm_function_iwt;
           break;
-        case AlgoEnum.OIT:
+        case AlgoEnum.SWT:
           var osm_aat_info = new OIT_OSM();
           osm_aat_info.SetTargetH(targeth);
-          osm_aat_info.SetAwaRateWindowSize(20);
-          osm_aat_info.SetLinkInfoValueWindowSize(20);
-          osm_aat_info.SetInfoWeightRate(0.5);
+          osm_aat_info.SetAwaRateWindowSize(100);
+          osm_aat_info.SetLinkInfoValueWindowSize(100);
+          osm_aat_info.SetInfoWeightRate(1.0);
           osm = osm_aat_info;
           break;
-        case AlgoEnum.OITstep:
+        case AlgoEnum.SWTstep:
           var osm_aat_info_step = new OIT_step_OSM();
           osm_aat_info_step.SetTargetH(targeth);
           osm_aat_info_step.SetAwaRateWindowSize(100);
@@ -360,10 +234,12 @@ namespace OSM2019
       osm.SetRand(update_step_rand);
       osm.SetAgentNetwork(agent_network);
       var subject_mgr_dic = new Dictionary<int, SubjectManager>();
-      for (int i = 0; i < 1; i++)
-      {
-        subject_mgr_dic.Add(i * change_round, new SubjectManagerGenerator().Generate(subject_test, dist_weight, i % dim, sensor_rate, EnvDistributionEnum.Exponential));
-      }
+      subject_mgr_dic.Add(0, new SubjectManagerGenerator()
+        .Generate(subject_test, dist_weight, correct_dim, sensor_rate, EnvDistributionEnum.Turara, malicious_dim, malicious_dist_weight));
+      //for (int i = 0; i < 1; i++)
+      //{
+      //  subject_mgr_dic.Add(i * change_round, new SubjectManagerGenerator().Generate(subject_test, dist_weight, i % dim, sensor_rate, EnvDistributionEnum.Turara));
+      //}
       osm.SetSubjectManagerDic(subject_mgr_dic);
       osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
       osm.SetOpinionIntroInterval(10);

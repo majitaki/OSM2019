@@ -93,8 +93,8 @@ namespace OSM2019.Utility
         AATfunction,
         AATfunctionparticle,
         AATfunctioniwt,
-        OIT,
-        OITstep
+        SWT,
+        SWTstep
     }
 
     enum SensorWeightEnum

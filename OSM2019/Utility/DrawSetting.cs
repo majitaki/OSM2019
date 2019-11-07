@@ -30,6 +30,7 @@ namespace OSM2019.Utility
         public Pen SelectedLinkPen;
         public Pen SelectedPen;
         public Pen SensorPen;
+        public Pen MaliciousSensorPen;
         public Pen SensorNetworkPen;
         public Pen RedPen;
         public Pen MeterPen;
@@ -76,6 +77,8 @@ namespace OSM2019.Utility
             this.SensorPen = new Pen(Color.Orange);
             //this.SensorPen = new Pen(Color.MediumBlue);
             this.SensorPen.Width = 3f;
+            this.MaliciousSensorPen = new Pen(Color.Magenta);
+            this.MaliciousSensorPen.Width = 3f;
             this.SensorNetworkPen = new Pen(OrangeColor);
             this.SensorNetworkPen.Width = 10;
             this.RedPen = new Pen(Color.Red);
