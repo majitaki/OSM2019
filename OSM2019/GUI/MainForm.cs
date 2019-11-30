@@ -39,8 +39,8 @@ namespace OSM2019
       InitializeComponent();
       this.UserInitialize();
       this.MyAnimationForm = new AnimationForm();
-      Test();
-      //TargethExp();
+      //Test();
+      TargethExp();
       this.MyAnimationForm.Show();
       this.MyAnimationForm.Left = this.Right;
     }
@@ -59,29 +59,31 @@ namespace OSM2019
       Parallel.For(0, seeds, seed =>
       {
         new TargetH_Experiment()
-              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.Grid2D, GraphEnum.Hexagonal })
-              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.SWT, AlgoEnum.AATfunction })
-              .SetNetworkSize(new List<int>() { 200 })
-              .SetDims(new List<int>() { 2, 5, 10 }).SetSensorRate(sensor_rate)
+              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS, GraphEnum.BA, GraphEnum.Grid2D })
+              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.GDWT, AlgoEnum.AAT, AlgoEnum.SWT })
+              .SetNetworkSize(new List<int>() { 300 })
+              .SetDims(new List<int>() { 5 }).SetSensorRate(sensor_rate)
               //.SetSensorCommonWeight(0.70)
-              .SetSensorSizeRate(new List<double>() { 0.1 })
-              .SetMaliciousSensorSizeRate(new List<double>() { 0.0, 0.02, 0.04, 0.06, 0.08, 0.1 })
+              .SetSensorSizeRate(new List<double>() { 0.05 })
+              .SetMaliciousSensorSizeRate(new List<double>() { 0.00 })
               //.SetSensorFixSize(10)
               .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
               .SetSubjectName("test")
-              //.SetEnvDistWeights(new List<double>() { 0.5 })
-              .SetEnvDistWeights(new List<double>() { 0.65 })
-              .SetMaliciousEnvDistWeights(new List<double>() { 0.8 })
+              .SetEnvDistWeights(new List<double>() { 0.5 })
+              //.SetEnvDistWeights(new List<double>() { 0.65 })
+              .SetMaliciousEnvDistWeights(new List<double>() { 0.0 })
+              //.SetMaliciousEnvDistWeights(new List<double>() { 0.0 })
               .SetCommonCuriocity(0.1)
               //.SetTargetHs(Enumerable.Range(10, 20 - 9).Select(i => i * th_duration).ToList())
-              .SetTargetHs(new List<double>() { 0.9 })
-              .SetLogFolder(dt_name, "senrio2")
+              .SetTargetHs(new List<double>() { 0.6, 0.7, 0.8, 0.9, 0.92, 0.94, 0.96, 0.98, 1.0 })
+              .SetLogFolder(dt_name, "gdwt")
               .SetRounds(new List<int>() { 300 })
               .SetSteps(steps)
               .SetOpinionThreshold(0.9)
               .SetDynamics(new List<bool>() { false })
               .SetEnvDistModes(new List<EnvDistributionEnum> { EnvDistributionEnum.Exponential })
               .SetInfoWeightRates(new List<double>() { 1.0 })
+              .SetEstFunctions(new List<EstFuncEnum>() { EstFuncEnum.Sigmoid })
               .Run(seed);
       });
 
@@ -89,30 +91,32 @@ namespace OSM2019
     }
     void Test()
     {
-      int agent_size = 300;
-      int dim = 5;
+      int agent_size = 200;
+      int dim = 2;
       int correct_dim = 0;
       int malicious_dim = 1;
-      AlgoEnum algo = AlgoEnum.AATfunction;
-      double targeth = 0.9;
+      AlgoEnum algo = AlgoEnum.GDWT;
+      double targeth = 0.90;
       double common_weight = 0.5;
       double common_curiocity = 0.5;
       double sensor_rate = 0.8;
-      double dist_weight = 0.8;
+      double dist_weight = 0.6;
       double malicious_dist_weight = 0.8;
-      int sensor_size = (int)(0.1 * agent_size);
-      int malicious_sensor_size = (int)(0.06 * agent_size);
+      int sensor_size = (int)(0.05 * agent_size);
+      //int malicious_sensor_size = (int)(0.04 * agent_size);
+      int malicious_sensor_size = 0;
       var op_form_threshold = 0.9;
       int sample_size = 10;
       int change_round = 0;
+      var est_func_enum = EstFuncEnum.Sigmoid;
 
       var belief_updater = new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate);
 
       GraphGeneratorBase graph_generator;
       //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-      graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
+      //graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
       //graph_generator = new BA_GraphGenerator().SetNodeSize(agent_size).SetAttachEdges(2);
-      //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(agent_size);
+      graph_generator = new Grid2D_GraphGenerator().SetNodeSize(agent_size);
 
       var pb = new ExtendProgressBar(100);
       var graph = graph_generator.Generate(0, pb);
@@ -121,6 +125,7 @@ namespace OSM2019
 
       var init_belief_gene = new InitBeliefGenerator()
                               .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
+      //.SetInitBeliefMode(mode: InitBeliefMode.NormalWide);
 
       var subject_test = new OpinionSubject("test", dim);
 
@@ -227,6 +232,23 @@ namespace OSM2019
           osm_aat_info_step.SetInfoWeightRate(1.0);
           osm_aat_info_step.SetInfoLearningRate(0.2);
           osm = osm_aat_info_step;
+          break;
+        case AlgoEnum.GDWT:
+          var osm_gdwt = new GDWT_OSM();
+          osm_gdwt.SetTargetH(targeth);
+          osm_gdwt.SetAwaRateWindowSize(100);
+
+          I_EstFunc est_func = null;
+          switch (est_func_enum)
+          {
+            case EstFuncEnum.Sigmoid:
+              est_func = new Sigmoid_EstFunc(0.5, 0, 15);
+              break;
+            default:
+              break;
+          }
+          osm_gdwt.SetEstimateFunction(est_func);
+          osm = osm_gdwt;
           break;
         default:
           break;

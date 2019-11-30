@@ -33,6 +33,7 @@ namespace OSM2019.Experiment
     int Steps;
     List<GraphEnum> MyGraphs;
     List<AlgoEnum> MyAlgos;
+    List<EstFuncEnum> MyEstFuncs;
     List<int> MyDims;
     List<double> TargetHs;
     List<double> InfoWeightRates;
@@ -60,6 +61,7 @@ namespace OSM2019.Experiment
       this.NetworkSizes = new List<int>();
       this.SensorSizeRates = new List<double>();
       this.MaliciousSensorSizeRates = new List<double>();
+      this.MyEstFuncs = new List<EstFuncEnum>();
     }
 
     public TargetH_Experiment SetAlgos(List<AlgoEnum> algos)
@@ -123,6 +125,12 @@ namespace OSM2019.Experiment
     {
       this.SensorSizeFixMode = false;
       this.MaliciousSensorSizeRates = malicious_sensor_size_rates;
+      return this;
+    }
+
+    public TargetH_Experiment SetEstFunctions(List<EstFuncEnum> est_funcs)
+    {
+      this.MyEstFuncs = est_funcs;
       return this;
     }
 
@@ -242,7 +250,10 @@ namespace OSM2019.Experiment
                               {
                                 foreach (var mal_sensor_size_rate in this.MaliciousSensorSizeRates)
                                 {
-                                  max++;
+                                  foreach (var est_func in this.MyEstFuncs)
+                                  {
+                                    max++;
+                                  }
                                 }
                               }
                             }
@@ -284,253 +295,273 @@ namespace OSM2019.Experiment
                         {
                           foreach (var mal_sensor_size_rate in this.MaliciousSensorSizeRates)
                           {
-                            for (int seed = start_seed; seed <= final_seed; seed++)
+                            foreach (var est_func in this.MyEstFuncs)
                             {
-                              switch (select_graph)
+                              for (int seed = start_seed; seed <= final_seed; seed++)
                               {
-                                case GraphEnum.WS:
-                                  graph_generator = new WS_GraphGenerator().SetNodeSize(size).SetNearestNeighbors(6).SetRewireP(0.01);
-                                  //graph_generator = new WS_GraphGenerator().SetNodeSize(size).SetNearestNeighbors(15).SetRewireP(0.1);
-                                  break;
-                                case GraphEnum.BA:
-                                  graph_generator = new BA_GraphGenerator().SetNodeSize(size).SetAttachEdges(2);
-                                  //graph_generator = new BA_GraphGenerator().SetNodeSize(size).SetAttachEdges(10);
-                                  break;
-                                case GraphEnum.Hexagonal:
-                                  graph_generator = new Hexagonal_GraphGenerator().SetNodeSize(size);
-                                  break;
-                                case GraphEnum.Grid2D:
-                                  graph_generator = new Grid2D_GraphGenerator().SetNodeSize(size);
-                                  break;
-                                case GraphEnum.Triangular:
-                                  graph_generator = new Triangular_GraphGenerator().SetNodeSize(size);
-                                  break;
-                                default:
-                                  new Exception();
-                                  return;
-                              }
-                              var graph = new RawGraph();
-                              var layout = new Layout();
-
-                              lock (lock_object)
-                              {
-                                graph = graph_generator.Generate(seed, pb);
-                                layout = new Circular_LayoutGenerator(graph).Generate(pb);
-                              }
-
-                              var init_belief_gene = new InitBeliefGenerator()
-                                                      .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
-
-                              var subject_test = new OpinionSubject(this.SubjectName, op_dim_size);
-
-                              var sample_agent_test = new SampleAgent()
-                                                  .SetInitBeliefGene(init_belief_gene)
-                                                  .SetThreshold(this.OpinionThreshold)
-                                                  .SetSubject(subject_test)
-                                                  .SetInitOpinion(Vector<double>.Build.Dense(op_dim_size, 0.0));
-
-                              var sensor_gene = new SensorGenerator();
-                              if (this.SensorSizeFixMode)
-                              {
-                                //you will add malicious sensor size 
-                                sensor_gene.SetSensorSize(this.SensorSize);
-                              }
-                              else
-                              {
-                                int sensor_size = (int)(sensor_size_rate * graph.Nodes.Count);
-                                int mal_sensor_size = (int)(mal_sensor_size_rate * graph.Nodes.Count);
-                                sensor_gene.SetSensorSize(sensor_size, mal_sensor_size);
-                              }
-
-                              int agent_gene_seed = seed;
-                              var agent_gene_rand = new ExtendRandom(agent_gene_seed);
-
-
-                              var agent_network = new AgentNetwork()
-                                                      .SetRand(agent_gene_rand)
-                                                      .GenerateNetworkFrame(graph)
-                                                      .ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
-                                                      .GenerateSensor(sensor_gene)
-                                                      .SetLayout(layout);
-
-                              int update_step_seed = seed;
-
-                              foreach (var algo in algos)
-                              {
-                                OSMBase osm = new OSM_Only();
-                                foreach (var target_h in this.TargetHs)
+                                switch (select_graph)
                                 {
-                                  var sample_size = 10;
-                                  var awa_rate_window = 100;
-                                  var info_value_window = 50;
-                                  //var info_value_window = 100;
-                                  var op_intro_interval = 10;
-                                  var op_intro_rate = 0.1;
-                                  var dinamic_interval = 25;
+                                  case GraphEnum.WS:
+                                    graph_generator = new WS_GraphGenerator().SetNodeSize(size).SetNearestNeighbors(6).SetRewireP(0.01);
+                                    //graph_generator = new WS_GraphGenerator().SetNodeSize(size).SetNearestNeighbors(15).SetRewireP(0.1);
+                                    break;
+                                  case GraphEnum.BA:
+                                    graph_generator = new BA_GraphGenerator().SetNodeSize(size).SetAttachEdges(2);
+                                    //graph_generator = new BA_GraphGenerator().SetNodeSize(size).SetAttachEdges(10);
+                                    break;
+                                  case GraphEnum.Hexagonal:
+                                    graph_generator = new Hexagonal_GraphGenerator().SetNodeSize(size);
+                                    break;
+                                  case GraphEnum.Grid2D:
+                                    graph_generator = new Grid2D_GraphGenerator().SetNodeSize(size);
+                                    break;
+                                  case GraphEnum.Triangular:
+                                    graph_generator = new Triangular_GraphGenerator().SetNodeSize(size);
+                                    break;
+                                  default:
+                                    new Exception();
+                                    return;
+                                }
+                                var graph = new RawGraph();
+                                var layout = new Layout();
 
-                                  switch (algo)
-                                  {
-                                    case AlgoEnum.AAT:
-                                      var osm_aat = new AAT_OSM();
-                                      osm_aat.SetTargetH(target_h);
-                                      osm = osm_aat;
-                                      break;
-                                    case AlgoEnum.AATG:
-                                      var osm_aatg = new AATG_OSM();
-                                      osm_aatg.SetTargetH(target_h);
-                                      osm = osm_aatg;
-                                      break;
-                                    case AlgoEnum.AATfix:
-                                      var osm_aatfix = new AATfix_OSM();
-                                      osm_aatfix.SetTargetH(target_h);
-                                      osm = osm_aatfix;
-                                      break;
-                                    case AlgoEnum.IWTori:
-                                      var osm_iwtori = new IWTori_OSM();
-                                      osm_iwtori.SetCommonCuriocity(this.CommonCuriocity);
-                                      osm_iwtori.SetTargetH(target_h);
-                                      osm = osm_iwtori;
-                                      break;
-                                    case AlgoEnum.AATparticle:
-                                      var osm_aatpar = new AATparticle_OSM();
-                                      osm_aatpar.SetSampleSize(sample_size);
-                                      osm_aatpar.SetTargetH(target_h);
-                                      osm = osm_aatpar;
-                                      break;
-                                    case AlgoEnum.AATwindow:
-                                      var osm_window = new AATwindow_OSM();
-                                      osm_window.SetTargetH(target_h);
-                                      osm_window.SetAwaRateWindowSize(awa_rate_window);
-                                      osm = osm_window;
-                                      break;
-                                    case AlgoEnum.AATwindowparticle:
-                                      var osm_window_particle = new AATwindow_particle_OSM();
-                                      osm_window_particle.SetTargetH(target_h);
-                                      osm_window_particle.SetAwaRateWindowSize(awa_rate_window);
-                                      osm_window_particle.SetSampleSize(sample_size);
-                                      osm = osm_window_particle;
-                                      break;
-                                    case AlgoEnum.AATfunction:
-                                      var osm_function = new AATfunction_OSM();
-                                      osm_function.SetTargetH(target_h);
-                                      osm_function.SetAwaRateWindowSize(awa_rate_window);
-                                      osm = osm_function;
-                                      break;
-                                    case AlgoEnum.AATfunctioniwt:
-                                      var osm_function_iwt = new AATfunction_iwt_OSM();
-                                      osm_function_iwt.SetTargetH(target_h);
-                                      osm_function_iwt.SetCommonCuriocity(this.CommonCuriocity);
-                                      osm_function_iwt.SetAwaRateWindowSize(awa_rate_window);
-                                      osm = osm_function_iwt;
-                                      break;
-                                    case AlgoEnum.SWT:
-                                      var osm_aat_info = new OIT_OSM();
-                                      osm_aat_info.SetTargetH(target_h);
-                                      osm_aat_info.SetAwaRateWindowSize(awa_rate_window);
-                                      osm_aat_info.SetLinkInfoValueWindowSize(info_value_window);
-                                      osm_aat_info.SetInfoWeightRate(info_weight_rate);
-                                      osm = osm_aat_info;
-                                      break;
-                                    case AlgoEnum.SWTstep:
-                                      var osm_aat_info_step = new OIT_step_OSM();
-                                      osm_aat_info_step.SetTargetH(target_h);
-                                      osm_aat_info_step.SetAwaRateWindowSize(awa_rate_window);
-                                      osm_aat_info_step.SetLinkInfoValueWindowSize(info_value_window);
-                                      osm_aat_info_step.SetInfoWeightRate(info_weight_rate);
-                                      osm_aat_info_step.SetInfoLearningRate(0.2);
-                                      osm = osm_aat_info_step;
-                                      break;
-                                    default:
-                                      break;
-                                  }
+                                lock (lock_object)
+                                {
+                                  graph = graph_generator.Generate(seed, pb);
+                                  layout = new Circular_LayoutGenerator(graph).Generate(pb);
+                                }
 
-                                  var update_step_rand_tmp = new ExtendRandom(update_step_seed);
-                                  var subject_mgr_dic = new Dictionary<int, SubjectManager>();
-                                  if (is_diynamic)
+                                var init_belief_gene = new InitBeliefGenerator()
+                                                        .SetInitBeliefMode(mode: InitBeliefMode.NormalNarrow);
+
+                                var subject_test = new OpinionSubject(this.SubjectName, op_dim_size);
+
+                                var sample_agent_test = new SampleAgent()
+                                                    .SetInitBeliefGene(init_belief_gene)
+                                                    .SetThreshold(this.OpinionThreshold)
+                                                    .SetSubject(subject_test)
+                                                    .SetInitOpinion(Vector<double>.Build.Dense(op_dim_size, 0.0));
+
+                                var sensor_gene = new SensorGenerator();
+                                if (this.SensorSizeFixMode)
+                                {
+                                  //you will add malicious sensor size 
+                                  sensor_gene.SetSensorSize(this.SensorSize);
+                                }
+                                else
+                                {
+                                  int sensor_size = (int)(sensor_size_rate * graph.Nodes.Count);
+                                  int mal_sensor_size = (int)(mal_sensor_size_rate * graph.Nodes.Count);
+                                  sensor_gene.SetSensorSize(sensor_size, mal_sensor_size);
+                                }
+
+                                int agent_gene_seed = seed;
+                                var agent_gene_rand = new ExtendRandom(agent_gene_seed);
+
+
+                                var agent_network = new AgentNetwork()
+                                                        .SetRand(agent_gene_rand)
+                                                        .GenerateNetworkFrame(graph)
+                                                        .ApplySampleAgent(sample_agent_test, mode: SampleAgentSetMode.RemainSet)
+                                                        .GenerateSensor(sensor_gene)
+                                                        .SetLayout(layout);
+
+                                int update_step_seed = seed;
+
+                                foreach (var algo in algos)
+                                {
+                                  OSMBase osm = new OSM_Only();
+                                  foreach (var target_h in this.TargetHs)
                                   {
-                                    for (int i = 0; i < 100; i++)
+                                    var sample_size = 10;
+                                    var awa_rate_window = 100;
+                                    var info_value_window = 50;
+                                    //var info_value_window = 100;
+                                    var op_intro_interval = 10;
+                                    var op_intro_rate = 0.1;
+                                    var dinamic_interval = 25;
+
+                                    switch (algo)
                                     {
-                                      subject_mgr_dic.Add(i * dinamic_interval, new SubjectManagerGenerator().Generate(subject_test, env_dist_weight, i % op_dim_size, sensor_rate, env_dist_mode));
+                                      case AlgoEnum.AAT:
+                                        var osm_aat = new AAT_OSM();
+                                        osm_aat.SetTargetH(target_h);
+                                        osm = osm_aat;
+                                        break;
+                                      case AlgoEnum.AATG:
+                                        var osm_aatg = new AATG_OSM();
+                                        osm_aatg.SetTargetH(target_h);
+                                        osm = osm_aatg;
+                                        break;
+                                      case AlgoEnum.AATfix:
+                                        var osm_aatfix = new AATfix_OSM();
+                                        osm_aatfix.SetTargetH(target_h);
+                                        osm = osm_aatfix;
+                                        break;
+                                      case AlgoEnum.IWTori:
+                                        var osm_iwtori = new IWTori_OSM();
+                                        osm_iwtori.SetCommonCuriocity(this.CommonCuriocity);
+                                        osm_iwtori.SetTargetH(target_h);
+                                        osm = osm_iwtori;
+                                        break;
+                                      case AlgoEnum.AATparticle:
+                                        var osm_aatpar = new AATparticle_OSM();
+                                        osm_aatpar.SetSampleSize(sample_size);
+                                        osm_aatpar.SetTargetH(target_h);
+                                        osm = osm_aatpar;
+                                        break;
+                                      case AlgoEnum.AATwindow:
+                                        var osm_window = new AATwindow_OSM();
+                                        osm_window.SetTargetH(target_h);
+                                        osm_window.SetAwaRateWindowSize(awa_rate_window);
+                                        osm = osm_window;
+                                        break;
+                                      case AlgoEnum.AATwindowparticle:
+                                        var osm_window_particle = new AATwindow_particle_OSM();
+                                        osm_window_particle.SetTargetH(target_h);
+                                        osm_window_particle.SetAwaRateWindowSize(awa_rate_window);
+                                        osm_window_particle.SetSampleSize(sample_size);
+                                        osm = osm_window_particle;
+                                        break;
+                                      case AlgoEnum.AATfunction:
+                                        var osm_function = new AATfunction_OSM();
+                                        osm_function.SetTargetH(target_h);
+                                        osm_function.SetAwaRateWindowSize(awa_rate_window);
+                                        osm = osm_function;
+                                        break;
+                                      case AlgoEnum.AATfunctioniwt:
+                                        var osm_function_iwt = new AATfunction_iwt_OSM();
+                                        osm_function_iwt.SetTargetH(target_h);
+                                        osm_function_iwt.SetCommonCuriocity(this.CommonCuriocity);
+                                        osm_function_iwt.SetAwaRateWindowSize(awa_rate_window);
+                                        osm = osm_function_iwt;
+                                        break;
+                                      case AlgoEnum.SWT:
+                                        var osm_aat_info = new OIT_OSM();
+                                        osm_aat_info.SetTargetH(target_h);
+                                        osm_aat_info.SetAwaRateWindowSize(awa_rate_window);
+                                        osm_aat_info.SetLinkInfoValueWindowSize(info_value_window);
+                                        osm_aat_info.SetInfoWeightRate(info_weight_rate);
+                                        osm = osm_aat_info;
+                                        break;
+                                      case AlgoEnum.SWTstep:
+                                        var osm_aat_info_step = new OIT_step_OSM();
+                                        osm_aat_info_step.SetTargetH(target_h);
+                                        osm_aat_info_step.SetAwaRateWindowSize(awa_rate_window);
+                                        osm_aat_info_step.SetLinkInfoValueWindowSize(info_value_window);
+                                        osm_aat_info_step.SetInfoWeightRate(info_weight_rate);
+                                        osm_aat_info_step.SetInfoLearningRate(0.2);
+                                        osm = osm_aat_info_step;
+                                        break;
+                                      case AlgoEnum.GDWT:
+                                        var osm_gdwt = new GDWT_OSM();
+                                        osm_gdwt.SetTargetH(target_h);
+                                        osm_gdwt.SetAwaRateWindowSize(awa_rate_window);
+
+                                        I_EstFunc est_func_instance = null;
+                                        switch (est_func)
+                                        {
+                                          case EstFuncEnum.Sigmoid:
+                                            est_func_instance = new Sigmoid_EstFunc(0.5, 0, 15);
+                                            break;
+                                          default:
+                                            break;
+                                        }
+                                        osm_gdwt.SetEstimateFunction(est_func_instance);
+                                        osm = osm_gdwt;
+                                        break;
+                                      default:
+                                        break;
                                     }
 
+                                    var update_step_rand_tmp = new ExtendRandom(update_step_seed);
+                                    var subject_mgr_dic = new Dictionary<int, SubjectManager>();
+                                    if (is_diynamic)
+                                    {
+                                      for (int i = 0; i < 100; i++)
+                                      {
+                                        subject_mgr_dic.Add(i * dinamic_interval, new SubjectManagerGenerator().Generate(subject_test, env_dist_weight, i % op_dim_size, sensor_rate, env_dist_mode));
+                                      }
+
+                                    }
+                                    else
+                                    {
+                                      subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(subject_test, env_dist_weight, 0, sensor_rate, env_dist_mode, 1, mal_env_dist_weight));
+                                    }
+                                    osm.SetSubjectManagerDic(subject_mgr_dic);
+                                    osm.SetRand(update_step_rand_tmp);
+                                    osm.SetAgentNetwork(agent_network);
+                                    osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
+                                    osm.SetOpinionIntroInterval(op_intro_interval);
+                                    osm.SetOpinionIntroRate(op_intro_rate);
+                                    osm.SimpleRecordFlag = true;
+                                    osm.SetBeliefUpdater(this.MyBeliefUpdater);
+
+                                    pb.Tag = $"{select_graph.ToString()} {size.ToString()} {algo.ToString()} {op_dim_size} {seed}";
+                                    osm.UpdateRounds(round, this.Steps, pb);
+
+                                    string sensor_size_mode = "";
+                                    if (this.SensorSizeFixMode)
+                                    {
+                                      sensor_size_mode = "fix" + this.SensorSize.ToString();
+                                    }
+                                    else
+                                    {
+                                      sensor_size_mode = "rate" + Math.Round(sensor_size_rate, 3).ToString();
+                                    }
+
+                                    string sensor_weight_mode = $"{this.MyBeliefUpdater.SensorWeightMode}";
+
+                                    var exp_setting = new ExperimentSetting();
+                                    exp_setting.Algorithm = algo.ToString();
+                                    exp_setting.AwaRateWindowSize = awa_rate_window;
+                                    exp_setting.BeliefUpdater = this.MyBeliefUpdater.MyBeliefUpdateFunctionMode.ToString();
+                                    exp_setting.CommonCuriocity = this.CommonCuriocity;
+                                    exp_setting.Dim = op_dim_size;
+                                    exp_setting.EnvDistWeight = env_dist_weight;
+                                    exp_setting.EnvDistMode = env_dist_mode.ToString();
+                                    exp_setting.GraphType = select_graph.ToString();
+                                    exp_setting.IsDynamic = is_diynamic;
+                                    exp_setting.InfoWeightRate = info_weight_rate;
+                                    exp_setting.NetworkSize = size;
+                                    exp_setting.OpinionIntroInteval = op_intro_interval;
+                                    exp_setting.OpinionIntroRate = op_intro_rate;
+                                    exp_setting.Round = round;
+                                    exp_setting.SampleSize = sample_size;
+                                    exp_setting.SensorRate = sensor_rate;
+                                    exp_setting.SensorSize = sensor_gene.SensorSize;
+                                    exp_setting.SensorSizeMode = this.SensorSizeFixMode.ToString();
+                                    exp_setting.SensorWeightMode = sensor_weight_mode;
+                                    exp_setting.Step = this.Steps;
+                                    exp_setting.TargetAwareness = target_h;
+
+                                    var json_exp_each_setting = JsonConvert.SerializeObject(exp_setting, Formatting.Indented);
+
+                                    var output_pass = Properties.Settings.Default.OutputLogPath
+                                        + $"/{save_folder}/data/"
+                                        + select_graph.ToString()
+                                        + $"_{size.ToString()}"
+                                        + $"_{algo.ToString()}"
+                                        + $"_{op_dim_size}"
+                                        + $"_{is_diynamic}"
+                                        + $"_{target_h}"
+                                        + $"_{env_dist_mode.ToString()}"
+                                        + $"_{env_dist_weight}"
+                                        + $"_{info_weight_rate}"
+                                        + $"_{round}"
+                                        + $"_{sensor_size_mode}"
+                                        + $"_{mal_sensor_size_rate}"
+                                        + $"_{est_func.ToString()}"
+                                        + $"_";
+
+                                    //Output.OutputRounds(output_pass, osm.MyRecordRounds, seed.ToString());
+                                    Output.OutputRounds(output_pass, osm.MyRecordRounds, json_exp_each_setting, seed.ToString());
+                                    pb.Next();
                                   }
-                                  else
-                                  {
-                                    subject_mgr_dic.Add(0, new SubjectManagerGenerator().Generate(subject_test, env_dist_weight, 0, sensor_rate, env_dist_mode, 1, mal_env_dist_weight));
-                                  }
-                                  osm.SetSubjectManagerDic(subject_mgr_dic);
-                                  osm.SetRand(update_step_rand_tmp);
-                                  osm.SetAgentNetwork(agent_network);
-                                  osm.SetInitWeightsMode(mode: CalcWeightMode.FavorMyOpinion);
-                                  osm.SetOpinionIntroInterval(op_intro_interval);
-                                  osm.SetOpinionIntroRate(op_intro_rate);
-                                  osm.SimpleRecordFlag = true;
-                                  osm.SetBeliefUpdater(this.MyBeliefUpdater);
-
-                                  pb.Tag = $"{select_graph.ToString()} {size.ToString()} {algo.ToString()} {op_dim_size} {seed}";
-                                  osm.UpdateRounds(round, this.Steps, pb);
-
-                                  string sensor_size_mode = "";
-                                  if (this.SensorSizeFixMode)
-                                  {
-                                    sensor_size_mode = "fix" + this.SensorSize.ToString();
-                                  }
-                                  else
-                                  {
-                                    sensor_size_mode = "rate" + Math.Round(sensor_size_rate, 3).ToString();
-                                  }
-
-                                  string sensor_weight_mode = $"{this.MyBeliefUpdater.SensorWeightMode}";
-
-                                  var exp_setting = new ExperimentSetting();
-                                  exp_setting.Algorithm = algo.ToString();
-                                  exp_setting.AwaRateWindowSize = awa_rate_window;
-                                  exp_setting.BeliefUpdater = this.MyBeliefUpdater.MyBeliefUpdateFunctionMode.ToString();
-                                  exp_setting.CommonCuriocity = this.CommonCuriocity;
-                                  exp_setting.Dim = op_dim_size;
-                                  exp_setting.EnvDistWeight = env_dist_weight;
-                                  exp_setting.EnvDistMode = env_dist_mode.ToString();
-                                  exp_setting.GraphType = select_graph.ToString();
-                                  exp_setting.IsDynamic = is_diynamic;
-                                  exp_setting.InfoWeightRate = info_weight_rate;
-                                  exp_setting.NetworkSize = size;
-                                  exp_setting.OpinionIntroInteval = op_intro_interval;
-                                  exp_setting.OpinionIntroRate = op_intro_rate;
-                                  exp_setting.Round = round;
-                                  exp_setting.SampleSize = sample_size;
-                                  exp_setting.SensorRate = sensor_rate;
-                                  exp_setting.SensorSize = sensor_gene.SensorSize;
-                                  exp_setting.SensorSizeMode = this.SensorSizeFixMode.ToString();
-                                  exp_setting.SensorWeightMode = sensor_weight_mode;
-                                  exp_setting.Step = this.Steps;
-                                  exp_setting.TargetAwareness = target_h;
-
-                                  var json_exp_each_setting = JsonConvert.SerializeObject(exp_setting, Formatting.Indented);
-
-                                  var output_pass = Properties.Settings.Default.OutputLogPath
-                                      + $"/{save_folder}/data/"
-                                      + select_graph.ToString()
-                                      + $"_{size.ToString()}"
-                                      + $"_{algo.ToString()}"
-                                      + $"_{op_dim_size}"
-                                      + $"_{is_diynamic}"
-                                      + $"_{target_h}"
-                                      + $"_{env_dist_mode.ToString()}"
-                                      + $"_{env_dist_weight}"
-                                      + $"_{info_weight_rate}"
-                                      + $"_{round}"
-                                      + $"_{sensor_size_mode}"
-                                      + $"_{mal_sensor_size_rate}"
-                                      + $"_";
-
-                                  //Output.OutputRounds(output_pass, osm.MyRecordRounds, seed.ToString());
-                                  Output.OutputRounds(output_pass, osm.MyRecordRounds, json_exp_each_setting, seed.ToString());
-                                  pb.Next();
                                 }
                               }
                             }
                           }
-
                         }
                       }
                     }

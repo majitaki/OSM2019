@@ -6,114 +6,121 @@ using System.Threading.Tasks;
 
 namespace OSM2019.Utility
 {
-    enum GUIEnum
-    {
-        AgentGUI,
-        AnimationGUI,
-        ExperimentGUI,
-        LearningGUI,
-        MainFormGUI,
-        GraphGUI,
-    }
+  enum GUIEnum
+  {
+    AgentGUI,
+    AnimationGUI,
+    ExperimentGUI,
+    LearningGUI,
+    MainFormGUI,
+    GraphGUI,
+  }
 
-    enum GraphEnum
-    {
-        WS,
-        NewmanWS,
-        ConnectedWS,
-        BA,
-        FastGnp,
-        GnpRandom,
-        DenseGnm,
-        Gnm,
-        ER,
-        Binomial,
-        RandomRegular,
-        PowerLawCluster,
-        RandomKernel,
-        RandomLobster,
-        Grid2D,
-        Hexagonal,
-        Triangular,
-        Custom,
-        Void
-    }
+  enum GraphEnum
+  {
+    WS,
+    NewmanWS,
+    ConnectedWS,
+    BA,
+    FastGnp,
+    GnpRandom,
+    DenseGnm,
+    Gnm,
+    ER,
+    Binomial,
+    RandomRegular,
+    PowerLawCluster,
+    RandomKernel,
+    RandomLobster,
+    Grid2D,
+    Hexagonal,
+    Triangular,
+    Custom,
+    Void
+  }
 
-    enum LayoutEnum
-    {
-        Circular,
-        FruchtermanReingold,
-        KamadaKawai,
-        Random,
-        Shell,
-        Spectral,
-        Spring,
-        Square,
-        Null
-    }
+  enum LayoutEnum
+  {
+    Circular,
+    FruchtermanReingold,
+    KamadaKawai,
+    Random,
+    Shell,
+    Spectral,
+    Spring,
+    Square,
+    Null
+  }
 
 
-    enum SeedEnum
-    {
-        AgentGenerateSeed,
-        PlayStepSeed,
-    }
+  enum SeedEnum
+  {
+    AgentGenerateSeed,
+    PlayStepSeed,
+  }
 
-    enum InitBeliefMode
-    {
-        NormalNarrow,
-        Normal,
-        NormalWide,
-        NoRandom
-    }
+  enum InitBeliefMode
+  {
+    NormalNarrow,
+    Normal,
+    NormalWide,
+    NoRandom
+  }
 
-    enum CalcWeightMode
-    {
-        FavorMyOpinion,
-        Equality
-    }
+  enum CalcWeightMode
+  {
+    FavorMyOpinion,
+    Equality
+  }
 
-    enum SampleAgentSetMode
-    {
-        RandomSetRate,
-        RemainSet
-    }
+  enum SampleAgentSetMode
+  {
+    RandomSetRate,
+    RemainSet
+  }
 
-    enum AlgoEnum
-    {
-        AAT,
-        AATG,
-        AATfix,
-        OSMonly,
-        IWTori,
-        IWTorionly,
-        AATparticle,
-        AATwindow,
-        AATwindowparticle,
-        AATfunction,
-        AATfunctionparticle,
-        AATfunctioniwt,
-        SWT,
-        SWTstep
-    }
+  enum AlgoEnum
+  {
+    AAT,
+    AATG,
+    AATfix,
+    OSMonly,
+    IWTori,
+    IWTorionly,
+    AATparticle,
+    AATwindow,
+    AATwindowparticle,
+    AATfunction,
+    AATfunctionparticle,
+    AATfunctioniwt,
+    SWT,
+    SWTstep,
+    GDWT
+  }
 
-    enum SensorWeightEnum
-    {
-        DependSensorRate,
-        Custom,
-        SameNoneSensor
-    }
+  enum EstFuncEnum
+  {
+    Sigmoid,
+    PowerPower
+  }
 
-    enum BeliefUpdateFunctionEnum
-    {
-        Bayse,
-        Particle
-    }
+  enum SensorWeightEnum
+  {
+    DependSensorRate,
+    Custom,
+    SameNoneSensor
+  }
 
-    enum EnvDistributionEnum
-    {
-        Turara,
-        Exponential
+  enum BeliefUpdateFunctionEnum
+  {
+    Bayse,
+    Particle
+  }
 
-    }
+  enum EnvDistributionEnum
+  {
+    Turara,
+    Exponential
+
+  }
 }
