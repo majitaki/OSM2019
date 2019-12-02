@@ -9,10 +9,10 @@ namespace OSM2019.OSM
   interface I_EstFunc
   {
     I_EstFunc Copy();
-    double EvaluateFunction(double weight, double param);
-    double EvaluateInverseFunction(double awa_rate);
-    double EvaluateErrorFunction(double weight, double awa_rate, double param);
-    void EstimateParameter(double weight, double new_awa_rate);
+    double EvaluateFunction(double weight);
+    double EvaluateInverseFunction(double awa);
+    double EvaluateErrorFunction(double cur_weight, double cur_awa);
+    void EstimateParameter(double cur_weight, double cur_awa);
     void PrintEstFuncInfo();
   }
 }

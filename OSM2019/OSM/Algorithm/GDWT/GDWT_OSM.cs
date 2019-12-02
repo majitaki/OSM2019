@@ -117,7 +117,7 @@ namespace OSM2019.OSM
         double obs_u = this.GetObsU(received_sum_op);
         if (obs_u == 0) continue;
 
-        candidate.Value.EstimateParameter();
+        candidate.Value.EstimateParameter(this.CurrentRound);
       }
     }
 
@@ -130,6 +130,7 @@ namespace OSM2019.OSM
         if (obs_u == 0) continue;
 
         var current_h = candidate.Value.GetWindowAwaRate();
+        //var current_h = candidate.Value.GetAwaRate(this.CurrentRound);
 
         if (current_h < this.TargetH + this.Epsilon || current_h > this.TargetH - this.Epsilon)
         {
@@ -146,11 +147,11 @@ namespace OSM2019.OSM
     {
       if (this.IsDetermined(agent))
       {
-        candidate.AwaCount = candidate.AwaCount + 1;
+        candidate.AwaCount += 1;
       }
       else
       {
-        candidate.AwaCount = candidate.AwaCount + 0;
+        candidate.AwaCount += 0;
       }
     }
 

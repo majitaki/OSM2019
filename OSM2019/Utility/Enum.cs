@@ -95,13 +95,10 @@ namespace OSM2019.Utility
     AATfunctioniwt,
     SWT,
     SWTstep,
-    GDWT
-  }
-
-  enum EstFuncEnum
-  {
-    Sigmoid,
-    PowerPower
+    GDWTsigH,
+    GDWTsigW,
+    GDWTpowerH,
+    GDWTpowerW
   }
 
   enum SensorWeightEnum

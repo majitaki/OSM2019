@@ -107,10 +107,13 @@
     <Compile Include="GUI\AnimationForm.Designer.cs">
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OSM\Algorithm\GDWT\EstFuncs\PowerH_awa_EstFunc.cs" />
+    <Compile Include="OSM\Algorithm\GDWT\EstFuncs\PowerH_weight_EstFunc.cs" />
+    <Compile Include="OSM\Algorithm\GDWT\EstFuncs\Sigmoid_weight_EstFunc.cs" />
     <Compile Include="OSM\Algorithm\GDWT\GDWT_Candidate.cs" />
     <Compile Include="OSM\Algorithm\GDWT\GDWT_OSM.cs" />
     <Compile Include="OSM\Algorithm\GDWT\EstFuncs\I_EstFunc.cs" />
-    <Compile Include="OSM\Algorithm\GDWT\EstFuncs\Sigmoid_EstFunc.cs" />
+    <Compile Include="OSM\Algorithm\GDWT\EstFuncs\Sigmoid_awa_EstFunc.cs" />
     <Compile Include="OSM\Algorithm\OIT\OIT_step_OSM.cs" />
     <Compile Include="OSM\Algorithm\OIT\OIT_OSM.cs" />
     <Compile Include="OSM\Algorithm\AATfunction\AATfunction_iwt_OSM.cs" />

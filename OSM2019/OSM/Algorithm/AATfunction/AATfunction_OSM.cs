@@ -121,6 +121,7 @@ namespace OSM2019.OSM
         if (obs_u == 0) continue;
 
         var current_h = candidate.Value.GetWindowAwaRate();
+        //var current_h = candidate.Value.GetAwaRate(this.CurrentRound);
 
         if (current_h < this.TargetH + this.Epsilon || current_h > this.TargetH - this.Epsilon)
         {
