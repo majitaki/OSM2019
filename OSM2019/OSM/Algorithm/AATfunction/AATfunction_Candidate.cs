@@ -55,12 +55,6 @@ namespace OSM2019.OSM
       return weight;
     }
 
-    public double EstimateWeight(int current_round)
-    {
-      return this.EstimateWeight(this.GetAwaRate(current_round));
-      //return this.EstimateWeight(this.GetWindowAwaRate());
-    }
-
     public double GetWindowAwaRate()
     {
       var current_count = this.AwaCount;

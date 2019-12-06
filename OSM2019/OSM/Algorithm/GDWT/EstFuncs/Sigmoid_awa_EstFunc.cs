@@ -27,7 +27,9 @@ namespace OSM2019.OSM
     }
     public virtual double EvaluateFunction(double weight)
     {
-      //return 1.0 / (1.0 + Math.Pow(Math.E, -1.0 * this.Slope * (weight - this.Translation)));
+      if (weight <= 0.0) return 0;
+      if (weight >= 1.0) return 1;
+      //var evaluation = 1.0 / (1.0 + Math.Pow(Math.E, -1.0 * this.Slope * (weight - this.Translation)));
       var evaluation = 1.0 / (1.0 + Math.Pow(Math.E, (-2.0 * this.Slope * ((weight - this.Translation) - 0.5))));
       if (evaluation <= 0.0) return 0;
       if (evaluation >= 1.0) return 1;
@@ -36,7 +38,9 @@ namespace OSM2019.OSM
 
     public virtual double EvaluateInverseFunction(double awa_rate)
     {
-      //return ((-1.0 * Math.Log(1.0 / awa_rate - 1.0)) / this.Slope) + this.Translation;
+      if (awa_rate <= 0.0) return 0;
+      if (awa_rate >= 1.0) return 1;
+      //var evaluation = ((-1.0 * Math.Log(1.0 / awa_rate - 1.0)) / this.Slope) + this.Translation;
       var evaluation = ((2 * this.Translation + 1) + (Math.Log((awa_rate / (1 - awa_rate)))) / this.Slope) / 2.0;
       if (evaluation <= 0.0) return 0;
       if (evaluation >= 1.0) return 1;
@@ -52,16 +56,22 @@ namespace OSM2019.OSM
 
     public virtual void EstimateParameter(double cur_weight, double cur_awa)
     {
-      //var old_est_h = this.EvaluateFunction(cur_weight);
+      var old_est_w = this.EvaluateInverseFunction(cur_awa);
       double penalty = this.LearningRate * this.EvaluateErrorFunction(cur_weight, cur_awa);
       if (Math.Abs(penalty) > this.LearningThreshold)
       {
+        //this.Translation += penalty;
         this.Translation += penalty;
-        //var est_h = this.EvaluateFunction(cur_weight);
-        //if (cur_weight < 1 && cur_awa < 1 && cur_weight > 0 && cur_awa > 0)
-        //{
-        //  var a = 0;
-        //}
+        var est_w = this.EvaluateInverseFunction(cur_awa);
+        if (cur_weight < 1 && cur_awa < 1 && cur_weight > 0 && cur_awa > 0)
+        {
+          var old_diff = Math.Abs(old_est_w - cur_weight);
+          var new_diff = Math.Abs(est_w - cur_weight);
+          if (new_diff > old_diff)
+          {
+            var a = 0;
+          }
+        }
       }
     }
 

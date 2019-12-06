@@ -106,7 +106,7 @@ namespace OSM2019.OSM
         var received_sum_op = this.MyRecordRounds.Last().AgentReceiveOpinionsInRound[candidate.Key];
         double obs_u = this.GetObsU(received_sum_op);
         if (obs_u == 0) continue;
-        var est_weight = candidate.Value.EstimateWeight(this.CurrentRound);
+        var est_weight = candidate.Value.EstimateWeight(candidate.Value.GetAwaRate(this.CurrentRound));
         var current_weight = candidate.Value.CanWeight;
         candidate.Value.SetTranslation(current_weight - est_weight);
       }

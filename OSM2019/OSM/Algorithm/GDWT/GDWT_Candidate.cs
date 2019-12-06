@@ -33,7 +33,7 @@ namespace OSM2019.OSM
       this.EstFunc = estfunc;
     }
 
-    public double EvaluateWeight(double awa_rate)
+    public double EstimateWeight(double awa_rate)
     {
       if (awa_rate <= 0.0) return 0;
       if (awa_rate >= 1.0) return 1;

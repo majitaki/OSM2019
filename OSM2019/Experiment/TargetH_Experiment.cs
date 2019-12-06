@@ -371,6 +371,11 @@ namespace OSM2019.Experiment
                                   var algo_extend = algo.ToString();
                                   switch (algo)
                                   {
+                                    case AlgoEnum.OSMonly:
+                                      var osm_only = new OSM_Only();
+                                      osm_only.SetCommonWeight(this.CommonWeight);
+                                      osm = osm_only;
+                                      break;
                                     case AlgoEnum.AAT:
                                       var osm_aat = new AAT_OSM();
                                       osm_aat.SetTargetH(target_h);
@@ -445,14 +450,14 @@ namespace OSM2019.Experiment
                                       var osm_gdwt_sigw = new GDWT_OSM();
                                       osm_gdwt_sigw.SetTargetH(target_h);
                                       osm_gdwt_sigw.SetAwaRateWindowSize(100);
-                                      osm_gdwt_sigw.SetEstimateFunction(new Sigmoid_weight_EstFunc(1.0, 0, 3));
+                                      osm_gdwt_sigw.SetEstimateFunction(new Sigmoid_weight_EstFunc(0.5, 0, 10));
                                       osm = osm_gdwt_sigw;
                                       break;
                                     case AlgoEnum.GDWTsigH:
                                       var osm_gdwt_sigh = new GDWT_OSM();
                                       osm_gdwt_sigh.SetTargetH(target_h);
                                       osm_gdwt_sigh.SetAwaRateWindowSize(100);
-                                      osm_gdwt_sigh.SetEstimateFunction(new Sigmoid_awa_EstFunc(0.5, 0, 3));
+                                      osm_gdwt_sigh.SetEstimateFunction(new Sigmoid_awa_EstFunc(0.5, 0, 10));
                                       osm = osm_gdwt_sigh;
                                       break;
                                     case AlgoEnum.GDWTpowerH:

@@ -61,7 +61,7 @@ namespace OSM2019.OSM
         var can = new GDWT_Candidate(agent, this.BaseEstFunc.Copy(), this.AwaRateWindowSize);
         this.Candidates.Add(agent, can);
         var initial_h = 0.0;
-        var est_weight = can.EvaluateWeight(initial_h);
+        var est_weight = can.EstimateWeight(initial_h);
         agent.SetCommonWeight(est_weight);
         can.CanWeight = est_weight;
       }
@@ -134,7 +134,7 @@ namespace OSM2019.OSM
 
         if (current_h < this.TargetH + this.Epsilon || current_h > this.TargetH - this.Epsilon)
         {
-          var new_weight = candidate.Value.EvaluateWeight(this.TargetH);
+          var new_weight = candidate.Value.EstimateWeight(this.TargetH);
           candidate.Value.CanWeight = new_weight;
           candidate.Key.SetCommonWeight(new_weight);
           Debug.Assert(new_weight >= 0 && new_weight <= 1);
