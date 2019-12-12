@@ -234,7 +234,7 @@ namespace OSM2019.Experiment
                         var osm_env = new OpinionEnvironment()
                                         .SetSubject(subject_test)
                                         .SetCorrectDim(0)
-                                        .SetSensorRate(sensor_rate);
+                                        .SetSensorWeight(sensor_rate);
 
                         var subject_manager = new SubjectManager()
                             .AddSubject(subject_test)

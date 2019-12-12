@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-  class OIT_OSM : AATfunction_OSM
+  class SWT_OSM : AATfunction_OSM
   {
     public double InfoWeightRate { get; private set; }
 
@@ -37,22 +37,37 @@ namespace OSM2019.OSM
 
         var current_h = candidate.Value.GetWindowAwaRate();
 
-        if (current_h < this.TargetH + this.Epsilon || current_h > this.TargetH - this.Epsilon)
+        var aat_weight = candidate.Value.EstimateWeight(this.TargetH);
+        candidate.Value.CanWeight = aat_weight;
+        if (candidate.Key.IsSensor)
         {
-          var aat_weight = candidate.Value.EstimateWeight(this.TargetH);
-          candidate.Value.CanWeight = aat_weight;
-          if (candidate.Key.IsSensor)
-          {
-            candidate.Key.SetCommonWeight(aat_weight);
-          }
-          else
-          {
-            //candidate.Key.SetCommonWeight(aat_weight);
-            var weights = this.CalcInfoWeight(candidate.Key, aat_weight);
-            candidate.Key.SetWeights(weights);
-          }
-          Debug.Assert(aat_weight >= 0 && aat_weight <= 1);
+          candidate.Key.SetCommonWeight(aat_weight);
         }
+        else
+        {
+          //candidate.Key.SetCommonWeight(aat_weight);
+          var weights = this.CalcInfoWeight(candidate.Key, aat_weight);
+          candidate.Key.SetWeights(weights);
+        }
+        Debug.Assert(aat_weight >= 0 && aat_weight <= 1);
+
+
+        //if (current_h < this.TargetH + this.Epsilon || current_h > this.TargetH - this.Epsilon)
+        //{
+        //  var aat_weight = candidate.Value.EstimateWeight(this.TargetH);
+        //  candidate.Value.CanWeight = aat_weight;
+        //  if (candidate.Key.IsSensor)
+        //  {
+        //    candidate.Key.SetCommonWeight(aat_weight);
+        //  }
+        //  else
+        //  {
+        //    //candidate.Key.SetCommonWeight(aat_weight);
+        //    var weights = this.CalcInfoWeight(candidate.Key, aat_weight);
+        //    candidate.Key.SetWeights(weights);
+        //  }
+        //  Debug.Assert(aat_weight >= 0 && aat_weight <= 1);
+        //}
       }
     }
 

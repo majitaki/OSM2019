@@ -165,8 +165,10 @@ namespace OSM2019.OSM
         this.ReceiveOpinionsInRound[step_message.ToAgent][step_message.FromAgent] += receive_op;
       }
 
-      var active_sensor_size = step_messages.Where(message => message.FromAgent.AgentID < 0).Count();
-      var active_agent_size = step_messages.Where(message => message.FromAgent.AgentID >= 0).Count();
+      //var active_sensor_size = step_messages.Where(message => message.FromAgent.AgentID < 0).Count();
+      var active_sensor_size = step_messages.Where(message => message.FromAgent.AgentID < 0).Select(message => message.ToAgent.AgentID).Distinct().Count();
+      //var active_agent_size = step_messages.Where(message => message.FromAgent.AgentID >= 0).Count();
+      var active_agent_size = step_messages.Where(message => message.FromAgent.AgentID >= 0).Select(message => message.ToAgent.AgentID).Distinct().Count();
       var step_message_size = step_messages.Count;
 
       this.ActiveSensorSizes.Add(active_sensor_size);

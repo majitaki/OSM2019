@@ -10,7 +10,7 @@ namespace OSM2019.OSM
 {
   class OpinionEnvironment
   {
-    public double SensorRate { get; protected set; }
+    public double SensorWeight { get; protected set; }
     public OpinionSubject EnvSubject { get; protected set; }
     public int CorrectDim { get; protected set; }
     public int MaliciousDim { get; protected set; }
@@ -35,9 +35,9 @@ namespace OSM2019.OSM
       return this;
     }
 
-    public OpinionEnvironment SetSensorRate(double sensor_rate)
+    public OpinionEnvironment SetSensorWeight(double sensor_weight)
     {
-      this.SensorRate = sensor_rate;
+      this.SensorWeight = sensor_weight;
       return this;
     }
 

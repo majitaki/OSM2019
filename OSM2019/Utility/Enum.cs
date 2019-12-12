@@ -105,7 +105,8 @@ namespace OSM2019.Utility
   {
     DependSensorRate,
     Custom,
-    SameNoneSensor
+    SameNoneSensor,
+    FollowEnvDistWeight
   }
 
   enum BeliefUpdateFunctionEnum

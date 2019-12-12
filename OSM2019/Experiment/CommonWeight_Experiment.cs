@@ -246,7 +246,7 @@ namespace OSM2019.Experiment
                         osm_env = new OpinionEnvironment()
                               .SetSubject(subject_test)
                               .SetCorrectDim(0)
-                              .SetSensorRate(sensor_rate)
+                              .SetSensorWeight(sensor_rate)
                               .SetCustomDistribution(this.MyCustomDistribution);
 
                         var subject_manager = new SubjectManager()

@@ -23,7 +23,7 @@ namespace OSM2019.OSM
       dist[max_index] = dist[main_index];
       dist[main_index] = max;
 
-      this.MyCustomDistribution = new CustomDistribution(dist);
+      this.MyCustomDistribution = new CustomDistribution(dist, dist_weight);
     }
     public CustomDistribution Generate()
     {

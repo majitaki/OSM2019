@@ -12,7 +12,7 @@ namespace OSM2019
 {
   class SubjectManagerGenerator
   {
-    public SubjectManager Generate(OpinionSubject opinion_subject, double dist_weight, int correct_dim, double sensor_rate, EnvDistributionEnum env_dis_mode, int malicious_dim = 0, double malicious_dist_weight = 0.0)
+    public SubjectManager Generate(OpinionSubject opinion_subject, double dist_weight, int correct_dim, double sensor_weight, EnvDistributionEnum env_dis_mode, int malicious_dim = 0, double malicious_dist_weight = 0.0)
     {
       CustomDistribution env_dist = null;
       CustomDistribution env_malicious_dist = null;
@@ -40,7 +40,7 @@ namespace OSM2019
                     .SetSubject(subject_test)
                     .SetCorrectDim(correct_dim)
                     .SetMaliciousDim(malicious_dim)
-                    .SetSensorRate(sensor_rate)
+                    .SetSensorWeight(sensor_weight)
                     .SetCustomDistribution(env_dist)
                     .SetMaliciousCustomDistribution(env_malicious_dist);
 

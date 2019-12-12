@@ -94,7 +94,7 @@ namespace OSM2019.OSM
             }
         }
 
-        public Agent GetOtherAgent(Agent agent)
+    public Agent GetOtherAgent(Agent agent)
         {
             if (this.SourceAgent == agent)
             {

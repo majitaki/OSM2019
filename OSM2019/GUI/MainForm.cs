@@ -49,10 +49,10 @@ namespace OSM2019
       var dt = DateTime.Now;
       var dt_name = dt.ToString("yyyyMMddHHmm");
       //int seeds = 10;
-      var seeds = new List<int>() { 0, 1, 2, 3, 4, 5 };
-      double sensor_rate = 0.8;
+      var seeds = new List<int>() { 0, 1, 2 };
+      double sensor_weight = 0.8;
       //int rounds = 200;
-      int steps = 3000;
+      int steps = 2000;
       var th_duration = 0.05;
 
       dt = DateTime.Now;
@@ -63,9 +63,9 @@ namespace OSM2019
         new TargetH_Experiment()
               .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
               //.SetAlgos(new List<AlgoEnum>() { AlgoEnum.GDWTsigW })
-              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.GDWTsigW, AlgoEnum.AATfunction })
-              .SetNetworkSize(new List<int>() { 300 })
-              .SetDims(new List<int>() { 5 }).SetSensorRate(sensor_rate)
+              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.OSMonly, AlgoEnum.AAT, AlgoEnum.SWT, AlgoEnum.AATfunction })
+              .SetNetworkSize(new List<int>() { 500 })
+              .SetDims(new List<int>() { 2, 4, 6, 8, 10 }).SetSensorWeight(sensor_weight)
               //.SetSensorCommonWeight(0.70)
               .SetSensorSizeRate(new List<double>() { 0.05 })
               .SetMaliciousSensorSizeRate(new List<double>() { 0.00 })
@@ -76,16 +76,17 @@ namespace OSM2019
               //.SetEnvDistWeights(new List<double>() { 0.65 })
               .SetMaliciousEnvDistWeights(new List<double>() { 0.0 })
               .SetCommonCuriocity(0.1)
-              .SetTargetHs(new List<double>() { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 })
-              //.SetTargetHs(new List<double>() { 0.95 })
-              .SetLogFolder(dt_name, "size")
-              .SetRounds(new List<int>() { 300 })
+              //.SetTargetHs(new List<double>() { 0.7, 0.75, 0.8, 0.85, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0 })
+              .SetTargetHs(new List<double>() { 0.90 })
+              .SetLogFolder(dt_name, "dw0.5")
+              .SetRounds(new List<int>() { 200 })
               .SetSteps(steps)
-              .SetOpinionThreshold(0.9)
+              .SetOpinionThreshold(0.8)
               .SetDynamics(new List<bool>() { false })
               .SetEnvDistModes(new List<EnvDistributionEnum> { EnvDistributionEnum.Exponential })
               .SetInfoWeightRates(new List<double>() { 1.0 })
-              .SetCommonWeight(1.0)
+              .SetCommonWeights(new List<double>() { 1.0 })
+              //.SetCommonWeights(Enumerable.Range(25, 25).Select(x => x * 0.02).ToList())
               .Run(seed);
       });
 
@@ -94,15 +95,15 @@ namespace OSM2019
     void Test()
     {
       int agent_size = 200;
-      int dim = 10;
+      int dim = 5;
       int correct_dim = 0;
       int malicious_dim = 1;
-      AlgoEnum algo = AlgoEnum.GDWTsigW;
-      double targeth = 0.30;
+      AlgoEnum algo = AlgoEnum.AATfunction;
+      double targeth = 0.90;
       double common_weight = 0.5;
       double common_curiocity = 0.5;
       double sensor_rate = 0.8;
-      double dist_weight = 0.35;
+      double dist_weight = 0.5;
       double malicious_dist_weight = 0.8;
       int sensor_size = (int)(0.05 * agent_size);
       //int malicious_sensor_size = (int)(0.04 * agent_size);
@@ -218,7 +219,7 @@ namespace OSM2019
           osm = osm_function_iwt;
           break;
         case AlgoEnum.SWT:
-          var osm_aat_info = new OIT_OSM();
+          var osm_aat_info = new SWT_OSM();
           osm_aat_info.SetTargetH(targeth);
           osm_aat_info.SetAwaRateWindowSize(100);
           osm_aat_info.SetLinkInfoValueWindowSize(100);
@@ -226,7 +227,7 @@ namespace OSM2019
           osm = osm_aat_info;
           break;
         case AlgoEnum.SWTstep:
-          var osm_aat_info_step = new OIT_step_OSM();
+          var osm_aat_info_step = new SWT_step_OSM();
           osm_aat_info_step.SetTargetH(targeth);
           osm_aat_info_step.SetAwaRateWindowSize(100);
           osm_aat_info_step.SetLinkInfoValueWindowSize(100);

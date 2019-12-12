@@ -16,7 +16,7 @@ namespace OSM2019.OSM
             var turara = MyMath.MakeTurara(dim, dist_weight);
             var dist = Vector<double>.Build.Dense(dim, turara.other);
             dist[main_index] = turara.max;
-            this.MyCustomDistribution = new CustomDistribution(dist);
+            this.MyCustomDistribution = new CustomDistribution(dist, dist_weight);
         }
         public CustomDistribution Generate()
         {

@@ -18,7 +18,7 @@ namespace OSM2019.OSM
       this.Translation = translation;
       this.Slope = slope;
       this.LearningRate = learning_rate;
-      this.LearningThreshold = 0.01;
+      this.LearningThreshold = 0.1;
     }
 
     public virtual I_EstFunc Copy()
@@ -29,8 +29,8 @@ namespace OSM2019.OSM
     {
       if (weight <= 0.0) return 0;
       if (weight >= 1.0) return 1;
-      //var evaluation = 1.0 / (1.0 + Math.Pow(Math.E, -1.0 * this.Slope * (weight - this.Translation)));
-      var evaluation = 1.0 / (1.0 + Math.Pow(Math.E, (-2.0 * this.Slope * ((weight - this.Translation) - 0.5))));
+      var evaluation = 1.0 / (1.0 + Math.Pow(Math.E, -1.0 * this.Slope * (weight - this.Translation)));
+      //var evaluation = 1.0 / (1.0 + Math.Pow(Math.E, (-2.0 * this.Slope * ((weight - this.Translation) - 0.5))));
       if (evaluation <= 0.0) return 0;
       if (evaluation >= 1.0) return 1;
       return Math.Round(evaluation, 5);
@@ -40,8 +40,8 @@ namespace OSM2019.OSM
     {
       if (awa_rate <= 0.0) return 0;
       if (awa_rate >= 1.0) return 1;
-      //var evaluation = ((-1.0 * Math.Log(1.0 / awa_rate - 1.0)) / this.Slope) + this.Translation;
-      var evaluation = ((2 * this.Translation + 1) + (Math.Log((awa_rate / (1 - awa_rate)))) / this.Slope) / 2.0;
+      var evaluation = ((-1.0 * Math.Log(1.0 / awa_rate - 1.0)) / this.Slope) + this.Translation;
+      //var evaluation = ((2 * this.Translation + 1) + (Math.Log((awa_rate / (1 - awa_rate)))) / this.Slope) / 2.0;
       if (evaluation <= 0.0) return 0;
       if (evaluation >= 1.0) return 1;
       return Math.Round(evaluation, 5);
@@ -61,7 +61,7 @@ namespace OSM2019.OSM
       if (Math.Abs(penalty) > this.LearningThreshold)
       {
         //this.Translation += penalty;
-        this.Translation += penalty;
+        this.Translation = penalty;
         var est_w = this.EvaluateInverseFunction(cur_awa);
         if (cur_weight < 1 && cur_awa < 1 && cur_weight > 0 && cur_awa > 0)
         {
