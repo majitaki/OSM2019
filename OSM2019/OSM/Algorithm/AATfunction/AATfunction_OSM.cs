@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using OSM2019.Utility;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -106,7 +107,10 @@ namespace OSM2019.OSM
         var received_sum_op = this.MyRecordRounds.Last().AgentReceiveOpinionsInRound[candidate.Key];
         double obs_u = this.GetObsU(received_sum_op);
         if (obs_u == 0) continue;
-        var est_weight = candidate.Value.EstimateWeight(candidate.Value.GetAwaRate(this.CurrentRound));
+
+        var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.IsReceived(candidate.Key)).Count();
+        var est_weight = candidate.Value.EstimateWeight(candidate.Value.GetAwaRate(receive_rounds));
+        //var est_weight = candidate.Value.EstimateWeight(candidate.Value.GetAwaRate(this.CurrentRound));
         var current_weight = candidate.Value.CanWeight;
         candidate.Value.SetTranslation(current_weight - est_weight);
       }

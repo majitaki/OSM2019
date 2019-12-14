@@ -47,6 +47,8 @@ namespace OSM2019
       var pre_belief = message.ToAgent.Belief;
       var weight = message.GetToWeight();
 
+      if (message.ToAgent.IsSensor && message.ToAgent.IsDetermined() && osm.GetType() == typeof(OSM_Only)) return pre_belief;
+
       if (message.Subject.SubjectName != message.ToAgent.MySubject.SubjectName)
       {
         var to_subject = message.ToAgent.MySubject;
@@ -56,6 +58,7 @@ namespace OSM2019
       {
         receive_op = message.Opinion.Clone();
       }
+
 
       Vector<double> updated_belief = null;
 

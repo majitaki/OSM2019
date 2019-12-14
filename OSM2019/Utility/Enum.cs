@@ -81,6 +81,7 @@ namespace OSM2019.Utility
 
   enum AlgoEnum
   {
+    None,
     AAT,
     AATG,
     AATfix,

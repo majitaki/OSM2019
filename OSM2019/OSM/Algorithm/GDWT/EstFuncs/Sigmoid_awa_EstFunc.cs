@@ -61,7 +61,7 @@ namespace OSM2019.OSM
       if (Math.Abs(penalty) > this.LearningThreshold)
       {
         //this.Translation += penalty;
-        this.Translation = penalty;
+        this.Translation += penalty;
         var est_w = this.EvaluateInverseFunction(cur_awa);
         if (cur_weight < 1 && cur_awa < 1 && cur_weight > 0 && cur_awa > 0)
         {

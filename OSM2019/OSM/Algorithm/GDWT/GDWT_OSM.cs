@@ -117,7 +117,9 @@ namespace OSM2019.OSM
         double obs_u = this.GetObsU(received_sum_op);
         if (obs_u == 0) continue;
 
-        candidate.Value.EstimateParameter(this.CurrentRound);
+        var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.IsReceived(candidate.Key)).Count();
+        candidate.Value.EstimateParameter(receive_rounds);
+        //candidate.Value.EstimateParameter(this.CurrentRound);
       }
     }
 

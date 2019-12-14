@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OSM2019.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,19 +7,22 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-    class AATfix_OSM : AAT_OSM
+  class AATfix_OSM : AAT_OSM
+  {
+    public AATfix_OSM() : base()
     {
+    }
 
-        protected override void SetCandidate()
-        {
-            this.Candidates = new Dictionary<Agent, Candidate>();
-            foreach (var agent in this.MyAgentNetwork.Agents)
-            {
-                var can = new AATfix_Candidate(agent);
-                this.Candidates.Add(agent, can);
-                agent.SetCommonWeight(can.GetSelectCanWeight());
-            }
-        }
+    protected override void SetCandidate()
+    {
+      this.Candidates = new Dictionary<Agent, Candidate>();
+      foreach (var agent in this.MyAgentNetwork.Agents)
+      {
+        var can = new AATfix_Candidate(agent);
+        this.Candidates.Add(agent, can);
+        agent.SetCommonWeight(can.GetSelectCanWeight());
+      }
+    }
 
     protected override void EstimateAwaRate()
     {

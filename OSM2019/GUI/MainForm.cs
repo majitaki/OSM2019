@@ -48,38 +48,34 @@ namespace OSM2019
     {
       var dt = DateTime.Now;
       var dt_name = dt.ToString("yyyyMMddHHmm");
-      //int seeds = 10;
       var seeds = new List<int>() { 0, 1, 2 };
       double sensor_weight = 0.8;
-      //int rounds = 200;
-      int steps = 2000;
-      var th_duration = 0.05;
+      int steps = 3000;
 
       dt = DateTime.Now;
       dt_name = dt.ToString("yyyyMMddHHmm");
       //Parallel.For(0, seeds, seed =>
+
       Parallel.ForEach(seeds, seed =>
       {
         new TargetH_Experiment()
               .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-              //.SetAlgos(new List<AlgoEnum>() { AlgoEnum.GDWTsigW })
-              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.OSMonly, AlgoEnum.AAT, AlgoEnum.SWT, AlgoEnum.AATfunction })
-              .SetNetworkSize(new List<int>() { 500 })
-              .SetDims(new List<int>() { 2, 4, 6, 8, 10 }).SetSensorWeight(sensor_weight)
+              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.OSMonly, AlgoEnum.SWT })
+              .SetNetworkSize(new List<int>() { 300 })
+              .SetDims(new List<int>() { 10 }).SetSensorWeight(sensor_weight)
               //.SetSensorCommonWeight(0.70)
               .SetSensorSizeRate(new List<double>() { 0.05 })
               .SetMaliciousSensorSizeRate(new List<double>() { 0.00 })
               //.SetSensorFixSize(10)
               .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
               .SetSubjectName("test")
-              .SetEnvDistWeights(new List<double>() { 0.5 })
-              //.SetEnvDistWeights(new List<double>() { 0.65 })
+              .SetEnvDistWeights(new List<double>() { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 })
               .SetMaliciousEnvDistWeights(new List<double>() { 0.0 })
               .SetCommonCuriocity(0.1)
               //.SetTargetHs(new List<double>() { 0.7, 0.75, 0.8, 0.85, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0 })
-              .SetTargetHs(new List<double>() { 0.90 })
-              .SetLogFolder(dt_name, "dw0.5")
-              .SetRounds(new List<int>() { 200 })
+              .SetTargetHs(new List<double>() { 0.9 })
+              .SetLogFolder(dt_name, "ed10_receiverounds")
+              .SetRounds(new List<int>() { 300 })
               .SetSteps(steps)
               .SetOpinionThreshold(0.8)
               .SetDynamics(new List<bool>() { false })
