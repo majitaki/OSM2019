@@ -40,8 +40,10 @@ namespace OSM2019.OSM
       var window_h = candidate.GetWindowAwaRate();
       var awa_count = candidate.AwaCount;
       var h = candidate.GetAwaRate(this.CurrentRound);
+      //var h = candidate.GetAwaRate(receive_rounds);
+      var t = candidate.Translation;
 
-      Console.WriteLine($"can_weight: {can_weight:f3} awa_count: {awa_count,3} h_rcv_round: {receive_rounds,3} cur_round: {this.CurrentRound,3} h: {h:f4} wh: {window_h:f4}");
+      Console.WriteLine($"can_weight: {can_weight:f3} awa_count: {awa_count,3} h_rcv_round: {receive_rounds,3} cur_round: {this.CurrentRound,3} h: {h:f4} wh: {window_h:f4} t: {t:f3}");
     }
 
 
@@ -108,9 +110,11 @@ namespace OSM2019.OSM
         double obs_u = this.GetObsU(received_sum_op);
         if (obs_u == 0) continue;
 
-        var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.IsReceived(candidate.Key)).Count();
-        var est_weight = candidate.Value.EstimateWeight(candidate.Value.GetAwaRate(receive_rounds));
+        //var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.IsReceived(candidate.Key)).Count();
+        //var est_weight = candidate.Value.EstimateWeight(candidate.Value.GetAwaRate(receive_rounds));
         //var est_weight = candidate.Value.EstimateWeight(candidate.Value.GetAwaRate(this.CurrentRound));
+        var est_weight = candidate.Value.EstimateWeight(this.CurrentRound);
+        //var est_weight = candidate.Value.EstimateWeight(candidate.Value.GetWindowAwaRate());
         var current_weight = candidate.Value.CanWeight;
         candidate.Value.SetTranslation(current_weight - est_weight);
       }
@@ -125,7 +129,9 @@ namespace OSM2019.OSM
         if (obs_u == 0) continue;
 
         var current_h = candidate.Value.GetWindowAwaRate();
+        //var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.IsReceived(candidate.Key)).Count();
         //var current_h = candidate.Value.GetAwaRate(this.CurrentRound);
+        //var current_h = candidate.Value.GetAwaRate(receive_rounds);
 
         if (current_h < this.TargetH + this.Epsilon || current_h > this.TargetH - this.Epsilon)
         {
@@ -142,11 +148,11 @@ namespace OSM2019.OSM
     {
       if (this.IsDetermined(agent))
       {
-        candidate.AwaCount = candidate.AwaCount + 1;
+        candidate.AwaCount += 1;
       }
       else
       {
-        candidate.AwaCount = candidate.AwaCount + 0;
+        candidate.AwaCount += 0;
       }
     }
 

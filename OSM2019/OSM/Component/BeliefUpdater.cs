@@ -48,6 +48,7 @@ namespace OSM2019
       var weight = message.GetToWeight();
 
       if (message.ToAgent.IsSensor && message.ToAgent.IsDetermined() && osm.GetType() == typeof(OSM_Only)) return pre_belief;
+      //if (message.ToAgent.IsSensor && message.ToAgent.IsDetermined()) return pre_belief;
 
       if (message.Subject.SubjectName != message.ToAgent.MySubject.SubjectName)
       {

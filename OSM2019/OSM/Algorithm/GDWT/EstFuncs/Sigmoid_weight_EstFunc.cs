@@ -19,7 +19,16 @@ namespace OSM2019.OSM
 
     public override double EvaluateErrorFunction(double cur_weight, double cur_awa)
     {
-      this.Error = cur_weight - this.EvaluateInverseFunction(cur_awa);
+      //this.Error = cur_weight - this.EvaluateInverseFunction(cur_awa);
+
+      if (cur_awa < 0.01) cur_awa = 0.01;
+      if (cur_awa > 0.99) cur_awa = 0.99;
+      this.Error = (2.0 * Math.Log(cur_awa / (1.0 - cur_awa))) / this.Slope - 2.0 * cur_weight + 2.0 * this.Translation + 1.0;
+      this.Error *= -1.0;
+      if (Double.IsNaN(this.Error))
+      {
+        var a = 0;
+      }
       return this.Error;
     }
   }

@@ -38,27 +38,15 @@ namespace OSM2019.OSM
     {
       Debug.Assert(op.Count == belief.Count);
       double p = 1.0;
-      double each_p = 0.0;
-
+      double each_p;
 
       foreach (var i in Enumerable.Range(0, op.Count))
       {
+        if (belief[i] == 0) continue;
         each_p = Math.Round(Math.Pow(belief[i], op[i]), 5);
-        if (each_p == 0 || belief[i] == 0 || op[i] == 0) continue;
+        if (each_p == 0) continue;
         p *= each_p;
       }
-
-
-      //foreach (var op_value in op)
-      //{
-      //  foreach (var belief_value in belief)
-      //  {
-      //    if (op_value == 0 || belief_value == 0) continue;
-      //    var each_p = Math.Round(Math.Pow(belief_value, op_value), 5);
-      //    if (each_p == 0) continue;
-      //    p *= each_p;
-      //  }
-      //}
 
       Debug.Assert(p != 0);
       this.RecOpinionProb = p;

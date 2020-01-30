@@ -456,29 +456,29 @@ namespace OSM2019.Experiment
                                         var osm_gdwt_sigw = new GDWT_OSM();
                                         osm_gdwt_sigw.SetTargetH(target_h);
                                         osm_gdwt_sigw.SetAwaRateWindowSize(awa_rate_window);
-                                        //osm_gdwt_sigw.SetEstimateFunction(new Sigmoid_weight_EstFunc(0.5, 0, 3));
-                                        osm_gdwt_sigw.SetEstimateFunction(new Sigmoid_weight_EstFunc(1.0, 0.5, 10));
+                                        osm_gdwt_sigw.SetEstimateFunction(new Sigmoid_weight_EstFunc(0.01, 0.0, 5));
+                                        //osm_gdwt_sigw.SetEstimateFunction(new Sigmoid_weight_EstFunc(1.0, 0.0, 3));
                                         osm = osm_gdwt_sigw;
                                         break;
                                       case AlgoEnum.GDWTsigH:
                                         var osm_gdwt_sigh = new GDWT_OSM();
                                         osm_gdwt_sigh.SetTargetH(target_h);
                                         osm_gdwt_sigh.SetAwaRateWindowSize(awa_rate_window);
-                                        osm_gdwt_sigh.SetEstimateFunction(new Sigmoid_awa_EstFunc(0.5, 0, 10));
+                                        osm_gdwt_sigh.SetEstimateFunction(new Sigmoid_awa_EstFunc(0.05, 0, 20));
                                         osm = osm_gdwt_sigh;
                                         break;
                                       case AlgoEnum.GDWTpowerH:
                                         var osm_gdwt_powh = new GDWT_OSM();
                                         osm_gdwt_powh.SetTargetH(target_h);
                                         osm_gdwt_powh.SetAwaRateWindowSize(awa_rate_window);
-                                        osm_gdwt_powh.SetEstimateFunction(new PowerH_awa_EstFunc(3.0, 0));
+                                        osm_gdwt_powh.SetEstimateFunction(new Power_awa_EstFunc(3.0, 0));
                                         osm = osm_gdwt_powh;
                                         break;
                                       case AlgoEnum.GDWTpowerW:
                                         var osm_gdwt_poww = new GDWT_OSM();
                                         osm_gdwt_poww.SetTargetH(target_h);
                                         osm_gdwt_poww.SetAwaRateWindowSize(awa_rate_window);
-                                        osm_gdwt_poww.SetEstimateFunction(new PowerH_weight_EstFunc(3.0, 0));
+                                        osm_gdwt_poww.SetEstimateFunction(new Power_weight_EstFunc(3.0, 0));
                                         osm = osm_gdwt_poww;
                                         break;
                                       default:

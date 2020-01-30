@@ -38,6 +38,7 @@ namespace OSM2019.OSM
     public void SetTranslation(double translation)
     {
       this.Translation = translation;
+      //this.Translation += 0.5 * translation;
     }
     public void SetSlope(double slope)
     {
@@ -46,10 +47,11 @@ namespace OSM2019.OSM
 
     public double EstimateWeight(double awa_rate)
     {
-      if (awa_rate <= 0.0) return 0;
-      if (awa_rate >= 1.0) return 1;
+      if (awa_rate <= 0.01) return 0.01;
+      if (awa_rate >= 0.99) return 0.99;
 
-      var weight = ((2 * this.Translation + 1) + (Math.Log((awa_rate / (1 - awa_rate)))) / this.Slope) / 2.0;
+      //var weight = ((2 * this.Translation + 1) + (Math.Log((awa_rate / (1 - awa_rate)))) / this.Slope) / 2.0;
+      var weight = ((2 * this.Translation + 0.5) + (Math.Log((awa_rate / (1 - awa_rate)))) / this.Slope) / 2.0;
       if (weight <= 0.0) return 0;
       if (weight >= 1.0) return 1;
       return weight;

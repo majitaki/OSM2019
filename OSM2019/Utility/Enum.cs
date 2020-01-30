@@ -96,10 +96,12 @@ namespace OSM2019.Utility
     AATfunctioniwt,
     SWT,
     SWTstep,
+    SWTkai,
     GDWTsigH,
     GDWTsigW,
     GDWTpowerH,
-    GDWTpowerW
+    GDWTpowerW,
+    GDWTLinearW
   }
 
   enum SensorWeightEnum

@@ -31,43 +31,49 @@ namespace OSM2019.OSM
     {
       foreach (var candidate in this.Candidates)
       {
+        if (candidate.Key.AgentID == 45)
+        {
+          var a = 0;
+        }
+
         var received_sum_op = this.MyRecordRounds.Last().AgentReceiveOpinionsInRound[candidate.Key];
         double obs_u = this.GetObsU(received_sum_op);
         if (obs_u == 0) continue;
 
         var current_h = candidate.Value.GetWindowAwaRate();
 
-        var aat_weight = candidate.Value.EstimateWeight(this.TargetH);
-        candidate.Value.CanWeight = aat_weight;
-        if (candidate.Key.IsSensor)
-        {
-          candidate.Key.SetCommonWeight(aat_weight);
-        }
-        else
-        {
-          //candidate.Key.SetCommonWeight(aat_weight);
-          var weights = this.CalcInfoWeight(candidate.Key, aat_weight);
-          candidate.Key.SetWeights(weights);
-        }
-        Debug.Assert(aat_weight >= 0 && aat_weight <= 1);
+        //var aat_weight = candidate.Value.EstimateWeight(this.TargetH);
+        //candidate.Value.CanWeight = aat_weight;
 
-
-        //if (current_h < this.TargetH + this.Epsilon || current_h > this.TargetH - this.Epsilon)
+        //if (candidate.Key.IsSensor)
         //{
-        //  var aat_weight = candidate.Value.EstimateWeight(this.TargetH);
-        //  candidate.Value.CanWeight = aat_weight;
-        //  if (candidate.Key.IsSensor)
-        //  {
-        //    candidate.Key.SetCommonWeight(aat_weight);
-        //  }
-        //  else
-        //  {
-        //    //candidate.Key.SetCommonWeight(aat_weight);
-        //    var weights = this.CalcInfoWeight(candidate.Key, aat_weight);
-        //    candidate.Key.SetWeights(weights);
-        //  }
-        //  Debug.Assert(aat_weight >= 0 && aat_weight <= 1);
+        //  candidate.Key.SetCommonWeight(aat_weight);
         //}
+        //else
+        //{
+        //  //candidate.Key.SetCommonWeight(aat_weight);
+        //  var weights = this.CalcInfoWeight(candidate.Key, aat_weight);
+        //  candidate.Key.SetWeights(weights);
+        //}
+        //Debug.Assert(aat_weight >= 0 && aat_weight <= 1);
+
+
+        if (current_h < this.TargetH + this.Epsilon || current_h > this.TargetH - this.Epsilon)
+        {
+          var aat_weight = candidate.Value.EstimateWeight(this.TargetH);
+          candidate.Value.CanWeight = aat_weight;
+          if (candidate.Key.IsSensor)
+          {
+            candidate.Key.SetCommonWeight(aat_weight);
+          }
+          else
+          {
+            //candidate.Key.SetCommonWeight(aat_weight);
+            var weights = this.CalcInfoWeight(candidate.Key, aat_weight);
+            candidate.Key.SetWeights(weights);
+          }
+          Debug.Assert(aat_weight >= 0 && aat_weight <= 1);
+        }
       }
     }
 

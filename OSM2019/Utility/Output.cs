@@ -125,10 +125,10 @@ namespace OSM2019.Utility
             var dt = DateTime.Now;
             var dt_name = dt.ToString("yyyy-MM-dd-HH-mm-ss");
 
-            using (var sw = new StreamWriter(pass + "/setting.json", false, Encoding.UTF8))
-            {
-                sw.Write(json_setting);
-            }
+            //using (var sw = new StreamWriter(pass + "/setting.json", false, Encoding.UTF8))
+            //{
+            //    sw.Write(json_setting);
+            //}
 
             var keys = record_rounds.First().AllOpinionSizes.Values.SelectMany(value => value.Keys).Select(key => key.ToString());
             var headers = new[] {

@@ -29,7 +29,7 @@ namespace OSM2019.OSM
             return this;
         }
 
-        public ER_GraphGenerator EdgeCreateP(double p)
+        public ER_GraphGenerator SetEdgeCreateP(double p)
         {
             this.P = p;
             this.SetGeneratePath();

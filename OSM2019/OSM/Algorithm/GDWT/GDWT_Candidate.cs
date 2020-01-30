@@ -47,6 +47,10 @@ namespace OSM2019.OSM
       //this.EstFunc.EstimateParameter(this.CanWeight, this.GetWindowAwaRate());
       this.EstFunc.EstimateParameter(this.CanWeight, this.GetAwaRate(current_round));
     }
+    public void EstimateParameter()
+    {
+      this.EstFunc.EstimateParameter(this.CanWeight, this.GetWindowAwaRate());
+    }
 
     public double GetWindowAwaRate()
     {
@@ -65,7 +69,7 @@ namespace OSM2019.OSM
     public double GetAwaRate(int current_round)
     {
       if (current_round == 0) return 0.0;
-      var cur_awa = this.AwaCount / (double)(current_round + 0);
+      var cur_awa = this.AwaCount / (double)(current_round + 1);
       //Debug.Assert(cur_awa >= 0 && cur_awa <= 1);
       return cur_awa;
     }

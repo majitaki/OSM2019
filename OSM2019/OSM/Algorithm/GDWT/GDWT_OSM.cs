@@ -117,9 +117,10 @@ namespace OSM2019.OSM
         double obs_u = this.GetObsU(received_sum_op);
         if (obs_u == 0) continue;
 
-        var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.IsReceived(candidate.Key)).Count();
-        candidate.Value.EstimateParameter(receive_rounds);
-        //candidate.Value.EstimateParameter(this.CurrentRound);
+        //var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.IsReceived(candidate.Key)).Count();
+        //candidate.Value.EstimateParameter(receive_rounds);
+        candidate.Value.EstimateParameter(this.CurrentRound);
+        //candidate.Value.EstimateParameter();
       }
     }
 
@@ -131,8 +132,10 @@ namespace OSM2019.OSM
         double obs_u = this.GetObsU(received_sum_op);
         if (obs_u == 0) continue;
 
-        var current_h = candidate.Value.GetWindowAwaRate();
-        //var current_h = candidate.Value.GetAwaRate(this.CurrentRound);
+        //var current_h = candidate.Value.GetWindowAwaRate();
+        //var receive_rounds = this.MyRecordRounds.Where(record_round => record_round.IsReceived(candidate.Key)).Count();
+        //var current_h = candidate.Value.GetAwaRate(receive_rounds);
+        var current_h = candidate.Value.GetAwaRate(this.CurrentRound);
 
         if (current_h < this.TargetH + this.Epsilon || current_h > this.TargetH - this.Epsilon)
         {

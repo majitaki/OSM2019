@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace OSM2019.OSM
 {
-  class PowerH_weight_EstFunc : PowerH_awa_EstFunc
+  class Power_weight_EstFunc : Power_awa_EstFunc
   {
-    public PowerH_weight_EstFunc(double learning_rate, double power_t) : base(learning_rate, power_t)
+    public Power_weight_EstFunc(double learning_rate, double power_t) : base(learning_rate, power_t)
     {
     }
 
     public override I_EstFunc Copy()
     {
-      return new PowerH_weight_EstFunc(this.LearningRate, this.Power_T);
+      return new Power_weight_EstFunc(this.LearningRate, this.Power_T);
     }
 
     public override double EvaluateErrorFunction(double cur_weight, double cur_awa)

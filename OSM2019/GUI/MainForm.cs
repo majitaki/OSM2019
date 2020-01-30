@@ -50,7 +50,7 @@ namespace OSM2019
       var dt_name = dt.ToString("yyyyMMddHHmm");
       var seeds = new List<int>() { 0, 1, 2 };
       double sensor_weight = 0.8;
-      int steps = 3000;
+      int steps = 2000;
 
       dt = DateTime.Now;
       dt_name = dt.ToString("yyyyMMddHHmm");
@@ -59,30 +59,34 @@ namespace OSM2019
       Parallel.ForEach(seeds, seed =>
       {
         new TargetH_Experiment()
-              .SetGraphs(new List<GraphEnum>() { GraphEnum.WS })
-              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.AAT, AlgoEnum.OSMonly, AlgoEnum.SWT })
-              .SetNetworkSize(new List<int>() { 300 })
-              .SetDims(new List<int>() { 10 }).SetSensorWeight(sensor_weight)
+              .SetGraphs(new List<GraphEnum>() { GraphEnum.Grid2D  })
+              .SetAlgos(new List<AlgoEnum>() { AlgoEnum.GDWTsigW })
+              .SetNetworkSize(new List<int>() { 50, 100, 300, 1000 })
+              //.SetNetworkSize(new List<int>() { 200 })
+              .SetDims(new List<int>() { 2, 5, 10 }).SetSensorWeight(sensor_weight)
               //.SetSensorCommonWeight(0.70)
               .SetSensorSizeRate(new List<double>() { 0.05 })
+              //.SetSensorSizeRate(new List<double>() { 0.1 })
               .SetMaliciousSensorSizeRate(new List<double>() { 0.00 })
               //.SetSensorFixSize(10)
               .SetBeliefUpdater(new BeliefUpdater().SetSensorWeightMode(SensorWeightEnum.DependSensorRate))
               .SetSubjectName("test")
-              .SetEnvDistWeights(new List<double>() { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 })
+              .SetEnvDistWeights(new List<double>() { 0.5 })
+              //.SetEnvDistWeights(new List<double>() { 0.55 })
               .SetMaliciousEnvDistWeights(new List<double>() { 0.0 })
               .SetCommonCuriocity(0.1)
-              //.SetTargetHs(new List<double>() { 0.7, 0.75, 0.8, 0.85, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0 })
-              .SetTargetHs(new List<double>() { 0.9 })
-              .SetLogFolder(dt_name, "ed10_receiverounds")
+              .SetTargetHs(new List<double>() { 0.95 })
+              //.SetTargetHs(Enumerable.Range(20, 21).Select(x => x * 0.025).ToList())
+              .SetLogFolder(dt_name, "gdwt_size_grid_0.95")
               .SetRounds(new List<int>() { 300 })
               .SetSteps(steps)
-              .SetOpinionThreshold(0.8)
+              .SetOpinionThreshold(0.9)
+              //.SetOpinionThreshold(0.8)
               .SetDynamics(new List<bool>() { false })
               .SetEnvDistModes(new List<EnvDistributionEnum> { EnvDistributionEnum.Exponential })
               .SetInfoWeightRates(new List<double>() { 1.0 })
               .SetCommonWeights(new List<double>() { 1.0 })
-              //.SetCommonWeights(Enumerable.Range(25, 25).Select(x => x * 0.02).ToList())
+              //.SetCommonWeights(Enumerable.Range(0, 21).Select(x => x * 0.05).ToList())
               .Run(seed);
       });
 
@@ -91,11 +95,11 @@ namespace OSM2019
     void Test()
     {
       int agent_size = 200;
-      int dim = 5;
+      int dim = 3;
       int correct_dim = 0;
       int malicious_dim = 1;
-      AlgoEnum algo = AlgoEnum.AATfunction;
-      double targeth = 0.90;
+      AlgoEnum algo = AlgoEnum.SWTkai;
+      double targeth = 0.80;
       double common_weight = 0.5;
       double common_curiocity = 0.5;
       double sensor_rate = 0.8;
@@ -104,7 +108,7 @@ namespace OSM2019
       int sensor_size = (int)(0.05 * agent_size);
       //int malicious_sensor_size = (int)(0.04 * agent_size);
       int malicious_sensor_size = 0;
-      var op_form_threshold = 0.9;
+      var op_form_threshold = 0.8;
       int sample_size = 10;
       int change_round = 0;
 
@@ -112,9 +116,10 @@ namespace OSM2019
 
       GraphGeneratorBase graph_generator;
       //graph_generator = new PC_GraphGenerator().SetNodeSize(500).SetRandomEdges(3).SetAddTriangleP(0.1);
-      graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
+      //graph_generator = new WS_GraphGenerator().SetNodeSize(agent_size).SetNearestNeighbors(6).SetRewireP(0.01);
       //graph_generator = new BA_GraphGenerator().SetNodeSize(agent_size).SetAttachEdges(2);
-      //graph_generator = new Grid2D_GraphGenerator().SetNodeSize(agent_size);
+      graph_generator = new Grid2D_GraphGenerator().SetNodeSize(agent_size);
+      //graph_generator = new ER_GraphGenerator().SetNodeSize(agent_size).SetEdgeCreateP(0.01);
 
       var pb = new ExtendProgressBar(100);
       var graph = graph_generator.Generate(0, pb);
@@ -211,14 +216,14 @@ namespace OSM2019
           var osm_function_iwt = new AATfunction_iwt_OSM();
           osm_function_iwt.SetCommonCuriocity(common_curiocity);
           osm_function_iwt.SetTargetH(targeth);
-          osm_function_iwt.SetAwaRateWindowSize(20);
+          osm_function_iwt.SetAwaRateWindowSize(100);
           osm = osm_function_iwt;
           break;
         case AlgoEnum.SWT:
           var osm_aat_info = new SWT_OSM();
           osm_aat_info.SetTargetH(targeth);
-          osm_aat_info.SetAwaRateWindowSize(100);
-          osm_aat_info.SetLinkInfoValueWindowSize(100);
+          osm_aat_info.SetAwaRateWindowSize(50);
+          osm_aat_info.SetLinkInfoValueWindowSize(50);
           osm_aat_info.SetInfoWeightRate(1.0);
           osm = osm_aat_info;
           break;
@@ -231,11 +236,17 @@ namespace OSM2019
           osm_aat_info_step.SetInfoLearningRate(0.2);
           osm = osm_aat_info_step;
           break;
+        case AlgoEnum.SWTkai:
+          var osm_swtkai = new SWTkai_OSM();
+          osm_swtkai.SetCommonWeight(0.5);
+          osm_swtkai.SetLinkInfoValueWindowSize(1000);
+          osm = osm_swtkai;
+          break;
         case AlgoEnum.GDWTsigW:
           var osm_gdwt_sigw = new GDWT_OSM();
           osm_gdwt_sigw.SetTargetH(targeth);
           osm_gdwt_sigw.SetAwaRateWindowSize(100);
-          osm_gdwt_sigw.SetEstimateFunction(new Sigmoid_weight_EstFunc(1.0, 0, 3));
+          osm_gdwt_sigw.SetEstimateFunction(new Sigmoid_weight_EstFunc(1.0, 0, 2));
           osm = osm_gdwt_sigw;
           break;
         case AlgoEnum.GDWTsigH:
@@ -249,16 +260,24 @@ namespace OSM2019
           var osm_gdwt_powh = new GDWT_OSM();
           osm_gdwt_powh.SetTargetH(targeth);
           osm_gdwt_powh.SetAwaRateWindowSize(100);
-          osm_gdwt_powh.SetEstimateFunction(new PowerH_awa_EstFunc(3.0, 0));
+          osm_gdwt_powh.SetEstimateFunction(new Power_awa_EstFunc(3.0, 0));
           osm = osm_gdwt_powh;
           break;
         case AlgoEnum.GDWTpowerW:
           var osm_gdwt_poww = new GDWT_OSM();
           osm_gdwt_poww.SetTargetH(targeth);
           osm_gdwt_poww.SetAwaRateWindowSize(100);
-          osm_gdwt_poww.SetEstimateFunction(new PowerH_weight_EstFunc(3.0, 0));
+          osm_gdwt_poww.SetEstimateFunction(new Power_weight_EstFunc(3.0, 0));
           osm = osm_gdwt_poww;
           break;
+        case AlgoEnum.GDWTLinearW:
+          var osm_gdwt_linearw = new GDWT_OSM();
+          osm_gdwt_linearw.SetTargetH(targeth);
+          osm_gdwt_linearw.SetAwaRateWindowSize(100);
+          osm_gdwt_linearw.SetEstimateFunction(new Linear_weight_EstFunc(1.0, 1, 0));
+          osm = osm_gdwt_linearw;
+          break;
+
         default:
           break;
       }
@@ -266,7 +285,7 @@ namespace OSM2019
       osm.SetAgentNetwork(agent_network);
       var subject_mgr_dic = new Dictionary<int, SubjectManager>();
       subject_mgr_dic.Add(0, new SubjectManagerGenerator()
-          .Generate(subject_test, dist_weight, correct_dim, sensor_rate, EnvDistributionEnum.Turara, malicious_dim, malicious_dist_weight));
+          .Generate(subject_test, dist_weight, correct_dim, sensor_rate, EnvDistributionEnum.Exponential, malicious_dim, malicious_dist_weight));
       //for (int i = 0; i < 1; i++)
       //{
       //  subject_mgr_dic.Add(i * change_round, new SubjectManagerGenerator().Generate(subject_test, dist_weight, i % dim, sensor_rate, EnvDistributionEnum.Turara));
